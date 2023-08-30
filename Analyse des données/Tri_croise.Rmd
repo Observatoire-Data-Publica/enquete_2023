@@ -43,119 +43,88 @@ htmltools::img(src = "https://nextcloud.datactivist.coop/s/o53wzfMNnFosQni/previ
 
 ```{r données}
 library(tidyverse)
-data <- read_csv("../results-survey396597.csv")
-communes <- read_delim("https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-communes-consolidee/exports/csv?lang=fr&facet=facet(name%3D%22reg_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22dep_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22epci_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22tranche_population%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22tranche_revenu_imposable_par_habitant%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22com_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22agregat%22%2C%20disjunctive%3Dtrue)&refine=exer%3A%222022%22&refine=agregat%3A%22Achats%20et%20charges%20externes%22&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B", ";") |> 
-    select(`Code Siren Collectivité`, `Code Insee Collectivité`, `Nom 2022 Commune`, `Population totale`, `Catégorie`) |> 
-    rename(COG = `Code Insee Collectivité`,
-           nom = `Nom 2022 Commune`,
-           SIREN = `Code Siren Collectivité`) |> 
-    mutate(SIREN = as.character(SIREN),
-           COG = as.character(COG)) |> 
-    arrange(COG)
-regions <- read_delim("https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-regions-consolidee/exports/csv?lang=fr&facet=facet(name%3D%22reg_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22agregat%22%2C%20disjunctive%3Dtrue)&refine=exer%3A%222022%22&refine=agregat%3A%22Achats%20et%20charges%20externes%22&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B", ";") |> 
-    select(`Code Siren Collectivité`, `Code Insee 2022 Région`, `Nom 2022 Région`, `Population totale`, `Catégorie`) |> 
-    rename(COG = `Code Insee 2022 Région`,
-           nom = `Nom 2022 Région`,
-           SIREN = `Code Siren Collectivité`) |> 
-    mutate(SIREN = as.character(SIREN),
-           COG = as.character(COG)) |> 
-    arrange(COG)
-departements <- read_delim("https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-departements-consolidee/exports/csv?lang=fr&facet=facet(name%3D%22reg_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22dep_tranche_population%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22dep_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22agregat%22%2C%20disjunctive%3Dtrue)&refine=exer%3A%222022%22&refine=agregat%3A%22D%C3%A9penses%20totales%22&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B", ";") |> 
-    select(`Code Siren Collectivité`, `Code Insee 2022 Département`, `Nom 2022 Département`, `Population totale`, `Catégorie`) |> 
-    rename(COG = `Code Insee 2022 Département`,
-           nom = `Nom 2022 Département`,
-           SIREN = `Code Siren Collectivité`) |> 
-    mutate(SIREN = as.character(SIREN),
-           COG = as.character(COG)) |> 
-    arrange(COG)
-epci <- read_delim("https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-ei/exports/csv?lang=fr&facet=facet(name%3D%22libelle_categ%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22dep_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22gfp_tranche_population%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22nat_juridique%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22mode_financement%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22gfp_tranche_revenu_imposable_par_habitant%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22epci_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22agregat%22%2C%20disjunctive%3Dtrue)&refine=exer%3A%222022%22&refine=agregat%3A%22Achats%20et%20charges%20externes%22&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B", ";") |> 
-    select(`Code Siren 2022 EI`, `Nom 2022 EI`, `Population totale`, `Catégorie`) |> 
-    rename(nom = `Nom 2022 EI`,
-           SIREN = `Code Siren 2022 EI`) |> 
-    mutate(SIREN = as.character(SIREN),
-           COG = NA_character_) |> 
-    arrange(COG)
-coll_ter <- rbind(regions, departements, communes, epci)
+data <- read_csv("../results-survey396597.csv") |> select(1:220)
+CT_enrichies <- read_csv("../interim_data.csv")
+data <- data |> 
+    left_join(CT_enrichies |> select(-2), by = "ID de la réponse") |> 
+    mutate(Catégorie2 = case_when(Catégorie == "Commune" & `Population totale` < 3500 ~ "Communes de moins de 3 500 hab.",
+                               Catégorie == "Commune" & `Population totale` >= 3500 & `Population totale` < 10000 ~ "Communes de 3 500 à 10 000 hab.",
+                               Catégorie == "Commune" & `Population totale` >= 10000 & `Population totale` < 100000 ~ "Communes de 10 000 à 100 000 hab.",
+                               Catégorie == "Commune" & `Population totale` >= 100000 ~ "Communes de plus de 100 000 hab.",
+                               is.na(Catégorie) ~ "Autre",
+                               .default = Catégorie),
+           Catégorie = case_when(is.na(Catégorie) ~ "Autre", .default = Catégorie))
+data_clean <- data |> 
+    filter(!is.na(`Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?`))
+data_clean_unique <- data_clean |> 
+    distinct(nom, Catégorie, Catégorie2)
 ```
 
-Les données sont composées de `r norw(data)` réponses et `r ncol(data)` variables. Elles sont enrichies par le type de territoire et la population extraits des [données OFGL](https://data.ofgl.fr/explore/?exclude.theme=INTERNE&sort=title).
+Les données sont composées de `r nrow(data)` réponses (complètes comme incomplètes) et `r ncol(data)` variables. Elles sont enrichies par le type de territoire et la population extraits des [données OFGL](https://data.ofgl.fr/explore/?exclude.theme=INTERNE&sort=title) en plusieurs étapes :
+
+- retrait des accents, chiffres et caractères spéciaux des noms de structure et mise en majuscule ;
+- jointure avec les données OFGL par le nom de structure (lui aussi sans caractères spéciaux etc.) ;
+- complétion manuelle du type de structure et de la population pour les structures non enrichies par les données OFGL ; 
+- vérification des jointures multiples lorsque plusieurs CT ont un même nom, choix de la bonne collectivité via les informations renseignées dans le questionnaire.
+
+Sont considérées comme complètes toutes les réponses ayant répondu à la question *Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?*, soit `r nrow(data_clean_unique)` observations en retirant les doublons. Les **types de structure** ayant répondu sont les suivants : 
+
+- `r data_clean_unique |> filter(Catégorie == "Region") |> nrow()` régions ;
+- `r data_clean_unique |> filter(Catégorie == "Departement") |> nrow()` départements ;
+- `r data_clean_unique |> filter(Catégorie == "Commune") |> nrow()` communes ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de moins de 3 500 hab.") |> nrow()` communes de moins de 3 500 habitants ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de 3 500 à 10 000 hab.") |> nrow()` communes de 3 500 à 10 000 habitants ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow()` communes de 10 000 à 100 000 habitants ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de plus de 100 000 hab.") |> nrow()` communes de plus de 100 000 habitants ;
+- `r data_clean_unique |> filter(Catégorie == "EPCI") |> nrow()` EPCI ;
+- `r data_clean_unique |> filter(Catégorie == "Autre") |> nrow()` structures '*Autre*', c'est-à-dire n'entrant pas dans les catégories précédentes.
+
+
+# Tri croisé
+
+## Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
 
 ```{r enrich data}
-test <- data |> 
-    mutate(nom = toupper(str_replace_all(`Quel est le nom de votre structure ?`, "[^[:alnum:]]", " ")), #remove special char
-           nom = str_replace_all(nom, "[0-9]", ""), # remove digits
-           nom = trimws(nom, which = "both"), #remove white space end of string
-           nom = stringi::stri_trans_general(str = nom, id = "Latin-ASCII"), #remove accents
-           nom = str_replace_all(nom, c("DEPARTEMENT D " = "", "DEPARTEMENT DE " = "", 
-                                        "DEPARTEMENT DE LA " = "", "DEPARTEMENT " = "", 
-                                        "DEPARTEMENT DU " = "", "COMMUNE DE " = "", 
-                                        "COMMUNE DE LA " = "", "MAIRIE DE " = "",
-                                        "MAIRIE D " = "", "CONSEIL DEPARTEMENTAL DE L " = "",
-                                        "CONSEIL DEPARTEMENTAL DE LA " = "",
-                                        "CONSEIL DEPARTEMENTAL DES " = "",
-                                        "CONSEIL DEPARTEMENTAL DE " = "",
-                                        "CONSEIL DEPARTEMENTAL DU " = "",
-                                        "CONSEIL REGIONAL " = "",
-                                        "CONSEIL REGIONAL D " = "",
-                                        "CONSEIL REGIONAL DES " = "",
-                                        "COMMUNAUTE DE COMMUNES" = "CC",
-                                        "COMMUNAUTE D AGGLOMERATION" = "CA"
-                                        ))) |>  
-    left_join(coll_ter |> mutate(nom = toupper(nom),
-                                 nom = toupper(str_replace_all(nom, "[^[:alnum:]]", " ")), #remove special char
-                                 nom = str_replace_all(nom, "[0-9]", ""), # remove digits
-                                 nom = trimws(nom, which = "both"),
-                                 nom = stringi::stri_trans_general(str = nom, id = "Latin-ASCII")), 
-              by = "nom") |> 
-    select(`Quel est le nom de votre structure ?`, 303:307)
+test <- data_clean |> 
+    select(`Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?`, 
+           Catégorie2) |> 
+    summarise(n = n(), .by = c(Catégorie2, `Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?`)) |> na.omit() |>  
+    pivot_wider(names_from = 2, values_from = 3) |>
+    janitor::adorn_totals("row") |>
+    pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+    mutate_all(replace_na, replace = 0) |>
+    mutate(percent = round(n / sum(n) *100, 0), .by = Catégorie2) |> 
+    select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+
+test <- data_clean |> 
+    select(`Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?`, 
+           Catégorie) |> 
+    summarise(n = n(), .by = c(Catégorie, `Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?`)) |> na.omit() |>  
+    pivot_wider(names_from = 2, values_from = 3) |>
+    janitor::adorn_totals("row") |>
+    pivot_longer(cols = -Catégorie, names_to = "cat", values_to = "n") |> 
+    mutate_all(replace_na, replace = 0) |>
+    mutate(percent = round(n / sum(n) *100, 0), .by = Catégorie) |> 
+    select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+
+
+    mutate(Catégorie = factor(Catégorie, levels = c("")))
 ```
 
 
-## Les petites astuces
-
-Quelques paramètres à changer si vous voulez un R Markdown légèrement différent : 
-
-- `<br>` saute une ligne entre 2 éléments 
-- `number_sections: true` dans l'en-tête de ce document numérote automatiquement les parties et sous-parties (retirer le `#` dans l'en-tête pour l'utiliser)
-- `toc: false` supprime la table des matières (table of contents, *toc*) qui s'affiche par défaut au début du document avec une profondeur maximale de 4 actuellement
-- `date: "1er janvier 2023"` affiche une date fixe car entrée comme un texte. Actuellement c'est la date du jour où le rapport est généré qui apparaît automatiquement dans l'en-tête du document
-- **texte en gras**, *texte en italique*, ***texte en gras italique***
-
-# Une deuxième section divisée en 3
-
-<div class = "row">
-  
-<div class = "col-md-4">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
-</div>
-  
-<div class = "col-md-4">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.
-</div>
-  
-<div class = "col-md-4">
-```{r graph}
-library(tidyverse)
-ggplot( mtcars, aes(x=mpg)) + 
-  geom_histogram(fill="skyblue", alpha=0.5) + 
-  theme_minimal()
-```
-</div>
-</div>
-
-## Faire ressortir du texte dans une boxe
 
 
-<br>
 
-<style>
-div.blue { background-color:#fff1eb; border-radius: 5px; padding: 20px;}
-</style>
-<div class = "blue">
 
-**Ma boxe**
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim.
 
-</div>
+
+
+
+
+
+
+
+
+
 
