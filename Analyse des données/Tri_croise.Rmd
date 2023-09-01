@@ -1,13 +1,13 @@
 ---
-title: "Tri croisé des réponses"
-subtitle: "Enquête Data Publica, édition 2023"
-date: "`r format(Sys.time(), '%d %B %Y')`"
+title: "Enquête Data Publica, édition 2023"
+subtitle: "Analyse des données de l'enquête"
+date: "Dernière modification le `r format(Sys.time(), '%d %B %Y')`"
 output:
     rmarkdown::html_document:
       #number_sections: true
       theme: paper
       toc: true
-      toc_depth: 4
+      toc_depth: 2
       collapsed: true
       smooth_scroll: true
       css: styles.css
@@ -42,22 +42,41 @@ htmltools::img(src = "https://nextcloud.datactivist.coop/s/o53wzfMNnFosQni/previ
 
 
 ```{r données}
+# Import de données
 library(tidyverse)
-data <- read_csv("../results-survey396597.csv") |> select(1:220)
-CT_enrichies <- read_csv("../interim_data.csv")
+data <- read_csv("../Data/results-survey396597.csv") |> select(1:220)
+CT_enrichies <- read_csv("../Data/interim_data.csv")
+
+# Jointure questionnaire + type de structure récupéré en pre-processing
 data <- data |> 
     left_join(CT_enrichies |> select(-2), by = "ID de la réponse") |> 
-    mutate(Catégorie2 = case_when(Catégorie == "Commune" & `Population totale` < 3500 ~ "Communes de moins de 3 500 hab.",
-                               Catégorie == "Commune" & `Population totale` >= 3500 & `Population totale` < 10000 ~ "Communes de 3 500 à 10 000 hab.",
-                               Catégorie == "Commune" & `Population totale` >= 10000 & `Population totale` < 100000 ~ "Communes de 10 000 à 100 000 hab.",
-                               Catégorie == "Commune" & `Population totale` >= 100000 ~ "Communes de plus de 100 000 hab.",
+    mutate(Catégorie = case_when(Catégorie == "Commune" ~ "Une commune",
+                                 Catégorie == "Metropole" ~ "Une métropole",
+                                 Catégorie == "Departement" ~ "Un département",
+                                 Catégorie == "Region" ~ "Une région",
+                                 Catégorie == "EPCI" ~ "Un EPCI (hors métropole)"),
+           Catégorie2 = case_when(Catégorie == "Une commune" & `Population totale` < 3500 ~ "Communes de moins de 3 500 hab.",
+                               Catégorie == "Une commune" & `Population totale` >= 3500 & `Population totale` < 10000 ~ "Communes de 3 500 à 10 000 hab.",
+                               Catégorie == "Une commune" & `Population totale` >= 10000 & `Population totale` < 100000 ~ "Communes de 10 000 à 100 000 hab.",
+                               Catégorie == "Une commune" & `Population totale` >= 100000 ~ "Communes de plus de 100 000 hab.",
                                is.na(Catégorie) ~ "Autre",
                                .default = Catégorie),
            Catégorie = case_when(is.na(Catégorie) ~ "Autre", .default = Catégorie))
+
+# Données complètes
 data_clean <- data |> 
     filter(!is.na(`Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?`))
 data_clean_unique <- data_clean |> 
-    distinct(nom, Catégorie, Catégorie2)
+    mutate(nb_na = rowSums(is.na(data_clean))) |> 
+    mutate(n = n(), .by = nom) |> 
+    group_by(nom) |> slice(which.min(nb_na)) |> ungroup()
+    
+
+
+# Liste des régions
+library(tools)
+reg <- data_clean_unique |> filter(Catégorie == "Une région") |> 
+    mutate(nom = toTitleCase(tolower(nom))) |> distinct(nom) |> t()
 ```
 
 Les données sont composées de `r nrow(data)` réponses (complètes comme incomplètes) et `r ncol(data)` variables. Elles sont enrichies par le type de territoire et la population extraits des [données OFGL](https://data.ofgl.fr/explore/?exclude.theme=INTERNE&sort=title) en plusieurs étapes :
@@ -67,25 +86,433 @@ Les données sont composées de `r nrow(data)` réponses (complètes comme incom
 - complétion manuelle du type de structure et de la population pour les structures non enrichies par les données OFGL ; 
 - vérification des jointures multiples lorsque plusieurs CT ont un même nom, choix de la bonne collectivité via les informations renseignées dans le questionnaire.
 
-Sont considérées comme complètes toutes les réponses ayant répondu à la question *Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?*, soit `r nrow(data_clean_unique)` observations en retirant les doublons. Les **types de structure** ayant répondu sont les suivants : 
+Sont considérées comme complètes toutes les réponses remplies jusqu'à la question *Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?*, soit `r nrow(data_clean_unique)` observations en retirant les doublons. Les **types de structure** ayant une réponse complète sont les suivants : 
 
-- `r data_clean_unique |> filter(Catégorie == "Region") |> nrow()` régions ;
-- `r data_clean_unique |> filter(Catégorie == "Departement") |> nrow()` départements ;
-- `r data_clean_unique |> filter(Catégorie == "Commune") |> nrow()` communes ;
+- `r data_clean_unique |> filter(Catégorie == "Une région") |> nrow()` régions ;
+- `r data_clean_unique |> filter(Catégorie == "Un département") |> nrow()` départements ;
+- `r data_clean_unique |> filter(Catégorie == "Une commune") |> nrow()` communes ;
     - `r data_clean_unique |> filter(Catégorie2 == "Communes de moins de 3 500 hab.") |> nrow()` communes de moins de 3 500 habitants ;
     - `r data_clean_unique |> filter(Catégorie2 == "Communes de 3 500 à 10 000 hab.") |> nrow()` communes de 3 500 à 10 000 habitants ;
     - `r data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow()` communes de 10 000 à 100 000 habitants ;
     - `r data_clean_unique |> filter(Catégorie2 == "Communes de plus de 100 000 hab.") |> nrow()` communes de plus de 100 000 habitants ;
-- `r data_clean_unique |> filter(Catégorie == "EPCI") |> nrow()` EPCI ;
+- `r data_clean_unique |> filter(Catégorie == "Un EPCI (hors métropole)") |> nrow()` EPCI (hors métropoles) ;
+- `r data_clean_unique |> filter(Catégorie == "Une métropole") |> nrow()` métropoles ;
 - `r data_clean_unique |> filter(Catégorie == "Autre") |> nrow()` structures '*Autre*', c'est-à-dire n'entrant pas dans les catégories précédentes.
+
+Les régions ayant répondu sont les suivantes : ***`r reg`***.
 
 
 # Tri croisé
 
-## Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
+Les questions impliquant des **réponses textuelles** ne sont pas présentées dans le tri croisé, il s'agit des questions suivantes : 
 
-```{r enrich data}
-test <- data_clean |> 
+- Quelles sont les grandes lignes de cette politique de souveraineté publique sur les données ?
+- Si domaine autre, pouvez-vous préciser ?
+- Avez-vous identifié d’autres priorités justifiant une utilisation plus importante de données ?
+- Quelle forme prend cette participation d’acteurs tiers ?
+- Pouvez-vous nous en dire davantage ?
+- Quels sont les autres métiers impliqués ?
+- Si autres, précisez :
+- Pouvez-vous préciser ?
+- Pouvez-vous nous décrire ces projets ou expérimentations ?
+
+Toutes les questions appelant à **déposer des fichiers** ne sont pas non plus présentées dans le tri croisé. 
+
+## Droit des données publiques
+
+### Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
+
+```{r qs1}
+# Stats individuelles
+stat_qs_simple <- function(n_col, nom_col){
+   cat2 <- data_clean_unique |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> na.omit() |>  
+        pivot_wider(names_from = 2, values_from = 3) |>
+        janitor::adorn_totals("row") |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate(Catégorie2 = case_when(Catégorie2 == "Total" ~ paste0("Total (", sum(n[Catégorie2 == "Total"]), " réponses)"), .default = Catégorie2)) |> 
+        mutate_all(replace_na, replace = 0) |>
+        mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie2) |> 
+        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+    cat1 <- data_clean_unique |> 
+        select(n_col, Catégorie) |> 
+        filter(Catégorie == "Une commune") |> 
+        summarise(n = n(), .by = c(Catégorie, 1)) |> na.omit() |>  
+        mutate_all(replace_na, replace = 0) |>
+        mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie) |> 
+        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+    
+    stat_indiv <- list(cat1, cat2 |> rename(Catégorie = Catégorie2)) |> 
+        bind_rows() |> ungroup() |> 
+        mutate_all(replace_na, replace = "0%") |>  
+        #mutate(Catégorie = factor(Catégorie, ordered = TRUE,  levels = c("Total", "Une commune", "Communes de moins de 3 500 hab.", "Communes de 3 500 à 10 000 hab.", "Communes de 10 000 à 100 000 hab.", "Communes de plus de 100 000 hab.", "Une métropole", "Un EPCI (hors métropole)", "Un département", "Une région", "Autre"))) |> 
+        rename({{ nom_col }} := 1)
+    knitr::kable(stat_indiv, format = "html") %>% 
+      kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
+}
+stat_qs_simple(13, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
+```
+
+### Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?
+
+```{r}
+stat_qs_simple(14, "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+```
+
+
+### Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?
+
+```{r}
+stat_qs_simple(15, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
+```
+
+
+### De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?
+
+```{r}
+stat_qs_simple(18, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
+```
+
+
+
+### Quels sont le ou les domaines concernés par ces clauses ?
+
+```{r}
+ref_type <- rbind(data_clean_unique |> summarise(n_total = n(), .by = Catégorie2),
+                  data_clean_unique |> filter(Catégorie == "Une commune") |> summarise(n_total = n(), .by = Catégorie) |> rename(Catégorie2 = 1)) |> 
+    add_row(Catégorie2 = "Total", n_total = nrow(data_clean_unique))
+nb_commune <- (ref_type |> filter(Catégorie2 == "Une commune") |> select(n_total))$n_total
+
+stat_qs_multiple <- function(min_col, max_col, nom_col){
+    cat1 <- data_clean_unique %>% 
+        select(min_col:max_col, 226) %>% 
+        group_by(Catégorie2) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        janitor::adorn_totals("row") |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        left_join(ref_type, by = "Catégorie2") |> 
+        mutate(percent = paste0(round(n / n_total *100, 0), "%"), .by = Catégorie2) |> 
+        select(-c(n, n_total)) |> pivot_wider(names_from = 2, values_from = 3)
+    cat2 <- data_clean_unique %>% 
+        filter(Catégorie == "Une commune") |> 
+        select(min_col:max_col, 225) %>% 
+        group_by(Catégorie) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        pivot_longer(cols = -Catégorie, names_to = "cat", values_to = "n") |> 
+        mutate(percent = paste0(round(n / nb_commune *100, 0), "%")) |> 
+        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+    stat_indiv <- list(cat2, cat1 |> rename(Catégorie = Catégorie2)) |> 
+        bind_rows() |> ungroup() |> 
+        mutate_all(replace_na, replace = "0%") |>  
+        rename({{ nom_col }} := 1)
+    knitr::kable(stat_indiv, format = "html") %>% 
+      kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
+}
+stat_qs_multiple(19, 22, "Quels sont le ou les domaines concernés par ces clauses ?")
+```
+
+
+### La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?
+
+```{r}
+stat_qs_simple(16, "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
+```
+
+
+
+
+
+## Les objectifs et les priorités pour l'utilisation des données
+
+### Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?
+
+```{r}
+```
+
+
+### Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)
+
+```{r}
+
+```
+
+
+
+
+### Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?
+
+```{r}
+stat_qs_simple(46, "Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
+```
+
+
+## La gouvernance des données
+
+### Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ?
+
+```{r}
+stat_qs_simple(49, "Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ?")
+```
+
+
+### Pouvez-vous préciser quelles sont ces règles ?
+
+```{r}
+stat_qs_multiple(50, 53, "Pouvez-vous préciser quelles sont ces règles ?")
+```
+
+
+### Votre structure a-t-elle adopté une charte éthique de la donnée ?
+
+```{r}
+stat_qs_simple(55, "Votre structure a-t-elle adopté une charte éthique de la donnée ?")
+```
+
+
+### La structure a-t-elle associé des acteurs externes à la définition de ces règles de gouvernance ?
+
+```{r}
+stat_qs_multiple(58, 63, "La structure a-t-elle associé des acteurs externes à la définition de ces règles de gouvernance ?")
+```
+
+
+
+### Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?
+
+```{r}
+```
+
+
+## Le management de la donnée
+
+
+### Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?
+
+```{r}
+stat_qs_simple(70, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
+```
+
+
+### Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?
+
+```{r}
+stat_qs_multiple(71, 75, "Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
+```
+
+
+### En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?
+
+```{r}
+stat_qs_multiple(77, 82, "En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
+```
+
+
+### Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est
+
+```{r}
+```
+
+
+### Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?
+
+```{r}
+```
+
+
+### Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?
+
+```{r}
+```
+
+
+
+## L’ouverture et la transparence
+
+### Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?
+
+```{r}
+stat_qs_simple(111, "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
+```
+
+
+### Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?
+
+```{r}
+stat_qs_simple(112, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
+```
+
+
+### Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?
+
+```{r}
+stat_qs_simple(113, "Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
+```
+
+
+
+## L'intelligence artificielle
+
+### Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?
+
+```{r}
+stat_qs_simple(115, "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
+```
+
+
+### À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?
+
+```{r}
+stat_qs_multiple(116, 121, "À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?")
+```
+
+
+### Quel(s) est (sont) le(s) domaine(s) concerné(s) ?
+
+```{r}
+stat_qs_multiple(123, 136, "Quel(s) est (sont) le(s) domaine(s) concerné(s) ?")
+```
+
+
+
+### Envisagez-vous de déployer des projets ou expérimentations recourant à de l’IA dans les 12 prochains mois ?
+
+```{r}
+stat_qs_simple(139, "Envisagez-vous de déployer des projets ou expérimentations recourant à de l’IA dans les 12 prochains mois ?")
+```
+
+
+### À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?
+
+```{r}
+stat_qs_multiple(140, 145, "À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?")
+```
+
+
+### Quel(s) sera (seront) le(s) domaine(s) concerné(s) ?
+
+```{r}
+stat_qs_multiple(147, 160, "Quel(s) sera (seront) le(s) domaine(s) concerné(s) ?")
+```
+
+
+## Les enjeux techniques de la gestion des données
+
+### Aujourd’hui, les données de votre structure sont majoritairement hébergées
+
+```{r}
+stat_qs_simple(162, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
+```
+
+
+### Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ?
+
+```{r}
+```
+
+
+### Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants
+
+```{r}
+```
+
+
+### Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs).   Pour le choix de ses outils et logiciels, votre structure :
+
+```{r}
+stat_qs_simple(174, "Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs).   Pour le choix de ses outils et logiciels, votre structure :")
+```
+
+### Lorsqu'une alternative open source est identifiée :
+
+```{r}
+stat_qs_simple(175, "Lorsqu'une alternative open source est identifiée")
+```
+
+### Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
+
+```{r}
+stat_qs_simple(176, "Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
+```
+
+
+### L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
+
+```{r}
+stat_qs_simple(177, "L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
+```
+
+
+## La cybersécurité
+
+### Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?
+
+```{r}
+stat_qs_simple(178, "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
+```
+
+
+### Pouvez-vous nous en dire plus sur cette cyberattaque ?
+
+```{r}
+```
+
+
+### Pensez-vous que votre structure est exposée à des attaques cyber ?
+
+```{r}
+stat_qs_simple(180, "Pensez-vous que votre structure est exposée à des attaques cyber ?")
+```
+
+
+### Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?
+
+```{r}
+stat_qs_simple(181, "Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
+```
+
+
+### Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?
+
+```{r}
+stat_qs_multiple(182, 186, "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
+```
+
+
+### Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place
+
+```{r}
+```
+
+
+## Le numérique responsable
+
+
+### Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?
+
+```{r}
+stat_qs_simple(197, "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
+```
+
+
+### Cette stratégie aborde-t-elle les thématiques suivantes ?
+
+```{r}
+stat_qs_multiple(198, 203, "Cette stratégie aborde-t-elle les thématiques suivantes ?")
+```
+
+
+### Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants
+
+```{r}
+stat_qs_multiple(205, 213, "Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants")
+```
+
+
+
+```{r}
+# Stats centralisées dans tableau
+cat3 <- data_clean |> 
     select(`Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?`, 
            Catégorie2) |> 
     summarise(n = n(), .by = c(Catégorie2, `Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?`)) |> na.omit() |>  
@@ -93,24 +520,18 @@ test <- data_clean |>
     janitor::adorn_totals("row") |>
     pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
     mutate_all(replace_na, replace = 0) |>
-    mutate(percent = round(n / sum(n) *100, 0), .by = Catégorie2) |> 
-    select(-n) |> pivot_wider(names_from = 2, values_from = 3)
-
-test <- data_clean |> 
+    mutate(percent = round(n / sum(n) *100, 0), .by = Catégorie2)
+cat4 <- data_clean |> 
     select(`Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?`, 
            Catégorie) |> 
+    filter(Catégorie == "Une commune") |> 
     summarise(n = n(), .by = c(Catégorie, `Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?`)) |> na.omit() |>  
-    pivot_wider(names_from = 2, values_from = 3) |>
-    janitor::adorn_totals("row") |>
-    pivot_longer(cols = -Catégorie, names_to = "cat", values_to = "n") |> 
     mutate_all(replace_na, replace = 0) |>
-    mutate(percent = round(n / sum(n) *100, 0), .by = Catégorie) |> 
-    select(-n) |> pivot_wider(names_from = 2, values_from = 3)
-
-
-    mutate(Catégorie = factor(Catégorie, levels = c("")))
+    mutate(percent = round(n / sum(n) *100, 0), .by = Catégorie)
+test <- rbind(cat3 |> rename(Catégorie = Catégorie2), cat4 |> rename(cat = 2)) |> 
+    mutate(Question = "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?", .before = 1) |> 
+    rename(Structure = Catégorie, Réponses = cat, Nombre = n, Pourcentage = percent)
 ```
-
 
 
 
