@@ -960,7 +960,7 @@ table_recap_simple <- function(n_col){
     all_stat <- rbind(cat1 |> rename(Catégorie = Catégorie2), cat2 |> rename(cat = 2)) |> 
         mutate(Question = name, .before = 1) |> 
         left_join(ref_nb_structures, by = c("Catégorie" = "Catégorie2")) |> 
-        rename(Structure = Catégorie, Réponses = cat, Occurences = n, Pourcentage = percent, `Nombre de réponses` = n_total) |> 
+        rename(Structure = Catégorie, Réponses = cat, Occurrences = n, Pourcentage = percent, `Nombre de réponses` = n_total) |> 
         mutate(index = case_match(Structure, 
                                   "Une commune" ~ 2,
                                   "Communes de moins de 3 500 hab." ~ 3,
@@ -975,7 +975,7 @@ table_recap_simple <- function(n_col){
                                   .default = 1)) |> 
         arrange(index) |> select(-index) |> 
         select(1:4, 6, 5) |> 
-        mutate(Occurences = as.integer(Occurences))
+        mutate(Occurrences = as.integer(Occurrences))
 
     assign(glue("all_stat_{n_col}"), all_stat, envir = .GlobalEnv)
 }
@@ -1022,7 +1022,7 @@ table_recap_multiple <- function(min_col, max_col){
                cat = str_replace_all(cat, "\\]", ""))
     all_stat <- rbind(cat1 |> rename(Catégorie = Catégorie2), cat2 |> rename(cat = 2)) |> 
         mutate(Question = name, .before = 1) |> 
-        rename(Structure = Catégorie, Réponses = cat, Occurences = n, Pourcentage = percent, `Nombre de réponses` = n_total) |> 
+        rename(Structure = Catégorie, Réponses = cat, Occurrences = n, Pourcentage = percent, `Nombre de réponses` = n_total) |> 
         mutate_all(function(x) gsub("NA%", NA_character_, x)) |> 
         mutate(index = case_match(Structure, 
                                   "Une commune" ~ 2,
