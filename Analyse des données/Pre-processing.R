@@ -2,7 +2,7 @@
 
 
 library(tidyverse)
-data <- read_csv("results-survey396597.csv")
+data <- read_csv("Data/results-survey396597.csv")
 communes <- read_delim("https://data.ofgl.fr/api/explore/v2.1/catalog/datasets/ofgl-base-communes-consolidee/exports/csv?lang=fr&facet=facet(name%3D%22reg_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22dep_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22epci_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22tranche_population%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22tranche_revenu_imposable_par_habitant%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22com_name%22%2C%20disjunctive%3Dtrue)&facet=facet(name%3D%22agregat%22%2C%20disjunctive%3Dtrue)&refine=exer%3A%222022%22&refine=agregat%3A%22Achats%20et%20charges%20externes%22&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B", ";") |> 
     select(`Code Siren Collectivité`, `Code Insee Collectivité`, `Nom 2022 Commune`, `Population totale`, `Catégorie`) |> 
     rename(COG = `Code Insee Collectivité`,
@@ -63,8 +63,7 @@ test <- data |>
                                  nom = str_replace_all(nom, "[0-9]", ""), # remove digits
                                  nom = trimws(nom, which = "both"),
                                  nom = stringi::stri_trans_general(str = nom, id = "Latin-ASCII")), by = "nom") |> 
-    select(`ID de la réponse`, `Quel est le nom de votre structure ?`, 303:307) |> 
-    filter(!is.na())
-rio::export(test, "interim_data.csv")
+    select(`ID de la réponse`, `Quel est le nom de votre structure ?`, 303:307)
+rio::export(test, "Data/dernieres_responses.csv")
 
 

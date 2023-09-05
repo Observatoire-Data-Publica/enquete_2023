@@ -33,9 +33,9 @@ knitr::opts_chunk$set(
 
 ```{r logo}
 # Logo Datactivist haut de page
-htmltools::img(src = "https://nextcloud.datactivist.coop/s/o53wzfMNnFosQni/preview", 
+htmltools::img(src = "https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/preview", 
                alt = 'logo', 
-               style = 'position:absolute; top:0; left:0.5; padding-top:10px;') #padding=taille des espaces autour
+               style = 'position:absolute; top:0; left:-0.5; padding-top:-2px; width:350px;') #padding=taille des espaces autour
 ```
 
 # Import des données
@@ -103,7 +103,7 @@ Sont considérées comme complètes toutes les réponses remplies jusqu'à la qu
 
 Les régions ayant répondu sont les suivantes : ***`r reg`***.
 
-Les ***réponses*** complètes, enrichies du type de structure, nettoyées des doublons et anonymisées sont consultables sur ce lien : 
+Les ***réponses*** complètes, enrichies du type de structure, nettoyées des doublons et anonymisées sont consultables sur ce lien : [https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv](https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv).
 
 # Tri croisé
 
@@ -924,7 +924,9 @@ stat_qs_multiple(205, 213, "Concernant les thématiques de l’inclusion et de l
 
 ```{r eval=FALSE, include=FALSE}
 library(glue)
+
 # Stats centralisées dans tableau
+    # Fonctions qs simples
 table_recap_simple <- function(n_col){
     name <- names(data_clean_unique[,n_col])
     nb_communes <- (data_clean_unique |> 
@@ -971,22 +973,100 @@ table_recap_simple <- function(n_col){
                                   "Une région" ~ 10,
                                   "Autre" ~ 11, 
                                   .default = 1)) |> 
-        arrange(index) |> select(-index) 
+        arrange(index) |> select(-index) |> 
+        select(1:4, 6, 5) |> 
+        mutate(Occurences = as.integer(Occurences))
 
     assign(glue("all_stat_{n_col}"), all_stat, envir = .GlobalEnv)
 }
-qs_simple <- rbind()
+    # Fonctions qs mutliples
+table_recap_multiple <- function(min_col, max_col){
+    name <- names(data_clean_unique[,min_col]) |> str_extract("^.*\\[") |> str_replace_all("\\[", "")
+    nb_communes <- (data_clean_unique |> 
+        select(min_col:max_col, 225) |> 
+        group_by(Catégorie) |> 
+        filter(across(where(is.character), ~. != "N/A")) |> 
+        ungroup() |> 
+        summarise(n_total = n(), .by = Catégorie) |> 
+        filter(Catégorie == "Une commune"))$n_total
+    ref_nb_structures <- data_clean_unique |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie2) |> 
+        filter(across(where(is.character), ~. != "N/A")) |> 
+        ungroup() |> 
+        summarise(n_total = n(), .by = Catégorie2)
+    total <- sum(ref_nb_structures$n_total)
+    ref_nb_structures <- ref_nb_structures |> 
+        add_row(Catégorie2 = "Total", n_total = total) |> 
+        add_row(Catégorie2 = "Une commune", n_total = nb_communes)
 
+    cat1 <- data_clean_unique |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie2) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        janitor::adorn_totals("row") |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        left_join(ref_nb_structures, by = "Catégorie2") |> 
+        mutate(percent = paste0(round(n / n_total *100, 0), "%"), .by = Catégorie2) |> 
+        mutate(cat = str_extract(cat, "(?<=\\[).*"),
+               cat = str_replace_all(cat, "\\]", ""))
+    cat2 <- data_clean_unique |> 
+        filter(Catégorie == "Une commune") |> 
+        select(min_col:max_col, 225) |> 
+        group_by(Catégorie) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        pivot_longer(cols = -Catégorie, names_to = "cat", values_to = "n") |> 
+        left_join(ref_nb_structures, by = c("Catégorie" = "Catégorie2")) |> 
+        mutate(percent = paste0(round(n / n_total *100, 0), "%")) |> 
+        mutate(cat = str_extract(cat, "(?<=\\[).*"),
+               cat = str_replace_all(cat, "\\]", ""))
+    all_stat <- rbind(cat1 |> rename(Catégorie = Catégorie2), cat2 |> rename(cat = 2)) |> 
+        mutate(Question = name, .before = 1) |> 
+        rename(Structure = Catégorie, Réponses = cat, Occurences = n, Pourcentage = percent, `Nombre de réponses` = n_total) |> 
+        mutate_all(function(x) gsub("NA%", NA_character_, x)) |> 
+        mutate(index = case_match(Structure, 
+                                  "Une commune" ~ 2,
+                                  "Communes de moins de 3 500 hab." ~ 3,
+                                  "Communes de 3 500 à 10 000 hab." ~ 4,
+                                  "Communes de 10 000 à 100 000 hab." ~ 5,
+                                  "Communes de plus de 100 000 hab." ~ 6,
+                                  "Une métropole" ~ 7,
+                                  "Un EPCI (hors métropole)" ~ 8,
+                                  "Un département" ~ 9,
+                                  "Une région" ~ 10,
+                                  "Autre" ~ 11, 
+                                  .default = 1)) |> 
+        arrange(index) |> select(-index)
+
+    assign(glue("all_stat_multiples_{min_col}"), all_stat, envir = .GlobalEnv)
+}
+
+
+# Application des fonctions créées
+    # Qs simples
 library(purrr)
-purrr::map(.x = c(13, 16),
+purrr::map(.x = c(13:16, 18, 26:38, 40:44, 46, 49, 55, 66:68, 70, 84:90, 93:96, 99:108, 111:113, 115, 139, 162:178, 180, 181, 188:197),
           .f = ~table_recap_simple(.x))
-test <- map2(.x = c(13, 16),
-            .y = data.frame(matrix(ncol = 1, nrow = 1)),
-            .f = ~rbind(glue("all_stat{.x}")))
-test2 <- rbind(lapply(ls(pattern="^test"), function(x) get(x)))
-
-table_recap_simple(13)
-table_recap_simple(16)
+table_qs_simples <- rbind(lapply(ls(pattern="^all_stat_"), function(x) get(x))) |> 
+    bind_rows()
+    # Qs multiples
+table_recap_multiple(19,22)
+table_recap_multiple(50,53)
+table_recap_multiple(58,63)
+table_recap_multiple(71,75)
+table_recap_multiple(77,82)
+table_recap_multiple(116,121)
+table_recap_multiple(123,136)
+table_recap_multiple(140,145)
+table_recap_multiple(147,160)
+table_recap_multiple(182,186)
+table_recap_multiple(198,203)
+table_recap_multiple(205,213)
+table_qs_multiple <- rbind(lapply(ls(pattern="^all_stat_multiples_"), function(x) get(x))) |>
+    bind_rows()
+    # Tout ensemble
+table_recap_stat <- rbind(table_qs_simples, table_qs_multiple)
+table_recap_stat |> rio::export("../Data/All_statistics.csv")
 ```
 
 

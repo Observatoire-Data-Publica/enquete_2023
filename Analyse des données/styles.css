@@ -5,7 +5,7 @@ h1.title { /*titre général du document*/
   font-weight: bold; /*gras*/
   border-top: 0px; /*pas de ligne horizontale avant*/
   padding-left: 0px; /*tout à gauche, pas d'alinéa*/
-  padding-top: 60px; /*espace avant titre*/
+  padding-top: 170px; /*espace avant titre*/
   margin-top: 30px; /*marge à 0*/
 }
 h3.subtitle{ /*sous-titre*/
