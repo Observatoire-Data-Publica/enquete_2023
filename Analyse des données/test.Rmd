@@ -1,0 +1,88 @@
+---
+title: "Untitled"
+author: "Diane Thierry"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Visualisation des donnnées
+
+```{r}
+library(tidyverse)
+# Import des données des stats rassemblés
+all_stat <- read_csv("../Data/All_statistics.csv")
+
+# Thème ggplot customisé
+font <- "Helvetica"
+custom_theme <- function (){
+    font <- "Helvetica"
+    ggplot2::theme(plot.title = ggplot2::element_text(family = font,size = 15, face = "bold", color = "#222222"), 
+        plot.subtitle = ggplot2::element_text(family = font,size = 15, face = "italic", margin = ggplot2::margin(0, 0, 9, 0)), 
+        plot.caption = ggplot2::element_text(family = font,size = 15, margin = ggplot2::margin(9, 0, 9, 0)), 
+        legend.title = ggplot2::element_text(family = font, size = 15, color = "#222222"), 
+        legend.position = "top", 
+        legend.text.align = 0, 
+        legend.background = ggplot2::element_blank(),
+        legend.key = ggplot2::element_blank(),
+        legend.text = ggplot2::element_text(family = font, size = 15,color = "#222222"), 
+        axis.text = ggplot2::element_text(family = font, size = 15,color = "#222222"), 
+        axis.text.x = ggplot2::element_text(margin = ggplot2::margin(5,b = 10)), 
+        axis.title = ggplot2::element_text(family = font, size = 15,color = "#222222"),
+        axis.ticks = ggplot2::element_blank(),
+        axis.line = ggplot2::element_blank(), 
+        panel.grid.minor = ggplot2::element_blank(),
+        panel.grid.major.y = ggplot2::element_line(color = "#cbcbcb"),
+        panel.grid.major.x = ggplot2::element_blank(), 
+        panel.background = ggplot2::element_blank(),
+        strip.background = ggplot2::element_rect(fill = "white"),
+        strip.text = ggplot2::element_text(size = 22, hjust = 0, face = "bold"))
+}
+```
+
+## Droit des données publiques
+
+### Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
+
+```{r}
+# Fonction graph ensemble
+dat <- all_stat |> 
+    filter(Question == "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?" & Structure == "Total")
+dat |> 
+    ggplot(aes(y=Occurrences, x=Réponses)) + 
+        geom_bar(position="dodge", stat="identity", width=.6, size = 1, fill = "#83b4d1") +
+        labs(x = "", y = "Nombre de réponses", 
+             title = stringr::str_wrap("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?", width = 45),
+             subtitle = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
+        geom_label(aes(x = Réponses, y = Occurrences+6, label = paste0(Pourcentage, "%")), 
+                   size = 5, fill = "white", label.size = NA, align = "left") +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        theme(panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+
+# Fonction type de collectivité
+dat <- all_stat |> 
+    filter(Question == "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?" & Structure != "Total" | Structure != "")
+dat |> 
+    ggplot(aes(y=Occurrences, x=Réponses)) + 
+        geom_bar(position="dodge", stat="identity", width=.6, size = 1, fill = "#83b4d1") +
+        labs(x = "", y = "Nombre de réponses", 
+             title = stringr::str_wrap("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?", width = 45),
+             subtitle = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
+        geom_label(aes(x = Réponses, y = Occurrences+6, label = paste0(Pourcentage, "%")), 
+                   size = 5, fill = "white", label.size = NA, align = "left") +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        theme(panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+
+
+```
