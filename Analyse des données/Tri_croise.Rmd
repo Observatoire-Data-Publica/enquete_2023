@@ -1,6 +1,6 @@
 ---
 title: "Enquête Data Publica, édition 2023"
-subtitle: "Analyse des données de l'enquête"
+subtitle: "Tri croisé"
 date: "Dernière modification le `r format(Sys.time(), '%d %B %Y')`"
 output:
     rmarkdown::html_document:
@@ -914,7 +914,7 @@ stat_qs_multiple(198, 203, "Cette stratégie aborde-t-elle les thématiques suiv
 ```
 
 
- ### Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants
+### Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants
 
 ```{r}
 stat_qs_multiple(205, 213, "Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants")
@@ -1068,20 +1068,4 @@ table_qs_multiple <- rbind(lapply(ls(pattern="^all_stat_multiples_"), function(x
 table_recap_stat <- rbind(table_qs_simples, table_qs_multiple)
 table_recap_stat |> rio::export("../Data/All_statistics.csv")
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
