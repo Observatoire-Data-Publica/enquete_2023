@@ -230,8 +230,8 @@ dataviz <- function(nom_col){
     dat <- all_stat |> 
         filter(Question == nom_col & grepl("Communes de", Structure) == TRUE) |> 
         mutate(Pourcentage = as.numeric(Pourcentage)/100,
-               Structure = factor(Structure, levels = c("Communes de plus de 100 000 hab.","Communes de 10 000 à 100 000 hab.","Communes de 3 500 à 10 000 hab.","Communes de moins de 3 500 hab.")),
-               Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")))
+               Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
+               Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab.")))
     p2 <- dat |> 
         ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
         geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
