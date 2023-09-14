@@ -922,7 +922,7 @@ stat_qs_multiple(205, 213, "Concernant les thématiques de l’inclusion et de l
 
 
 
-```{r eval=FALSE, include=FALSE}
+```{r}
 library(glue)
 
 # Stats centralisées dans tableau
@@ -1007,7 +1007,7 @@ table_recap_multiple <- function(min_col, max_col){
         janitor::adorn_totals("row") |>
         pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
         left_join(ref_nb_structures, by = "Catégorie2") |> 
-        mutate(percent = paste0(round(n / n_total *100, 0), "%"), .by = Catégorie2) |> 
+        mutate(percent = round(n / n_total *100, 0), .by = Catégorie2) |> 
         mutate(cat = str_extract(cat, "(?<=\\[).*"),
                cat = str_replace_all(cat, "\\]", ""))
     cat2 <- data_clean_unique |> 
@@ -1017,7 +1017,7 @@ table_recap_multiple <- function(min_col, max_col){
         summarise_all(funs(sum(. == "Oui"))) |> 
         pivot_longer(cols = -Catégorie, names_to = "cat", values_to = "n") |> 
         left_join(ref_nb_structures, by = c("Catégorie" = "Catégorie2")) |> 
-        mutate(percent = paste0(round(n / n_total *100, 0), "%")) |> 
+        mutate(percent = round(n / n_total *100, 0)) |> 
         mutate(cat = str_extract(cat, "(?<=\\[).*"),
                cat = str_replace_all(cat, "\\]", ""))
     all_stat <- rbind(cat1 |> rename(Catégorie = Catégorie2), cat2 |> rename(cat = 2)) |> 
@@ -1065,7 +1065,7 @@ table_recap_multiple(205,213)
 table_qs_multiple <- rbind(lapply(ls(pattern="^all_stat_multiples_"), function(x) get(x))) |>
     bind_rows()
     # Tout ensemble
-table_recap_stat <- rbind(table_qs_simples, table_qs_multiple)
+table_recap_stat <- rbind(table_qs_simples, table_qs_multiple) #|> mutate(Pourcentage = as.integer(Pourcentage))
 table_recap_stat |> rio::export("../Data/All_statistics.csv")
 ```
 

@@ -198,7 +198,7 @@ dataviz <- function(nom_col){
                  title = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
             geom_label(aes(x = Réponses, y = Occurrences+1, label = paste0(Pourcentage, "%")), 
                        size = 8, fill = "white", label.size = NA, hjust = 0) +
-            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465")) +
+            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
             scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
             ylim(0, max(dat$Occurrences)+14) +
             coord_flip() +
@@ -218,7 +218,7 @@ dataviz <- function(nom_col){
         geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
         labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
         scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465")) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
         coord_flip() +
         theme_classic() +
         custom_theme() +
@@ -237,7 +237,7 @@ dataviz <- function(nom_col){
         geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
         labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
         scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465")) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
         coord_flip() +
         theme_classic() +
         custom_theme() +
@@ -249,9 +249,9 @@ dataviz <- function(nom_col){
     graph <- grid.arrange(p0,p1.2, ncol = 2, nrow = 1)
     assign("graph", graph, envir = .GlobalEnv)
     grid::grid.draw(graph)
-    saving_plot(graph, nom_col)
 }
 dataviz("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
+saving_plot(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
 
 
@@ -267,6 +267,7 @@ stat_qs_simple(14, "Avez-vous nommé un(e) Délégué(e) à la Protection des Do
 
 ```{r}
 dataviz("Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+saving_plot(graph, "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
 ```
 
 
@@ -283,6 +284,7 @@ stat_qs_simple(15, "Afin de respecter le RGPD, avez-vous modifié des processus 
 
 ```{r}
 dataviz("Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
+saving_plot(graph, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 ```
 
 ### De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?
@@ -296,6 +298,1648 @@ stat_qs_simple(18, "De manière générale, avez-vous mis en place des clauses j
 + **Visualisation**
 
 ```{r}
-dataviz("Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
+dataviz("De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
+saving_plot(graph, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
+
+
+
+### Quels sont le ou les domaines concernés par ces clauses ?
+
++ **Statistiques**
+
+```{r}
+stat_qs_multiple <- function(min_col, max_col, nom_col){
+    nb_communes <- (data_clean_unique |> 
+        select(min_col:max_col, 225) |> 
+        group_by(Catégorie) |> 
+        filter(across(where(is.character), ~. != "N/A")) |> 
+        ungroup() |> 
+        summarise(n_total = n(), .by = Catégorie) |> 
+        filter(Catégorie == "Une commune"))$n_total
+    ref_nb_structures <- data_clean_unique |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie2) |> 
+        filter(across(where(is.character), ~. != "N/A")) |> 
+        ungroup() |> 
+        summarise(n_total = n(), .by = Catégorie2)
+    total <- sum(ref_nb_structures$n_total)
+    ref_nb_structures <- ref_nb_structures |> 
+        add_row(Catégorie2 = "Total", n_total = total)
+    cat1 <- data_clean_unique |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie2) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        janitor::adorn_totals("row") |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        left_join(ref_nb_structures, by = "Catégorie2") |> 
+        mutate(percent = paste0(round(n / n_total *100, 0), "%"), .by = Catégorie2) |> 
+        select(-c(n, n_total)) |> pivot_wider(names_from = 2, values_from = 3)
+    cat2 <- data_clean_unique |> 
+        filter(Catégorie == "Une commune") |> 
+        select(min_col:max_col, 225) |> 
+        group_by(Catégorie) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        pivot_longer(cols = -Catégorie, names_to = "cat", values_to = "n") |> 
+        mutate(percent = paste0(round(n / nb_communes *100, 0), "%")) |> 
+        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+    stat_indiv <- list(cat2, cat1 |> rename(Catégorie = Catégorie2)) |> 
+        bind_rows() |> ungroup() |> 
+        mutate_all(replace_na, replace = "0%") |>  
+        mutate(index = case_match(Catégorie, 
+                                  "Une commune" ~ 2,
+                                  "Communes de moins de 3 500 hab." ~ 3,
+                                  "Communes de 3 500 à 10 000 hab." ~ 4,
+                                  "Communes de 10 000 à 100 000 hab." ~ 5,
+                                  "Communes de plus de 100 000 hab." ~ 6,
+                                  "Une métropole" ~ 7,
+                                  "Un EPCI (hors métropole)" ~ 8,
+                                  "Un département" ~ 9,
+                                  "Une région" ~ 10,
+                                  "Autre" ~ 11, 
+                                  .default = 1)) |> 
+        arrange(index) |> select(-index) |> 
+        mutate_all(function(x) gsub("NA%", NA_character_, x)) |> ungroup() |> 
+        mutate(Catégorie = case_when(Catégorie == "Total" ~ paste0("Total (", total, " réponses)"), 
+                                      .default = Catégorie)) |> 
+        rename({{ nom_col }} := 1)
+    knitr::kable(stat_indiv, format = "html") |> 
+      kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
+}
+stat_qs_multiple(19, 22, "Quels sont le ou les domaines concernés par ces clauses ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Quels sont le ou les domaines concernés par ces clauses ?")
+saving_plot(graph, "Quels sont le ou les domaines concernés par ces clauses ?")
+```
+
+
+
+### La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?
+
++ **Statistiques**
+
+```{r}
+stat_qs_simple(16, "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
+```
+
+
++ **Visualisation**
+
+```{r}
+dataviz("La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
+saving_plot(graph, "Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
+```
+
+
+
+
+
+## Les objectifs et les priorités pour l'utilisation des données
+
+### Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?
+
+**Aménagement du territoire**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(26, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
+```
+
+
+**Mobilité**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(27, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Mobilité]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Mobilité]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Mobilité]")
+```
+
+
+**Administration**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(28, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Administration]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Administration]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Administration]")
+```
+
+
+**Développement économique**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(29, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Développement économique]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Développement économique]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Développement économique]")
+```
+
+
+**Gestion de l’espace public**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(30, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Gestion de l’espace public]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Gestion de l’espace public]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Gestion de l’espace public]")
+```
+
+
+**Sécurité**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(31, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Sécurité]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Sécurité]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Sécurité]")
+```
+
+
+**Patrimoine**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(32, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Patrimoine]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Patrimoine]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Patrimoine]")
+```
+
+
+**Energie et éclairage**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(33, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Energie et éclairage]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Energie et éclairage]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Energie et éclairage]")
+```
+
+
+**Déchets**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(38, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Déchets]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Déchets]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Déchets]")
+```
+
+
+**Tourisme**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(34, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Tourisme]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Tourisme]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Tourisme]")
+```
+
+
+**Citoyenneté**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(35, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Citoyenneté]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Citoyenneté]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Citoyenneté]")
+```
+
+
+**Environnement**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(36, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Environnement]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Environnement]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Environnement]")
+```
+
+
+**Autre**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(37, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]")
+```
+
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]")
+saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]")
+```
+
+
+### Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)
+
+
+**Classement 1**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(40, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 1]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 1]")
+saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 1]")
+```
+
+
+
+**Classement 2**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(41, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 2]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 2]")
+saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 2]")
+```
+
+
+
+**Classement 3**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(42, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 3]")
+```
+
+
++ **Visualisation**
+
+```{r}
+dataviz("Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 3]")
+saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 3]")
+```
+
+
+**Classement 4**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(43, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 4]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 4]")
+saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 4]")
+```
+
+
+
+**Classement 5**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(44, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 5]")
+```
+
+
++ **Visualisation**
+
+```{r}
+dataviz("Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 5]")
+saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 5]")
+```
+
+
+
+
+### Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(46, "Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
+saving_plot(graph, "Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
+```
+
+
+
+
+## La gouvernance des données
+
+### Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(49, "Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ? ")
+saving_plot(graph, "Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ?")
+```
+
+
+### Pouvez-vous préciser quelles sont ces règles ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(50, 53, "Pouvez-vous préciser quelles sont ces règles ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pouvez-vous préciser quelles sont ces règles ? ")
+saving_plot(graph, "Pouvez-vous préciser quelles sont ces règles ?")
+```
+
+
+
+### Votre structure a-t-elle adopté une charte éthique de la donnée ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(55, "Votre structure a-t-elle adopté une charte éthique de la donnée ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle adopté une charte éthique de la donnée ?")
+saving_plot(graph, "Votre structure a-t-elle adopté une charte éthique de la donnée ?")
+```
+
+
+
+### La structure a-t-elle associé des acteurs externes à la définition de ces règles de gouvernance ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(58, 63, "La structure a-t-elle associé des acteurs externes à la définition de ces règles de gouvernance ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("La structure a-t-elle associé des acteurs externes à la définition de ces règles de gouvernance ? ")
+saving_plot(graph, "La structure a-t-elle associé des acteurs externes à la définition de ces règles de gouvernance ?")
+```
+
+
+
+
+### Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?
+
+**Des plateformes générales de partage et d'accès aux données locales (ex : plateforme OpenDataSoft avec accès privés, plateforme Dawex…)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(66, "Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?    [Des plateformes générales de partage et d'accès aux données locales (ex : plateforme OpenDataSoft avec accès privés, plateforme Dawex…)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?    [Des plateformes générales de partage et d'accès aux données locales (ex : plateforme OpenDataSoft avec accès privés, plateforme Dawex…)]")
+saving_plot(graph, "Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données ? [Des plateformes générales de partage et d'accès aux données locales (ex : plateforme OpenDataSoft avec accès privés, plateforme Dawex…)]")
+```
+
+
+**Des  communications ponctuelles de données avec des partenaires/prestataires (par exemple communication de données foncières dans le cadre de la réalisation d’une étude ou d’une AMO)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(67, "Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?    [Des  communications ponctuelles de données avec des partenaires/prestataires (par exemple communication de données foncières dans le cadre de la réalisation d’une étude ou d’une AMO) ]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?    [Des  communications ponctuelles de données avec des partenaires/prestataires (par exemple communication de données foncières dans le cadre de la réalisation d’une étude ou d’une AMO) ]")
+saving_plot(graph, "Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données ? [Des  communications ponctuelles de données]")
+```
+
+
+**Des échanges de cas d’usage/bonnes pratiques concernant la gestion et la valorisation des données ou algorithmes**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(68, "Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?    [Des échanges de cas d’usage/bonnes pratiques concernant la gestion et la valorisation des données ou algorithmes ]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?    [Des échanges de cas d’usage/bonnes pratiques concernant la gestion et la valorisation des données ou algorithmes ]")
+saving_plot(graph, "Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données ? [Des échanges de cas d’usage bonnes pratiques concernant la gestion et la valorisation des données ou algorithmes]")
+```
+
+
+
+## Le management de la donnée
+
+
+### Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(70, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
+saving_plot(graph, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
+```
+
+
+
+### Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(71, 75, "Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
+saving_plot(graph, "Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
+```
+
+
+
+### En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(77, 82, "En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
+saving_plot(graph, "En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
+```
+
+
+
+### Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est
+
+
+**Direction générale**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(84, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
+saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
+```
+
+
+**Direction Informatique**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(85, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
+saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
+```
+
+
+
+**Service d’information géographique (SIG)]**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(86, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)]")
+saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)")
+```
+
+
+
+**Archives**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(87, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
+saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
+```
+
+
+
+**Communication**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(88, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
+saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
+```
+
+
+
+**Services techniques**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(89, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
+saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
+```
+
+
+
+**Ressources humaines**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(90, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
+saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
+```
+
+
+
+
+### Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?
+
+**Comité data**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(93, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Comité data]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Comité data]")
+saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Comité data]")
+```
+
+
+**Réseau de référent(e)s data**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(94, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Réseau de référent(e)s data]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Réseau de référent(e)s data]")
+saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Réseau de référent(e)s data]")
+```
+
+
+**Direction de la donnée**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(95, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Direction de la donnée]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Direction de la donnée]")
+saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Direction de la donnée]")
+```
+
+
+**Chief data officer / administrateur général des données**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(96, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Chief data officer / administrateur général des données]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Chief data officer / administrateur général des données]")
+saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Chief data officer - administrateur général des données]")
+```
+
+
+
+
+### Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?
+
+**Un Assistant à la maîtrise d’ouvrage (AMO)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(99, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un Assistant à la maîtrise d’ouvrage (AMO) ]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un Assistant à la maîtrise d’ouvrage (AMO) ]")
+saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un Assistant à la maîtrise d’ouvrage (AMO) ]")
+```
+
+
+**Un prestataire informatique**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(100, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un prestataire informatique]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un prestataire informatique]")
+saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un prestataire informatique]")
+```
+
+
+**Un délégataire de service public**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(101, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un délégataire de service public]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un délégataire de service public]")
+saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un délégataire de service public]")
+```
+
+
+**Un opérateur public de service numérique (OPSN)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(102, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un opérateur public de service numérique (OPSN)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un opérateur public de service numérique (OPSN)]")
+saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un opérateur public de service numérique (OPSN)]")
+```
+
+
+**Une plateforme régionale d’information géographique**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(103, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une plateforme régionale d’information géographique]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une plateforme régionale d’information géographique]")
+saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une plateforme régionale d’information géographique]")
+```
+
+
+**Un opérateur numérique**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(104, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un opérateur numérique]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un opérateur numérique]")
+saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un opérateur numérique]")
+```
+
+
+**Une collectivité territoriale plus grande (ex : EPCI, métropole, région)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(105, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une collectivité territoriale plus grande (ex : EPCI, métropole, région)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une collectivité territoriale plus grande (ex : EPCI, métropole, région)]")
+saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une collectivité territoriale plus grande (ex : EPCI, métropole, région)]")
+```
+
+
+**Une association de collectivités (ex : OpenData France, FNCCR…)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(106, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une association de collectivités (ex : OpenData France, FNCCR…)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une association de collectivités (ex : OpenData France, FNCCR…)]")
+saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une association de collectivités (ex : OpenData France, FNCCR…)]")
+```
+
+
+**Un service de l’Etat (ex : ANCT, SGAR…)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(107, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un service de l’Etat (ex : ANCT, SGAR…)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un service de l’Etat (ex : ANCT, SGAR…)]")
+saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un service de l’Etat (ex : ANCT, SGAR…)]")
+```
+
+
+**Autres**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(108, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Autres]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Autres]")
+saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Autres]")
+```
+
+
+
+
+## L’ouverture et la transparence
+
+### Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(111, "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
+saving_plot(graph, "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
+```
+
+
+
+### Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(112, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
+saving_plot(graph, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
+```
+
+
+
+### Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(113, "Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
+saving_plot(graph, "Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
+```
+
+
+
+
+## L'intelligence artificielle
+
+### Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(115, "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
+saving_plot(graph, "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
+```
+
+
+
+### À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(116, 121, "À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?")
+saving_plot(graph, "À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?")
+```
+
+
+
+### Quel(s) est (sont) le(s) domaine(s) concerné(s) ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(123, 136, "Quel(s) est (sont) le(s) domaine(s) concerné(s) ?")
+```
+
++ **Visualisation**
+
+```{r}
+#dataviz("Quel(s) est (sont) le(s) domaine(s) concerné(s) ?")
+#saving_plot(graph, "Quel(s) est (sont) le(s) domaine(s) concerné(s) ?")
+```
+
+
+
+
+### Envisagez-vous de déployer des projets ou expérimentations recourant à de l’IA dans les 12 prochains mois ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(139, "Envisagez-vous de déployer des projets ou expérimentations recourant à de l’IA dans les 12 prochains mois ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Envisagez-vous de déployer des projets ou expérimentations recourant à de l’IA dans les 12 prochains mois ?")
+saving_plot(graph, "Envisagez-vous de déployer des projets ou expérimentations recourant à de l’IA dans les 12 prochains mois ?")
+```
+
+
+
+### À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(140, 145, "À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?")
+saving_plot(graph, "À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?")
+```
+
+
+
+### Quel(s) sera (seront) le(s) domaine(s) concerné(s) ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(147, 160, "Quel(s) sera (seront) le(s) domaine(s) concerné(s) ?")
+```
+
++ **Visualisation**
+
+```{r}
+#dataviz("Quel(s) sera (seront) le(s) domaine(s) concerné(s) ?")
+#saving_plot(graph, "Quel(s) sera (seront) le(s) domaine(s) concerné(s) ?")
+```
+
+
+
+## Les enjeux techniques de la gestion des données
+
+### Aujourd’hui, les données de votre structure sont majoritairement hébergées
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(162, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Aujourd’hui, les données de votre structure sont majoritairement hébergées :")
+saving_plot(graph, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
+```
+
+
+
+### Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ?
+
+
+**Plateforme de données (ingestion, stockage, traitement, analyse  et visualisation de données)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(163, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Plateforme de données (ingestion, stockage, traitement, analyse  et visualisation de données)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Plateforme de données (ingestion, stockage, traitement, analyse  et visualisation de données)]")
+saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Plateforme de données (ingestion, stockage, traitement, analyse  et visualisation de données)]")
+```
+
+
+**Outils de traitement et d'analyse de données**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(164, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Outils de traitement et d'analyse de données]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Outils de traitement et d'analyse de données]")
+saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Outils de traitement et d'analyse de données]")
+```
+
+
+
+**Lac de données**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(165, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Lac de données]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Lac de données]")
+saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Lac de données]")
+```
+
+
+
+**Capteurs et réseaux IoT**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(166, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Capteurs et réseaux IoT]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Capteurs et réseaux IoT]")
+saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Capteurs et réseaux IoT]")
+```
+
+
+
+**Catalogue de données**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(167, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Catalogue de données]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Catalogue de données]")
+saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Catalogue de données]")
+```
+
+
+
+**Jumeau numérique**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(168, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Jumeau numérique]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Jumeau numérique]")
+saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Jumeau numérique]")
+```
+
+
+
+**Hyperviseur**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(169, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Hyperviseur]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Hyperviseur]")
+saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Hyperviseur]")
+```
+
+
+
+
+### Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants
+
+
+**Une plateforme régionale d’information géographique**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(170, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une plateforme régionale d’information géographique]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une plateforme régionale d’information géographique]")
+saving_plot(graph, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une plateforme régionale d’information géographique]")
+```
+
+
+**Un OPSN (opérateur public de services numériques)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(171, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Un OPSN (opérateur public de services numériques)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Un OPSN (opérateur public de services numériques)]")
+saving_plot(graph, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Un OPSN (opérateur public de services numériques)]")
+```
+
+
+**Une collectivité territoriale plus grande (ex : EPCI, métropole, région…)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(172, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une collectivité territoriale plus grande (ex : EPCI, métropole, région…)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une collectivité territoriale plus grande (ex : EPCI, métropole, région…)]")
+saving_plot(graph, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une collectivité territoriale plus grande]")
+```
+
+
+**Une association de collectivités (ex : OpenData France, FNCCR…)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(173, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une association de collectivités (ex : OpenData France, FNCCR…)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une association de collectivités (ex : OpenData France, FNCCR…)]")
+saving_plot(graph, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une association de collectivités]")
+```
+
+
+
+### Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs).   Pour le choix de ses outils et logiciels, votre structure :
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(174, "Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs).   Pour le choix de ses outils et logiciels, votre structure :")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs).   Pour le choix de ses outils et logiciels, votre structure :")
+saving_plot(graph, "Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Pour le choix de ses outils et logiciels, votre structure :")
+```
+
+
+### Lorsqu'une alternative open source est identifiée :
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(175, "Lorsqu'une alternative open source est identifiée")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Lorsqu'une alternative open source est identifiée :")
+saving_plot(graph, "Lorsqu'une alternative open source est identifiée")
+```
+
+
+### Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(176, "Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
+saving_plot(graph, "La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
+```
+
+
+
+### L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(177, "L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
+```
+
+
++ **Visualisation**
+
+```{r}
+dataviz("L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
+saving_plot(graph, "L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
+```
+
+
+
+## La cybersécurité
+
+### Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(178, "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
+saving_plot(graph, "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
+```
+
+### Pensez-vous que votre structure est exposée à des attaques cyber ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(180, "Pensez-vous que votre structure est exposée à des attaques cyber ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Pensez-vous que votre structure est exposée à des attaques cyber ?")
+saving_plot(graph, "Pensez-vous que votre structure est exposée à des attaques cyber ?")
+```
+
+
+
+### Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(181, "Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
+saving_plot(graph, "Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
+```
+
+
+
+### Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(182, 186, "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
+saving_plot(graph, "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
+```
+
+
+
+### Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place
+
+
+**Une formation pour les agents et les élus**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(188, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une formation pour les agents et les élus]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une formation pour les agents et les élus]")
+saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une formation pour les agents et les élus]")
+```
+
+**La désignation d’un responsable de sécurité informatique (RSSI ou autre)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(189, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
+saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
+```
+
+**Une stratégie de sécurité informatique**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(190, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une stratégie de sécurité informatique]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une stratégie de sécurité informatique]")
+saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une stratégie de sécurité informatique]")
+```
+
+**Un processus de certification (ISO 27001)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(191, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
+saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
+```
+
+**Une obligation d’hébergement souverain (français ou européen)**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(192, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une obligation d’hébergement souverain (français ou européen)]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une obligation d’hébergement souverain (français ou européen)]")
+saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une obligation d’hébergement souverain (français ou européen)]")
+```
+
+**Des clauses de sécurité dans les contrats informatiques**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(193, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
+saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
+```
+
+**Des clauses de sécurité pour les délégations de service public**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(194, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité pour les délégations de service public]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité pour les délégations de service public]")
+saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité pour les délégations de service public]")
+```
+
+**Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(195, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]")
+saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’informationou avec un cyber campus régional]")
+```
+
+**Le déploiement d’outils techniques de sécurisation des réseaux informatiques**
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(196, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
+saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
+```
+
+
+
+## Le numérique responsable
+
+
+### Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_simple(197, "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
+saving_plot(graph, "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
+```
+
+
+
+### Cette stratégie aborde-t-elle les thématiques suivantes ?
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(198, 203, "Cette stratégie aborde-t-elle les thématiques suivantes ?")
+```
+
++ **Visualisation**
+
+```{r}
+dataviz("Cette stratégie aborde-t-elle les thématiques suivantes ?")
+saving_plot(graph, "Cette stratégie aborde-t-elle les thématiques suivantes ?")
+```
+
+
+### Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants
+
+* **Statistiques**
+
+```{r}
+stat_qs_multiple(205, 213, "Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants")
+```
+
++ **Visualisation**
+
+```{r}
+#dataviz("Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants :")
+#saving_plot(graph, "Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants")
+```
+
 
