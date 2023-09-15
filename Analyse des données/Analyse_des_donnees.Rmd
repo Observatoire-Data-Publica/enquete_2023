@@ -93,14 +93,14 @@ font <- "Helvetica"
 custom_theme <- function (){
     font <- "Helvetica"
     ggplot2::theme(plot.title = ggplot2::element_text(family = font,size = 25, face = "bold", color = "#222222"), 
-        plot.subtitle = ggplot2::element_text(family = font,size = 15, face = "italic", margin = ggplot2::margin(0, 0, 9, 0)), 
+        plot.subtitle = ggplot2::element_text(family = font,size = 20, face = "italic", margin = ggplot2::margin(0, 0, 9, 0)), 
         plot.caption = ggplot2::element_text(family = font,size = 15, margin = ggplot2::margin(9, 0, 9, 0)), 
         legend.title = ggplot2::element_text(family = font, size = 15, color = "#222222"), 
         legend.position = "top", 
         legend.text.align = 0, 
         legend.background = ggplot2::element_blank(),
         legend.key = ggplot2::element_blank(),
-        legend.text = ggplot2::element_text(family = font, size = 13,color = "#222222"), 
+        legend.text = ggplot2::element_text(family = font, size = 20,color = "#222222"), 
         axis.text = ggplot2::element_text(family = font, size = 20,color = "#222222"), 
         axis.text.x = ggplot2::element_text(margin = ggplot2::margin(5,b = 10)), 
         axis.title = ggplot2::element_text(family = font, size = 22,color = "#222222"),
@@ -402,6 +402,76 @@ saving_plot(graph, "Votre organisation a-t-elle défini une politique en matièr
 ## Les objectifs et les priorités pour l'utilisation des données
 
 ### Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?
+
+**En résumé**
+
+```{r fig.height=8, fig.width=15}
+dat <- all_stat |> 
+    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure == "Total" & Réponses == "Oui, au cours des deux dernières années") |> 
+    ungroup() |> 
+    mutate(Question = str_extract(Question, "(?<=\\[).*"),
+           Question = substr(Question, 1, nchar(Question)-1),
+           Question = fct_reorder(Question, Pourcentage))
+graph <- dat |> 
+    ggplot(aes(y=Pourcentage, x=Question)) + 
+            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9, fill = "#323465") +
+            labs(x = "", y = "Pourcentage de réponses", 
+                 title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données a été engagée au cours des deux dernières années", width = 55),
+                 subtitle = "Toutes les collectivités") +
+            geom_label(aes(x = Question, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
+                       size = 8, fill = "white", label.size = NA, hjust = 0) +
+            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(dat$Pourcentage)+14) +
+            coord_flip() +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "none",
+                  #plot.title = element_text(hjust = 1),
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+graph
+saving_plot(graph, "Graphique général : domaines dans lesquels une expérimentation des données a été engagée au cours des deux dernières années")
+```
+
+
+
+```{r fig.height=8, fig.width=15}
+dat <- all_stat |> 
+    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure == "Total" & (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
+    ungroup() |> 
+    mutate(Question = str_extract(Question, "(?<=\\[).*"),
+           Question = substr(Question, 1, nchar(Question)-1),
+           Question = fct_reorder(Question, Pourcentage)) |> 
+    mutate(p_oui = Pourcentage[Réponses == "Oui, au cours des deux dernières années"],
+           p_non = Pourcentage[Réponses == "Non, mais c’est prévu dans les 12 prochains mois"],
+           labelpos = ifelse(Réponses == "Oui, au cours des deux dernières années", 
+                             Pourcentage/2, 
+                             p_oui + p_non /3),
+           .by = Question)
+graph <- dat |> 
+    ggplot(aes(y=Pourcentage, x=Question, 
+               fill = factor(Réponses, levels = c("Non, mais c’est prévu dans les 12 prochains mois",
+                                                  "Oui, au cours des deux dernières années")))) + 
+            geom_bar(position="stack", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Pourcentage de réponses", 
+                 title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données va être ou a déjà été engagée", width = 55),
+                 subtitle = "Toutes les collectivités") +
+            scale_fill_manual(values = c("#e1b44d", "#323465")) +
+            geom_text(aes(x = Question, y = labelpos, label = paste0(Pourcentage, "%")), 
+                       size = 6, hjust = 0, color = "white") +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(dat$Pourcentage)+14) +
+            coord_flip() +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "top",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank()) +
+            guides(fill = guide_legend(title = "", nrow = 2, reverse = TRUE))
+graph
+saving_plot(graph, "Graphique général n°2 : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée")
+```
 
 **Aménagement du territoire**
 
