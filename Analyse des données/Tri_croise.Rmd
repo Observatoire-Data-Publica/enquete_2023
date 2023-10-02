@@ -140,6 +140,49 @@ Les statistiques de chaque question comporteront donc 2 lignes ***Total*** ;
 - l'autre avec le total pondéré pour correspondre aux proportions nationales.
 
 
+```{r}
+prop_nationales <- data.frame(Structure = c("Une commune",
+                                            "Une région",
+                                            "Un département",
+                                            "Un EPCI (hors métropole)",
+                                            "Une métropole",
+                                            "Communes de 3 500 à 10 000 hab.",
+                                            "Communes de 10 000 à 100 000 hab.",
+                                            "Communes de plus de 100 000 hab."),
+                              Nombre_nat = c(34945,
+                                         18,
+                                         101,
+                                         1233,
+                                         21,
+                                         2160,
+                                         981,
+                                         42)) |> 
+    mutate(percent_nat = Nombre_nat / 36318 * 100)
+prop_echantillon <- data.frame(Structure = c("Une commune",
+                                            "Une région",
+                                            "Un département",
+                                            "Un EPCI (hors métropole)",
+                                            "Une métropole",
+                                            "Communes de 3 500 à 10 000 hab.",
+                                            "Communes de 10 000 à 100 000 hab.",
+                                            "Communes de plus de 100 000 hab."),
+                              Nombre_ech = c(data_clean_unique |> filter(Catégorie == "Une commune") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Une région") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Un département") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Un EPCI (hors métropole)") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Une métropole") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Communes de 3 500 à 10 000 hab.") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Communes de plus de 100 000 hab.") |> nrow())) |> 
+    mutate(percent_ech = Nombre_ech / nrow(data_clean_unique) * 100)
+prop_all <- prop_nationales |> 
+    left_join(prop_echantillon, by = "Structure") |> 
+    mutate(poids = percent_nat / percent_ech)
+
+
+
+
+```
 
 
 ## Droit des données publiques
