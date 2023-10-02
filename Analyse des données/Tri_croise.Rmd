@@ -95,7 +95,8 @@ Sont considérées comme complètes toutes les réponses remplies jusqu'à la qu
 - `r data_clean_unique |> filter(Catégorie == "Une commune") |> nrow()` communes ;
     - `r data_clean_unique |> filter(Catégorie2 == "Communes de moins de 3 500 hab.") |> nrow()` communes de moins de 3 500 habitants ;
     - `r data_clean_unique |> filter(Catégorie2 == "Communes de 3 500 à 10 000 hab.") |> nrow()` communes de 3 500 à 10 000 habitants ;
-    - `r data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow()` communes de 10 000 à 100 000 habitants ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow()` communes de 10 000 à 100 000 habitants ;Afin de respecter le RGPD, avez-vous modifié des
+  processus de gestion des données au sein de l'organisation ?
     - `r data_clean_unique |> filter(Catégorie2 == "Communes de plus de 100 000 hab.") |> nrow()` communes de plus de 100 000 habitants ;
 - `r data_clean_unique |> filter(Catégorie == "Un EPCI (hors métropole)") |> nrow()` EPCI (hors métropoles) ;
 - `r data_clean_unique |> filter(Catégorie == "Une métropole") |> nrow()` métropoles ;
@@ -124,6 +125,23 @@ Toutes les questions appelant à **déposer des fichiers** ne sont pas non plus 
 
 Les **pourcentages** présentés dans les statistiques correspondent au pourcentage de répondants pour chaque question, par type de structure.
 
+---
+
+Comme dernière étape avant d'être analysées, les données de l'échantillon ont été ***redressées*** pour les rendre cohérentes aux proportions des collectivités territoriales à l'échelle nationale. Les étapes ci-dessous ont été suivies : 
+
+- récupération du nombre de collectivités par type de structure à partir des chiffres 2023 de la page [*'Collectivités-locales.gouv.fr'*](https://www.collectivites-locales.gouv.fr/collectivites-locales-chiffres-2023), calcul des proportions de chaque type de structure sur le nombre total de collectivités  ;
+- calcul des mêmes proportions sur notre échantillon ; 
+- calcul des poids à attribuer à chaque type de collectivité pour redresser l'échantillon, tels que poids = proportion nationale / proportion dans l'échantillon ; 
+- calcul d'une moyenne pondérée à partir des poids obtenus en étape précédente.
+
+Les statistiques de chaque question comporteront donc 2 lignes ***Total*** ; 
+
+- l'une avec le total de l'échantillon, indiquant entre parenthèses le nombre de réponses reçues pour cette question ; 
+- l'autre avec le total pondéré pour correspondre aux proportions nationales.
+
+
+
+
 ## Droit des données publiques
 
 ### Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
@@ -131,25 +149,28 @@ Les **pourcentages** présentés dans les statistiques correspondent au pourcent
 ```{r qs1}
 # Stats individuelles
 stat_qs_simple <- function(n_col, nom_col){
+    # Structures détaillées
    cat2 <- data_clean_unique |> 
         select(n_col, Catégorie2) |> 
-        summarise(n = n(), .by = c(Catégorie2, 1)) |> na.omit() |>  
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> #na.omit() |>  
         pivot_wider(names_from = 2, values_from = 3) |>
         janitor::adorn_totals("row") |>
-        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
-        mutate(Catégorie2 = case_when(Catégorie2 == "Total" ~ paste0("Total (", sum(n[Catégorie2 == "Total"]), " réponses)"), .default = Catégorie2)) |> 
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n")
+   nb_na <- 191 - (cat2 |> filter(Catégorie2 == "Total" & cat != "NA") |> mutate(Total = sum(n)) |> distinct(Total))
+   cat2 <- cat2 |> 
+        mutate(Catégorie2 = case_when(Catégorie2 == "Total" ~ paste0("Total (", sum(n[Catégorie2 == "Total"]) - nb_na, " réponses)"), .default = Catégorie2)) |> 
         mutate_all(replace_na, replace = 0) |>
         mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie2) |> 
         select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+     # Structure 'commune' seulement
     cat1 <- data_clean_unique |> 
         select(n_col, Catégorie) |> 
         filter(Catégorie == "Une commune") |> 
-        summarise(n = n(), .by = c(Catégorie, 1)) |> na.omit() |>  
-        mutate_all(replace_na, replace = 0) |>
+        summarise(n = n(), .by = c(Catégorie, 1)) |> #na.omit() |>  
         mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie) |> 
         select(-n) |> pivot_wider(names_from = 2, values_from = 3)
     nb_col <- ncol(cat2)
-    
+     # Jointure, statistiques finales
     stat_indiv <- list(cat1, cat2 |> rename(Catégorie = Catégorie2)) |> 
         bind_rows() |> ungroup() |> 
         mutate_all(replace_na, replace = "0%") |>  
@@ -165,8 +186,16 @@ stat_qs_simple <- function(n_col, nom_col){
                                   "Une région" ~ 10,
                                   "Autre" ~ 11, 
                                   .default = 1)) |> 
-        arrange(index) |> select(-index) |> 
-        rename({{ nom_col }} := 1) 
+        arrange(index) |> select(-index) |> ungroup()
+    # Création colonne 'Sans réponse' si n'existe pas déjà
+    stat_indiv <- stat_indiv |> ungroup() |> 
+        select(1, order(colnames(stat_indiv))) |> 
+        rowwise() |> 
+        mutate(`NA` = ifelse("NA" %in% names(stat_indiv), `NA`, "0%")) |> 
+        mutate(`Sans réponse` = `NA`, .after = ncol(stat_indiv)) |> 
+        select(-`NA`) |> 
+        rename({{ nom_col }} := 1)
+    # On affiche la table finale
     knitr::kable(stat_indiv, format = "html") |> 
       kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
 }
@@ -176,7 +205,8 @@ stat_qs_simple(13, "Commençons par la protection de la vie privée. Considérez
 ### Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?
 
 ```{r}
-stat_qs_simple(14, "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+stat_qs_simple(14, "Avez-vous nommé un(e) Délégué(e) à la Protection desAfin de respecter le RGPD, avez-vous modifié des
+  processus de gestion des données au sein de l'organisation ? Données (DPO) ?")
 ```
 
 
@@ -198,44 +228,52 @@ stat_qs_simple(18, "De manière générale, avez-vous mis en place des clauses j
 ### Quels sont le ou les domaines concernés par ces clauses ?
 
 ```{r}
-# ref_type <- rbind(data_clean_unique |> summarise(n_total = n(), .by = Catégorie2),
-#                   data_clean_unique |> filter(Catégorie == "Une commune") |> summarise(n_total = n(), .by = Catégorie) |> rename(Catégorie2 = 1)) |> 
-#     add_row(Catégorie2 = "Total", n_total = nrow(data_clean_unique))
-# nb_commune <- (ref_type |> filter(Catégorie2 == "Une commune") |> select(n_total))$n_total
+ref_nb_structures <- rbind(data_clean_unique |> summarise(n_total = n(), .by = Catégorie2),
+                  data_clean_unique |> filter(Catégorie == "Une commune") |> summarise(n_total = n(), .by = Catégorie) |> rename(Catégorie2 = 1)) |>
+    add_row(Catégorie2 = "Total", n_total = nrow(data_clean_unique))
+nb_commune <- (ref_nb_structures |> filter(Catégorie2 == "Une commune") |> select(n_total))$n_total
 
 stat_qs_multiple <- function(min_col, max_col, nom_col){
-    nb_communes <- (data_clean_unique |> 
-        select(min_col:max_col, 225) |> 
-        group_by(Catégorie) |> 
-        filter(across(where(is.character), ~. != "N/A")) |> 
-        ungroup() |> 
-        summarise(n_total = n(), .by = Catégorie) |> 
-        filter(Catégorie == "Une commune"))$n_total
-    ref_nb_structures <- data_clean_unique |> 
+    ref_question <- data_clean_unique |> 
         select(min_col:max_col, 226) |> 
         group_by(Catégorie2) |> 
         filter(across(where(is.character), ~. != "N/A")) |> 
         ungroup() |> 
         summarise(n_total = n(), .by = Catégorie2)
-    total <- sum(ref_nb_structures$n_total)
-    ref_nb_structures <- ref_nb_structures |> 
-        add_row(Catégorie2 = "Total", n_total = total)
+    total <- sum(ref_question$n_total)
+    sans_rep <- data_clean_unique |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie2) |> 
+        summarise_all(funs(sum(. == "N/A"))) |> 
+        janitor::adorn_totals("row") |>
+        select(Catégorie2, 2) |> 
+        rename(`Sans réponse` = 2) |> 
+        mutate(n2 = case_when(grepl("Communes", Catégorie2) == TRUE ~ `Sans réponse`, .default = NA_real_))
+    sans_rep <- sans_rep |> 
+        add_row(Catégorie2 = "Une commune", `Sans réponse` = sum(sans_rep$n2, na.rm = TRUE)) |> 
+        select(-n2)
     cat1 <- data_clean_unique |> 
         select(min_col:max_col, 226) |> 
         group_by(Catégorie2) |> 
         summarise_all(funs(sum(. == "Oui"))) |> 
         janitor::adorn_totals("row") |>
+        left_join(sans_rep, by = "Catégorie2") |> 
         pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
         left_join(ref_nb_structures, by = "Catégorie2") |> 
-        mutate(percent = paste0(round(n / n_total *100, 0), "%"), .by = Catégorie2) |> 
+        mutate(cat = str_extract(cat, "(?<=\\[).*"),
+               cat = str_replace_all(cat, "\\]", ""),
+               percent = paste0(round(n / n_total *100, 0), "%"), .by = Catégorie2) |> 
         select(-c(n, n_total)) |> pivot_wider(names_from = 2, values_from = 3)
     cat2 <- data_clean_unique |> 
         filter(Catégorie == "Une commune") |> 
         select(min_col:max_col, 225) |> 
         group_by(Catégorie) |> 
         summarise_all(funs(sum(. == "Oui"))) |> 
+        left_join(sans_rep, by = c("Catégorie" = "Catégorie2")) |> 
         pivot_longer(cols = -Catégorie, names_to = "cat", values_to = "n") |> 
-        mutate(percent = paste0(round(n / nb_communes *100, 0), "%")) |> 
+        mutate(cat = str_extract(cat, "(?<=\\[).*"),
+               cat = str_replace_all(cat, "\\]", ""),
+               percent = paste0(round(n / nb_commune *100, 0), "%")) |> 
         select(-n) |> pivot_wider(names_from = 2, values_from = 3)
     stat_indiv <- list(cat2, cat1 |> rename(Catégorie = Catégorie2)) |> 
         bind_rows() |> ungroup() |> 
@@ -253,10 +291,16 @@ stat_qs_multiple <- function(min_col, max_col, nom_col){
                                   "Autre" ~ 11, 
                                   .default = 1)) |> 
         arrange(index) |> select(-index) |> 
-        mutate_all(function(x) gsub("NA%", NA_character_, x)) |> ungroup() |> 
+        mutate_all(function(x) gsub("NA%", "0%", x)) |> ungroup() |> 
         mutate(Catégorie = case_when(Catégorie == "Total" ~ paste0("Total (", total, " réponses)"), 
-                                      .default = Catégorie)) |> 
+                                      .default = Catégorie)) 
+        # Création colonne 'Sans réponse' si n'existe pas déjà
+    stat_indiv <- stat_indiv |> ungroup() |> 
+        select(1, order(colnames(stat_indiv))) |> 
+        mutate(`Sans réponse` = `NA`, .after = ncol(stat_indiv)) |> 
+        select(-`NA`) |> 
         rename({{ nom_col }} := 1)
+    
     knitr::kable(stat_indiv, format = "html") |> 
       kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
 }
@@ -922,7 +966,7 @@ stat_qs_multiple(205, 213, "Concernant les thématiques de l’inclusion et de l
 
 
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 library(glue)
 
 # Stats centralisées dans tableau
@@ -934,33 +978,43 @@ table_recap_simple <- function(n_col){
         na.omit() |> 
         summarise(n_total = n(), .by = Catégorie) |> 
         filter(Catégorie == "Une commune"))$n_total
-    ref_nb_structures <- data_clean_unique |> 
+    ref_question <- data_clean_unique |> 
         select(n_col, 226) |> 
         na.omit() |> 
         summarise(n_total = n(), .by = Catégorie2)
-    total <- sum(ref_nb_structures$n_total)
-    ref_nb_structures <- ref_nb_structures |> 
+    total <- sum(ref_question$n_total)
+    ref_question <- ref_question |> 
         add_row(Catégorie2 = "Total", n_total = total) |> 
         add_row(Catégorie2 = "Une commune", n_total = nb_communes)
 
     cat1 <- data_clean_unique |> 
         select(n_col, Catégorie2) |> 
-        summarise(n = n(), .by = c(Catégorie2, 1)) |> na.omit() |>  
+        summarise(n = n(), .by = c(Catégorie2, 1)) |>  
         pivot_wider(names_from = 2, values_from = 3) |>
         janitor::adorn_totals("row") |>
         pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
         mutate_all(replace_na, replace = 0) |>
-        mutate(percent = round(n / sum(n) *100, 0), .by = Catégorie2)
+        left_join(ref_nb_structures, by = "Catégorie2") |> 
+        mutate(percent = round(n / n_total *100, 0), .by = Catégorie2)
     cat2 <- data_clean_unique |> 
         select(n_col, Catégorie) |> 
         filter(Catégorie == "Une commune") |> 
-        summarise(n = n(), .by = c(Catégorie, 1)) |> na.omit() |>  
-        mutate_all(replace_na, replace = 0) |>
-        mutate(percent = round(n / sum(n) *100, 0), .by = Catégorie)
+        summarise(n = n(), .by = c(Catégorie, 1)) |>  
+        #mutate_all(replace_na, replace = 0) |>
+        mutate(n_total = nb_communes,
+               percent = round(n / 30 *100, 0), .by = Catégorie)
+    lignes <- nrow(cat2)
+    cat2[lignes+1, 1] <- "Une commune"
+    cat2[lignes+1, 2] <- NA_character_
+    cat2[lignes+1, 3] <- 0
+    cat2[lignes+1, 4] <- 30
+    cat2[lignes+1, 5] <- 0
+    cat2 <- cat2 |> 
+        filter(row_number() == 1, .by = 2)
     all_stat <- rbind(cat1 |> rename(Catégorie = Catégorie2), cat2 |> rename(cat = 2)) |> 
         mutate(Question = name, .before = 1) |> 
-        left_join(ref_nb_structures, by = c("Catégorie" = "Catégorie2")) |> 
-        rename(Structure = Catégorie, Réponses = cat, Occurrences = n, Pourcentage = percent, `Nombre de réponses` = n_total) |> 
+        left_join(ref_question |> rename(`Nombre de réponses` = n_total), by = c("Catégorie" = "Catégorie2")) |> 
+        rename(Structure = Catégorie, Réponses = cat, Occurrences = n, Pourcentage = percent, `Effectifs par structure` = n_total) |> 
         mutate(index = case_match(Structure, 
                                   "Une commune" ~ 2,
                                   "Communes de moins de 3 500 hab." ~ 3,
@@ -974,8 +1028,9 @@ table_recap_simple <- function(n_col){
                                   "Autre" ~ 11, 
                                   .default = 1)) |> 
         arrange(index) |> select(-index) |> 
-        select(1:4, 6, 5) |> 
-        mutate(Occurrences = as.integer(Occurrences))
+        select(1:4, 7, 5, 6) |> 
+        mutate(Occurrences = as.integer(Occurrences),
+               Réponses = str_replace_all(Réponses, 'NA', "Sans réponse"))
 
     assign(glue("all_stat_{n_col}"), all_stat, envir = .GlobalEnv)
 }
@@ -989,42 +1044,56 @@ table_recap_multiple <- function(min_col, max_col){
         ungroup() |> 
         summarise(n_total = n(), .by = Catégorie) |> 
         filter(Catégorie == "Une commune"))$n_total
-    ref_nb_structures <- data_clean_unique |> 
+    ref_question <- data_clean_unique |> 
         select(min_col:max_col, 226) |> 
         group_by(Catégorie2) |> 
         filter(across(where(is.character), ~. != "N/A")) |> 
         ungroup() |> 
         summarise(n_total = n(), .by = Catégorie2)
-    total <- sum(ref_nb_structures$n_total)
-    ref_nb_structures <- ref_nb_structures |> 
+    total <- sum(ref_question$n_total)
+    ref_question <- ref_question |> 
         add_row(Catégorie2 = "Total", n_total = total) |> 
         add_row(Catégorie2 = "Une commune", n_total = nb_communes)
-
+    sans_rep <- data_clean_unique |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie2) |> 
+        summarise_all(funs(sum(. == "N/A"))) |> 
+        janitor::adorn_totals("row") |>
+        select(Catégorie2, 2) |> 
+        rename(`Sans réponse` = 2) |> 
+        mutate(n2 = case_when(grepl("Communes", Catégorie2) == TRUE ~ `Sans réponse`, .default = NA_real_))
+    sans_rep <- sans_rep |> 
+        add_row(Catégorie2 = "Une commune", `Sans réponse` = sum(sans_rep$n2, na.rm = TRUE)) |> 
+        select(-n2)
     cat1 <- data_clean_unique |> 
         select(min_col:max_col, 226) |> 
         group_by(Catégorie2) |> 
         summarise_all(funs(sum(. == "Oui"))) |> 
+        left_join(sans_rep, by = "Catégorie2") |> 
         janitor::adorn_totals("row") |>
         pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
         left_join(ref_nb_structures, by = "Catégorie2") |> 
         mutate(percent = round(n / n_total *100, 0), .by = Catégorie2) |> 
         mutate(cat = str_extract(cat, "(?<=\\[).*"),
                cat = str_replace_all(cat, "\\]", ""))
+        
     cat2 <- data_clean_unique |> 
         filter(Catégorie == "Une commune") |> 
         select(min_col:max_col, 225) |> 
         group_by(Catégorie) |> 
         summarise_all(funs(sum(. == "Oui"))) |> 
+        left_join(sans_rep, by = c("Catégorie" = "Catégorie2")) |> 
         pivot_longer(cols = -Catégorie, names_to = "cat", values_to = "n") |> 
-        left_join(ref_nb_structures, by = c("Catégorie" = "Catégorie2")) |> 
-        mutate(percent = round(n / n_total *100, 0)) |> 
         mutate(cat = str_extract(cat, "(?<=\\[).*"),
-               cat = str_replace_all(cat, "\\]", ""))
-    all_stat <- rbind(cat1 |> rename(Catégorie = Catégorie2), cat2 |> rename(cat = 2)) |> 
+               cat = str_replace_all(cat, "\\]", ""),
+               #cat = replace_na(cat, "NA"),
+               percent = round(n / 30 *100, 0),
+               n_total = 30) 
+    all_stat <- list(cat2, cat1 |> rename(Catégorie = Catégorie2)) |> 
+        bind_rows() |> ungroup() |> 
         mutate(Question = name, .before = 1) |> 
-        rename(Structure = Catégorie, Réponses = cat, Occurrences = n, Pourcentage = percent, `Nombre de réponses` = n_total) |> 
-        mutate_all(function(x) gsub("NA%", NA_character_, x)) |> 
-        mutate(index = case_match(Structure, 
+        mutate(cat = replace_na(cat, "Sans réponse"),
+               index = case_match(Catégorie, 
                                   "Une commune" ~ 2,
                                   "Communes de moins de 3 500 hab." ~ 3,
                                   "Communes de 3 500 à 10 000 hab." ~ 4,
@@ -1036,7 +1105,10 @@ table_recap_multiple <- function(min_col, max_col){
                                   "Une région" ~ 10,
                                   "Autre" ~ 11, 
                                   .default = 1)) |> 
-        arrange(index) |> select(-index)
+        arrange(index) |> select(-index) |> ungroup() |> 
+        left_join(ref_question |> rename(`Nombre de réponses` = n_total), by = c("Catégorie" = "Catégorie2")) |> 
+        rename(Structure = Catégorie, Réponses = cat, Occurrences = n, Pourcentage = percent, `Effectifs par structure` = n_total) |> 
+        select(1:4, 7, 6, 5)
 
     assign(glue("all_stat_multiples_{min_col}"), all_stat, envir = .GlobalEnv)
 }
@@ -1048,7 +1120,8 @@ library(purrr)
 purrr::map(.x = c(13:16, 18, 26:38, 40:44, 46, 49, 55, 66:68, 70, 84:90, 93:96, 99:108, 111:113, 115, 139, 162:178, 180, 181, 188:197),
           .f = ~table_recap_simple(.x))
 table_qs_simples <- rbind(lapply(ls(pattern="^all_stat_"), function(x) get(x))) |> 
-    bind_rows()
+    bind_rows() |> 
+    mutate(Réponses = replace_na(Réponses, "Sans réponse"))
     # Qs multiples
 table_recap_multiple(19,22)
 table_recap_multiple(50,53)
@@ -1063,7 +1136,8 @@ table_recap_multiple(182,186)
 table_recap_multiple(198,203)
 table_recap_multiple(205,213)
 table_qs_multiple <- rbind(lapply(ls(pattern="^all_stat_multiples_"), function(x) get(x))) |>
-    bind_rows()
+    bind_rows() |> 
+    mutate(Réponses = replace_na(Réponses, "Sans réponse"))
     # Tout ensemble
 table_recap_stat <- rbind(table_qs_simples, table_qs_multiple) #|> mutate(Pourcentage = as.integer(Pourcentage))
 table_recap_stat |> rio::export("../Data/All_statistics.csv")
