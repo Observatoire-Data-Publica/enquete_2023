@@ -132,7 +132,8 @@ Comme dernière étape avant d'être analysées, les données de l'échantillon 
 - récupération du nombre de collectivités par type de structure à partir des chiffres 2023 de la page [*'Collectivités-locales.gouv.fr'*](https://www.collectivites-locales.gouv.fr/collectivites-locales-chiffres-2023), calcul des proportions de chaque type de structure sur le nombre total de collectivités  ;
 - calcul des mêmes proportions sur notre échantillon ; 
 - calcul des poids à attribuer à chaque type de collectivité pour redresser l'échantillon, tels que poids = proportion nationale / proportion dans l'échantillon ; 
-- calcul d'une moyenne pondérée à partir des poids obtenus en étape précédente.
+- calcul de la somme des poids par réponse ;
+- calcul d'une moyenne pondérée à partir des poids obtenus en étape précédente divisés par la somme totale des poids.
 
 Les statistiques de chaque question comporteront donc 2 lignes ***Total*** ; 
 
@@ -178,10 +179,6 @@ prop_echantillon <- data.frame(Structure = c("Une commune",
 prop_all <- prop_nationales |> 
     left_join(prop_echantillon, by = "Structure") |> 
     mutate(poids = percent_nat / percent_ech)
-
-
-
-
 ```
 
 
@@ -213,11 +210,31 @@ stat_qs_simple <- function(n_col, nom_col){
         mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie) |> 
         select(-n) |> pivot_wider(names_from = 2, values_from = 3)
     nb_col <- ncol(cat2)
+     # Moyenne pondérée
+    moy_pond <- data_clean_unique |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> 
+        pivot_wider(names_from = 2, values_from = 3) |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate_all(replace_na, replace = 0) |>
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(`Total pondéré`= paste0(round(p/sum(p)*100, 0), "%")) |> 
+        select(-p) |> 
+        pivot_wider(names_from = 1, values_from = 2) |> 
+        mutate(Catégorie = "Total pondéré", .before = 1)
      # Jointure, statistiques finales
     stat_indiv <- list(cat1, cat2 |> rename(Catégorie = Catégorie2)) |> 
         bind_rows() |> ungroup() |> 
+        rbind(moy_pond) |> 
         mutate_all(replace_na, replace = "0%") |>  
         mutate(index = case_match(Catégorie, 
+                                  "Total" ~ 1.5,
                                   "Une commune" ~ 2,
                                   "Communes de moins de 3 500 hab." ~ 3,
                                   "Communes de 3 500 à 10 000 hab." ~ 4,
@@ -318,10 +335,34 @@ stat_qs_multiple <- function(min_col, max_col, nom_col){
                cat = str_replace_all(cat, "\\]", ""),
                percent = paste0(round(n / nb_commune *100, 0), "%")) |> 
         select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+     # Moyenne pondérée
+    moy_pond <- data_clean_unique |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie2) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate(cat = str_extract(cat, "(?<=\\[).*"),
+               cat = str_replace_all(cat, "\\]", "")) |> 
+        mutate_all(replace_na, replace = 0) |>
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(`Total pondéré`= paste0(round(p/sum(p)*100, 0), "%")) |> 
+        select(-p) |> 
+        pivot_wider(names_from = 1, values_from = 2) |> 
+        mutate(Catégorie = "Total pondéré", .before = 1) |> 
+        mutate(`NA` = NA_real_)
+    # All together
     stat_indiv <- list(cat2, cat1 |> rename(Catégorie = Catégorie2)) |> 
         bind_rows() |> ungroup() |> 
+        rbind(moy_pond) |> 
         mutate_all(replace_na, replace = "0%") |>  
         mutate(index = case_match(Catégorie, 
+                                  "Total pondéré" ~ 1.5,
                                   "Une commune" ~ 2,
                                   "Communes de moins de 3 500 hab." ~ 3,
                                   "Communes de 3 500 à 10 000 hab." ~ 4,
@@ -1054,11 +1095,32 @@ table_recap_simple <- function(n_col){
     cat2[lignes+1, 5] <- 0
     cat2 <- cat2 |> 
         filter(row_number() == 1, .by = 2)
+     # Moyenne pondérée
+    moy_pond <- data_clean_unique |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> 
+        pivot_wider(names_from = 2, values_from = 3) |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate_all(replace_na, replace = 0) |>
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(percent= round(p/sum(p)*100, 0)) |> 
+        select(-p) |> 
+        mutate(Question = name, .before = 1) |> 
+        mutate(Catégorie = "Total pondéré", .after = 1) |> 
+        mutate(n = NA_real_, n_total = NA_real_)
+    # All
     all_stat <- rbind(cat1 |> rename(Catégorie = Catégorie2), cat2 |> rename(cat = 2)) |> 
         mutate(Question = name, .before = 1) |> 
+        rbind(moy_pond) |> 
         left_join(ref_question |> rename(`Nombre de réponses` = n_total), by = c("Catégorie" = "Catégorie2")) |> 
         rename(Structure = Catégorie, Réponses = cat, Occurrences = n, Pourcentage = percent, `Effectifs par structure` = n_total) |> 
         mutate(index = case_match(Structure, 
+                                  "Total" ~ 1.5,
                                   "Une commune" ~ 2,
                                   "Communes de moins de 3 500 hab." ~ 3,
                                   "Communes de 3 500 à 10 000 hab." ~ 4,
@@ -1132,8 +1194,29 @@ table_recap_multiple <- function(min_col, max_col){
                #cat = replace_na(cat, "NA"),
                percent = round(n / 30 *100, 0),
                n_total = 30) 
+     # Moyenne pondérée
+    moy_pond <- data_clean_unique |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie2) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate(cat = str_extract(cat, "(?<=\\[).*"),
+               cat = str_replace_all(cat, "\\]", "")) |> 
+        mutate_all(replace_na, replace = 0) |>
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(percent= round(p/sum(p)*100, 0)) |> 
+        select(-p) |> 
+        mutate(Catégorie = "Total pondéré", .after = 1) |> 
+        mutate(n = NA_real_, n_total = NA_real_)
+    
     all_stat <- list(cat2, cat1 |> rename(Catégorie = Catégorie2)) |> 
         bind_rows() |> ungroup() |> 
+        rbind(moy_pond) |> 
         mutate(Question = name, .before = 1) |> 
         mutate(cat = replace_na(cat, "Sans réponse"),
                index = case_match(Catégorie, 

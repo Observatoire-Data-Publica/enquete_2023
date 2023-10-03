@@ -88,6 +88,46 @@ reg <- data_clean_unique |> filter(Catégorie == "Une région") |>
 # Import des données des stats rassemblés
 all_stat <- read_csv("../Data/All_statistics.csv")
 
+# Données répartition des structures par type à échelle nationale
+prop_nationales <- data.frame(Structure = c("Une commune",
+                                            "Une région",
+                                            "Un département",
+                                            "Un EPCI (hors métropole)",
+                                            "Une métropole",
+                                            "Communes de 3 500 à 10 000 hab.",
+                                            "Communes de 10 000 à 100 000 hab.",
+                                            "Communes de plus de 100 000 hab."),
+                              Nombre_nat = c(34945,
+                                         18,
+                                         101,
+                                         1233,
+                                         21,
+                                         2160,
+                                         981,
+                                         42)) |> 
+    mutate(percent_nat = Nombre_nat / 36318 * 100)
+prop_echantillon <- data.frame(Structure = c("Une commune",
+                                            "Une région",
+                                            "Un département",
+                                            "Un EPCI (hors métropole)",
+                                            "Une métropole",
+                                            "Communes de 3 500 à 10 000 hab.",
+                                            "Communes de 10 000 à 100 000 hab.",
+                                            "Communes de plus de 100 000 hab."),
+                              Nombre_ech = c(data_clean_unique |> filter(Catégorie == "Une commune") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Une région") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Un département") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Un EPCI (hors métropole)") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Une métropole") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Communes de 3 500 à 10 000 hab.") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Communes de plus de 100 000 hab.") |> nrow())) |> 
+    mutate(percent_ech = Nombre_ech / nrow(data_clean_unique) * 100)
+prop_all <- prop_nationales |> 
+    left_join(prop_echantillon, by = "Structure") |> 
+    mutate(poids = percent_nat / percent_ech)
+
+
 # Thème ggplot customisé
 font <- "Helvetica"
 custom_theme <- function (){
@@ -129,8 +169,8 @@ library(cowplot)
 library(gridExtra)
 library(glue)
 saving_plot <- function(graph, name) {
-  ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph)
-  ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph)
+  ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph, width = 14, height = 10)
+  ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 14, height = 10)
 }
 ```
 
@@ -164,11 +204,31 @@ stat_qs_simple <- function(n_col, nom_col){
         mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie) |> 
         select(-n) |> pivot_wider(names_from = 2, values_from = 3)
     nb_col <- ncol(cat2)
+     # Moyenne pondérée
+    moy_pond <- data_clean_unique |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> 
+        pivot_wider(names_from = 2, values_from = 3) |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate_all(replace_na, replace = 0) |>
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(`Total pondéré`= paste0(round(p/sum(p)*100, 0), "%")) |> 
+        select(-p) |> 
+        pivot_wider(names_from = 1, values_from = 2) |> 
+        mutate(Catégorie = "Total pondéré", .before = 1)
      # Jointure, statistiques finales
     stat_indiv <- list(cat1, cat2 |> rename(Catégorie = Catégorie2)) |> 
         bind_rows() |> ungroup() |> 
+        rbind(moy_pond) |> 
         mutate_all(replace_na, replace = "0%") |>  
         mutate(index = case_match(Catégorie, 
+                                  "Total" ~ 1.5,
                                   "Une commune" ~ 2,
                                   "Communes de moins de 3 500 hab." ~ 3,
                                   "Communes de 3 500 à 10 000 hab." ~ 4,
@@ -202,7 +262,8 @@ stat_qs_simple(13, "Commençons par la protection de la vie privée. Considérez
 dataviz <- function(nom_col){
     # Fonction graph ensemble
     dat <- all_stat |> 
-        filter(Question == nom_col & Structure == "Total")
+        filter(Question == nom_col & Structure == "Total",
+               Réponses != "Sans réponse")
     p0 <- dat |> 
         ggplot(aes(y=Occurrences, x=Réponses, fill = Réponses)) + 
             geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
@@ -220,9 +281,31 @@ dataviz <- function(nom_col){
                   plot.title = element_text(hjust = 1),
                   panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
                   panel.grid.major.y = ggplot2::element_blank())
+    # Fonction graph total pondéré
+    dat <- all_stat |> 
+        filter(Question == nom_col & Structure == "Total pondéré",
+               Réponses != "Sans réponse")
+    p0_pond <- dat |> 
+        ggplot(aes(y=Pourcentage, x=Réponses, fill = Réponses)) + 
+            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Pourcentage de réponses", 
+                 title = "Total pondéré") +
+            geom_label(aes(x = Réponses, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
+                       size = 8, fill = "white", label.size = NA, hjust = 0) +
+            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(dat$Pourcentage)+14) +
+            coord_flip() +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())+
+            guides(fill = guide_legend(title = "Légende", ncol = 1))
     # Fonction type de collectivité
     dat <- all_stat |> 
-        filter(Question == nom_col & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre")) |> 
+        filter(Question == nom_col & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre"),
+               Réponses != "Sans réponse") |> 
         mutate(Pourcentage = as.numeric(Pourcentage)/100,
                Structure = factor(Structure, levels = c("Autre","Une région","Un département","Une métropole","Un EPCI (hors métropole)","Une commune")))
     p1 <- dat |> 
@@ -240,7 +323,8 @@ dataviz <- function(nom_col){
                   panel.grid.major.y = ggplot2::element_blank())
     # Fonction taille de commune
     dat <- all_stat |> 
-        filter(Question == nom_col & grepl("Communes de", Structure) == TRUE) |> 
+        filter(Question == nom_col & grepl("Communes de", Structure) == TRUE,
+               Réponses != "Sans réponse") |> 
         mutate(Pourcentage = as.numeric(Pourcentage)/100,
                Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
                Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab.")))
@@ -255,10 +339,28 @@ dataviz <- function(nom_col){
         custom_theme() +
         guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
         theme(legend.position = "none",
-                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
               panel.grid.major.y = ggplot2::element_blank())
+    # Légende
+    p3 <- dat |> 
+        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune", fill = "légende") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+        theme(legend.position = "right",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+     legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 0, 12)))
+    # All
     p1.2 <- plot_grid(p1, p2, align = 'v', nrow = 2)
-    graph <- grid.arrange(p0,p1.2, ncol = 2, nrow = 1)
+    c2 <- plot_grid(p0_pond, legend)
+    c1 <- grid.arrange(p0, p1.2, ncol = 2, nrow = 1)
+    graph <- grid.arrange(c1, c2, ncol = 1, nrow = 2)
     assign("graph", graph, envir = .GlobalEnv)
     grid::grid.draw(graph)
 }
@@ -368,11 +470,34 @@ stat_qs_multiple <- function(min_col, max_col, nom_col){
                cat = str_replace_all(cat, "\\]", ""),
                percent = paste0(round(n / nb_commune *100, 0), "%")) |> 
         select(-n) |> pivot_wider(names_from = 2, values_from = 3)
-    # Tout ensemble
+     # Moyenne pondérée
+    moy_pond <- data_clean_unique |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie2) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate(cat = str_extract(cat, "(?<=\\[).*"),
+               cat = str_replace_all(cat, "\\]", "")) |> 
+        mutate_all(replace_na, replace = 0) |>
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(`Total pondéré`= paste0(round(p/sum(p)*100, 0), "%")) |> 
+        select(-p) |> 
+        pivot_wider(names_from = 1, values_from = 2) |> 
+        mutate(Catégorie = "Total pondéré", .before = 1) |> 
+        mutate(`NA` = NA_real_)
+    # All together
     stat_indiv <- list(cat2, cat1 |> rename(Catégorie = Catégorie2)) |> 
         bind_rows() |> ungroup() |> 
+        rbind(moy_pond) |> 
         mutate_all(replace_na, replace = "0%") |>  
         mutate(index = case_match(Catégorie, 
+                                  "Total pondéré" ~ 1.5,
                                   "Une commune" ~ 2,
                                   "Communes de moins de 3 500 hab." ~ 3,
                                   "Communes de 3 500 à 10 000 hab." ~ 4,
@@ -387,7 +512,7 @@ stat_qs_multiple <- function(min_col, max_col, nom_col){
         arrange(index) |> select(-index) |> 
         mutate_all(function(x) gsub("NA%", "0%", x)) |> ungroup() |> 
         mutate(Catégorie = case_when(Catégorie == "Total" ~ paste0("Total (", total, " réponses)"), 
-                                      .default = Catégorie))
+                                      .default = Catégorie)) 
         # Création colonne 'Sans réponse' si n'existe pas déjà
     stat_indiv <- stat_indiv |> ungroup() |> 
         select(1, order(colnames(stat_indiv))) |> 
@@ -503,6 +628,107 @@ graph <- dat |>
 graph
 saving_plot(graph, "Graphique général n°2 : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée")
 ```
+
+**Comparaison avec l'édition 2022 de l'enquête, sans les communes de moins de 3500 habitants**
+
+
+```{r fig.height=8, fig.width=15}
+dat <- all_stat |> 
+    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure != "Communes de moins de 3 500 hab." & Structure != "Total" & Structure != "Autre" & Structure != "Une commune" & (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
+    ungroup() |> 
+    mutate(Question = str_extract(Question, "(?<=\\[).*"),
+           Question = substr(Question, 1, nchar(Question)-1),
+           Question = fct_reorder(Question, Pourcentage)) |> 
+    mutate(occu_rep_quest = sum(Occurrences), .by = c(Réponses, Question)) |> 
+    mutate(Pourcentage = round(occu_rep_quest / 107 * 100, 0)) |> #107 = 191 - 75 Autres - 9 communes de moins de 3500 habs 
+    distinct(Question, Réponses, occu_rep_quest, Pourcentage) |> 
+    mutate(p_oui = Pourcentage[Réponses == "Oui, au cours des deux dernières années"],
+           p_non = Pourcentage[Réponses == "Non, mais c’est prévu dans les 12 prochains mois"],
+           labelpos = ifelse(Réponses == "Oui, au cours des deux dernières années", 
+                             Pourcentage/2, 
+                             p_oui + p_non /3),
+           .by = Question)
+graph <- dat |> 
+    mutate(Question = fct_reorder(Question, Pourcentage)) |> 
+    ggplot(aes(y=Pourcentage, x=Question, 
+               fill = factor(Réponses, levels = c("Non, mais c’est prévu dans les 12 prochains mois",
+                                                  "Oui, au cours des deux dernières années")))) + 
+            geom_bar(position="stack", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Pourcentage de réponses", 
+                 title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données va être ou a déjà été engagée", width = 55),
+                 subtitle = "Collectivités et EPCI sauf communes de moins de 3.500 habitants - édition 2023") +
+            scale_fill_manual(values = c("#e1b44d", "#323465")) +
+            geom_text(aes(x = Question, y = labelpos, label = paste0(Pourcentage, "%")), 
+                       size = 6, hjust = 0, color = "white") +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(dat$Pourcentage)+14) +
+            coord_flip() +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "top",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank()) +
+            guides(fill = guide_legend(title = "", nrow = 2, reverse = TRUE))
+graph
+ggsave(file = glue("../Graphiques/PNG/Graphique général n°3 (sans comm < 3500 habs) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.png"), plot = graph, width = 15, height = 9)
+ggsave(file = glue("../Graphiques/SVG/Graphique général n°3 (sans comm < 3500 habs) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.svg"), plot = graph, width = 15, height = 9)
+```
+
+
+```{r}
+# Données
+data_2022 <- readxl::read_xlsx("../Data/data_enquete_2022.xlsx", "Resultats Bruts")
+dat22 <- data_2022 |> 
+    filter(`G1Q00004. Quel est le nombre d’habitants de votre commune ?` != "Moins de 3 500 habitants" | is.na(`G1Q00004. Quel est le nombre d’habitants de votre commune ?`),
+           `Vousconnaitre1. Votre collectivité est :` != "Autre") |> 
+    select(33:44) |> 
+    summarise_all(funs(sum(. == "Oui"))) |> 
+    pivot_longer(cols = everything(), names_to = "cat", values_to = "n") |> 
+    mutate(cat = str_extract(cat, "(?<=\\[).*"),
+           cat = str_extract(cat, "(?<=\\[).*"),
+           cat = str_replace_all(cat, "\\]", ""),
+           Pourcentage = round(n / 185 *100, 0),
+           type = "2022") |> 
+    select(-n)
+dat23 <- all_stat |> 
+    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure != "Communes de moins de 3 500 hab." & Structure != "Total" & Structure != "Une commune" & Réponses == "Oui, au cours des deux dernières années") |> 
+    filter(Question != "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]") |> #retrait dans la catégorie 'Autre' car non présente en 2022
+    ungroup() |> 
+    mutate(cat = str_extract(Question, "(?<=\\[).*"),
+           cat = substr(cat, 1, nchar(cat)-1),
+           cat = fct_reorder(cat, Pourcentage)) |> 
+    mutate(occu_rep_quest = sum(Occurrences, na.rm = TRUE), .by = c(Réponses, cat)) |> 
+    mutate(Pourcentage = round(occu_rep_quest / 107 * 100, 0),
+           type = "2023") |> 
+    distinct(cat, Pourcentage, type) 
+comp_editions <- rbind(dat22, dat23) |> ungroup() |> 
+    mutate(cat = fct_reorder(cat, Pourcentage), .by = type)
+
+# Graphique
+graph <- comp_editions |> 
+    ggplot(aes(y=Pourcentage, x=cat, fill = type)) + 
+            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Pourcentage de réponses", 
+                 title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données a été engagée au cours des deux dernières années", width = 55),
+                 subtitle = "Collectivités et EPCI sauf communes de moins de 3.500 habitants") +
+            geom_label(aes(x = cat, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
+                       size = 8, fill = "white", label.size = NA, hjust = 0) +
+            scale_fill_manual(values = c("#33bbc9", "#323465")) +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(comp_editions$Pourcentage)+14) +
+            coord_flip() +
+            facet_wrap(~type) +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "none",
+                  #plot.title = element_text(hjust = 1),
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+graph
+ggsave(file = glue("../Graphiques/PNG/Graphique général n°4 (comparaison 2022-2023) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.png"), plot = graph, width = 14)
+ggsave(file = glue("../Graphiques/SVG/Graphique général n°4 (comparaison 2022-2023) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.svg"), plot = graph, width = 14)
+```
+
 
 **Aménagement du territoire**
 
