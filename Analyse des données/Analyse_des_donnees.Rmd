@@ -8,10 +8,11 @@ output:
       theme: paper
       toc: true
       toc_float: true
-      toc_depth: 2
+      toc_depth: 5
       collapsed: true
       smooth_scroll: true
       css: styles.css
+      self_contained: false
       includes:
         in_header: header.html
         after_body: footer.html
