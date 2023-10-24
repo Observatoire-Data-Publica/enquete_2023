@@ -1050,10 +1050,10 @@ stat_qs_multiple(205, 213, "Concernant les thématiques de l’inclusion et de l
 
 
 
-```{r eval=FALSE, include=FALSE}
+```{r all_stat_2023, eval=FALSE, include=FALSE}
 library(glue)
 
-# Stats centralisées dans tableau
+# Stats centralisées dans tableau - édition 2023 
     # Fonctions qs simples
 table_recap_simple <- function(n_col){
     name <- names(data_clean_unique[,n_col])
@@ -1282,4 +1282,213 @@ table_recap_stat <- rbind(table_recap_stat, tot_plus3500) |>
     # Export
 table_recap_stat |> rio::export("../Data/All_statistics.csv")
 ```
+
+
+
+
+
+```{r all_stat_2022, eval=FALSE, include=FALSE}
+# On modifie la variable de type de structure pour correspondre à l'édition 2023
+data_2022 <- data_2022 |> 
+  mutate(Catégorie = str_replace_all(`Vousconnaitre1. Votre collectivité est :`, "Un EPCI \\(communauté de communes, communauté urbaine ou d’agglomération, métropole\\)", "Un EPCI"),
+         Catégorie2 = case_when(is.na(`G1Q00004. Quel est le nombre d’habitants de votre commune ?`) ~ Catégorie,
+                                .default = `G1Q00004. Quel est le nombre d’habitants de votre commune ?`),
+         Catégorie2 = str_replace_all(Catégorie2, "Un EPCI \\(communauté de communes, communauté urbaine ou d’agglomération, métropole\\)", "Un EPCI"))
+
+# On calcule les infos nécessaires
+ref_nb_structures_2022 <- rbind(data_2022 |> summarise(n_total = n(), .by = Catégorie2),
+                  data_2022 |> filter(Catégorie == "Une commune") |> summarise(n_total = n(), .by = Catégorie) |> rename(Catégorie2 = 1)) |>
+    add_row(Catégorie2 = "Total", n_total = nrow(data_2022))
+nb_commune_2022 <- (ref_nb_structures_2022 |> filter(Catégorie2 == "Une commune") |> select(n_total))$n_total
+
+# Stats centralisées dans tableau - édition 2022
+    # Fonctions qs simples
+table_recap_simple22 <- function(n_col){
+    name <- names(data_2022[,n_col])
+    nb_communes <- (data_2022 |> 
+        select(n_col, 226) |> 
+        na.omit() |> 
+        summarise(n_total = n(), .by = Catégorie) |> 
+        filter(Catégorie == "Une commune"))$n_total
+    ref_question <- data_2022 |> 
+        select(n_col, 227) |> 
+        na.omit() |> 
+        summarise(n_total = n(), .by = Catégorie2)
+    total <- sum(ref_question$n_total)
+    ref_question <- ref_question |> 
+        add_row(Catégorie2 = "Total", n_total = total) |> 
+        add_row(Catégorie2 = "Une commune", n_total = nb_communes)
+
+    cat1 <- data_2022 |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |>  
+        pivot_wider(names_from = 2, values_from = 3) |>
+        janitor::adorn_totals("row") |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate_all(replace_na, replace = 0) |>
+        left_join(ref_nb_structures_2022, by = "Catégorie2") |> 
+        mutate(percent = round(n / n_total *100, 0), .by = Catégorie2)
+    cat2 <- data_2022 |> 
+        select(n_col, Catégorie) |> 
+        filter(Catégorie == "Une commune") |> 
+        summarise(n = n(), .by = c(Catégorie, 1)) |>  
+        #mutate_all(replace_na, replace = 0) |>
+        mutate(n_total = nb_communes,
+               percent = round(n / 140 *100, 0), .by = Catégorie)
+    lignes <- nrow(cat2)
+    cat2[lignes+1, 1] <- "Une commune"
+    cat2[lignes+1, 2] <- NA_character_
+    cat2[lignes+1, 3] <- 0
+    cat2[lignes+1, 4] <- 140 #140 commmunes en 2022
+    cat2[lignes+1, 5] <- 0
+    cat2 <- cat2 |> 
+        filter(row_number() == 1, .by = 2)
+    # All
+    all_stat <- rbind(cat1 |> rename(Catégorie = Catégorie2), cat2 |> rename(cat = 2)) |> 
+        mutate(Question = name, .before = 1) |> 
+        left_join(ref_question |> rename(`Nombre de réponses` = n_total), by = c("Catégorie" = "Catégorie2")) |> 
+        rename(Structure = Catégorie, Réponses = cat, Occurrences = n, Pourcentage = percent, `Effectifs par structure` = n_total) |> 
+        mutate(index = case_match(Structure, 
+                                  "Total" ~ 1.5,
+                                  "Une commune" ~ 2,
+                                  "Communes de moins de 3 500 hab." ~ 3,
+                                  "Communes de 3 500 à 10 000 hab." ~ 4,
+                                  "Communes de 10 000 à 100 000 hab." ~ 5,
+                                  "Communes de plus de 100 000 hab." ~ 6,
+                                  "Une métropole" ~ 7,
+                                  "Un EPCI (hors métropole)" ~ 8,
+                                  "Un département" ~ 9,
+                                  "Une région" ~ 10,
+                                  "Autre" ~ 11, 
+                                  .default = 1)) |> 
+        arrange(index) |> select(-index) |> 
+        select(1:4, 7, 5, 6) |> 
+        mutate(Occurrences = as.integer(Occurrences),
+               Réponses = str_replace_all(Réponses, 'NA', "Sans réponse"))
+
+    assign(glue("all_stat_{n_col}"), all_stat, envir = .GlobalEnv)
+}
+    # Fonctions qs mutliples
+table_recap_multiple22 <- function(min_col, max_col){
+    name <- names(data_2022[,min_col]) |> str_extract("^.*\\[") |> str_replace_all("\\[", "")
+    nb_communes <- (data_2022 |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie) |> 
+        filter(across(where(is.character), ~. != "N/A")) |> 
+        ungroup() |> 
+        summarise(n_total = n(), .by = Catégorie) |> 
+        filter(Catégorie == "Une commune"))$n_total
+    ref_question <- data_2022 |> 
+        select(min_col:max_col, 227) |> 
+        group_by(Catégorie2) |> 
+        filter(across(where(is.character), ~. != "N/A")) |> 
+        ungroup() |> 
+        summarise(n_total = n(), .by = Catégorie2)
+    total <- sum(ref_question$n_total)
+    ref_question <- ref_question |> 
+        add_row(Catégorie2 = "Total", n_total = total) |> 
+        add_row(Catégorie2 = "Une commune", n_total = nb_communes)
+    sans_rep <- data_2022 |> 
+        select(min_col:max_col, 227) |> 
+        group_by(Catégorie2) |> 
+        summarise_all(funs(sum(. == "N/A"))) |> 
+        janitor::adorn_totals("row") |>
+        select(Catégorie2, 2) |> 
+        rename(`Sans réponse` = 2) |> 
+        mutate(n2 = case_when(grepl("Communes", Catégorie2) == TRUE ~ `Sans réponse`, .default = NA_real_))
+    sans_rep <- sans_rep |> 
+        add_row(Catégorie2 = "Une commune", `Sans réponse` = sum(sans_rep$n2, na.rm = TRUE)) |> 
+        select(-n2)
+    cat1 <- data_2022 |> 
+        select(min_col:max_col, 227) |> 
+        group_by(Catégorie2) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        left_join(sans_rep, by = "Catégorie2") |> 
+        janitor::adorn_totals("row") |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        left_join(ref_nb_structures_2022, by = "Catégorie2") |> 
+        mutate(percent = round(n / n_total *100, 0), .by = Catégorie2) |> 
+        mutate(cat = str_extract(cat, "(?<=\\[).*"),
+               cat = str_replace_all(cat, "\\]", ""))
+        
+    cat2 <- data_2022 |> 
+        filter(Catégorie == "Une commune") |> 
+        select(min_col:max_col, 226) |> 
+        group_by(Catégorie) |> 
+        summarise_all(funs(sum(. == "Oui"))) |> 
+        left_join(sans_rep, by = c("Catégorie" = "Catégorie2")) |> 
+        pivot_longer(cols = -Catégorie, names_to = "cat", values_to = "n") |> 
+        mutate(cat = str_extract(cat, "(?<=\\[).*"),
+               cat = str_replace_all(cat, "\\]", ""),
+               #cat = replace_na(cat, "NA"),
+               percent = round(n / 140 *100, 0), #140 communes en 2022
+               n_total = 140) 
+    
+    all_stat <- list(cat2, cat1 |> rename(Catégorie = Catégorie2)) |> 
+        bind_rows() |> ungroup() |> 
+        mutate(Question = name, .before = 1) |> 
+        mutate(cat = replace_na(cat, "Sans réponse"),
+               index = case_match(Catégorie, 
+                                  "Une commune" ~ 2,
+                                  "Communes de moins de 3 500 hab." ~ 3,
+                                  "Communes de 3 500 à 10 000 hab." ~ 4,
+                                  "Communes de 10 000 à 100 000 hab." ~ 5,
+                                  "Communes de plus de 100 000 hab." ~ 6,
+                                  "Une métropole" ~ 7,
+                                  "Un EPCI (hors métropole)" ~ 8,
+                                  "Un département" ~ 9,
+                                  "Une région" ~ 10,
+                                  "Autre" ~ 11, 
+                                  .default = 1)) |> 
+        arrange(index) |> select(-index) |> ungroup() |> 
+        left_join(ref_question |> rename(`Nombre de réponses` = n_total), by = c("Catégorie" = "Catégorie2")) |> 
+        rename(Structure = Catégorie, Réponses = cat, Occurrences = n, Pourcentage = percent, `Effectifs par structure` = n_total) |> 
+        select(1:4, 7, 6, 5)
+
+    assign(glue("all_stat_multiples_{min_col}"), all_stat, envir = .GlobalEnv)
+}
+
+
+# Application des fonctions créées - édition 2022
+    # Qs simples
+library(purrr)
+purrr::map(.x = c(20:23, 29, 48, 52, 54, 56, 61, 91, 93:95, 97, 98, 100, 101, 105, 107, 113:116, 134),
+          .f = ~table_recap_simple22(.x))
+table_qs_simples <- rbind(lapply(ls(pattern="^all_stat_"), function(x) get(x))) |> 
+    bind_rows() |> 
+    mutate(Réponses = replace_na(Réponses, "Sans réponse"))
+    # Qs multiples
+table_recap_multiple22(24,27)
+table_recap_multiple22(33,44)
+table_recap_multiple22(45,47)
+table_recap_multiple22(62,66)
+table_recap_multiple22(68,73)
+table_recap_multiple22(75,78)
+table_recap_multiple22(82,89)
+table_recap_multiple22(108,112)
+table_recap_multiple22(117,120)
+table_recap_multiple22(122,130)
+table_qs_multiple <- rbind(lapply(ls(pattern="^all_stat_multiples_"), function(x) get(x))) |>
+    bind_rows() |> 
+    mutate(Réponses = replace_na(Réponses, "Sans réponse"))
+    # Tout ensemble
+table_recap_stat <- rbind(table_qs_simples, table_qs_multiple)
+    # Ajout Total hors communes de moins de 3500 hab
+tot_plus3500 <- table_recap_stat |> 
+  filter(Structure == "Total" | Structure == "Moins de 3 500 habitants") |> 
+  pivot_wider(names_from = Structure, values_from = c(Occurrences, `Nombre de réponses`)) |> 
+  mutate(Occurrences = sum(Occurrences_Total, -`Occurrences_Moins de 3 500 habitants`, na.rm = T), 
+         `Nombre de réponses` = sum(`Nombre de réponses_Total`, -`Nombre de réponses_Moins de 3 500 habitants`, na.rm = T), 
+         .by = c(Question, Réponses)) |> 
+  distinct(Question, Réponses, Occurrences, `Nombre de réponses`) |> 
+  mutate(`Effectifs par structure` = 297-81, #total - communes de moins de 3500 hab
+         `Structure` = "Total hors communes < 3500 habitants",
+         Pourcentage = round(Occurrences/216 *100, 0))
+table_recap_stat <- rbind(table_recap_stat, tot_plus3500) |> 
+  arrange(Question, Structure) |> 
+  mutate(Edition = "2022")
+    # Export
+table_recap_stat |> rio::export("../Data/All_statistics_2022.csv")
+```
+
 

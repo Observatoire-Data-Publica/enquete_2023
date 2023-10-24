@@ -50,6 +50,7 @@ htmltools::img(src = "https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/previ
 library(tidyverse)
 data <- read_csv("../Data/results-survey396597.csv") |> select(1:220)
 CT_enrichies <- read_csv("../Data/interim_data.csv")
+data_2022 <- readxl::read_xlsx("../Data/data_enquete_2022.xlsx", "Resultats Bruts")
 
 # Jointure questionnaire + type de structure récupéré en pre-processing
 data <- data |> 
@@ -684,7 +685,6 @@ ggsave(file = glue("../Graphiques/SVG/Graphique général n°3 (sans comm < 3500
 
 ```{r fig.height=10, fig.width=15}
 # Données
-data_2022 <- readxl::read_xlsx("../Data/data_enquete_2022.xlsx", "Resultats Bruts")
 dat22 <- data_2022 |> 
     filter(`G1Q00004. Quel est le nombre d’habitants de votre commune ?` != "Moins de 3 500 habitants" | is.na(`G1Q00004. Quel est le nombre d’habitants de votre commune ?`),
            `Vousconnaitre1. Votre collectivité est :` != "Autre") |> 
