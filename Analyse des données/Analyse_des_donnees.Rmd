@@ -635,12 +635,12 @@ saving_plot(graph, "Graphique général n°2 : domaines dans lesquels une expér
 
 ```{r fig.height=8, fig.width=15}
 dat <- all_stat |> 
-    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure != "Communes de moins de 3 500 hab." & Structure != "Total" & Structure != "Autre" & Structure != "Une commune" & (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
+    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & (Structure != "Communes de moins de 3 500 hab.") & (Structure != "Total") & (Structure != "Autre") & (Structure != "Une commune") & (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
     ungroup() |> 
     mutate(Question = str_extract(Question, "(?<=\\[).*"),
            Question = substr(Question, 1, nchar(Question)-1),
            Question = fct_reorder(Question, Pourcentage)) |> 
-    mutate(occu_rep_quest = sum(Occurrences), .by = c(Réponses, Question)) |> 
+    mutate(occu_rep_quest = sum(Occurrences, na.rm = TRUE), .by = c(Réponses, Question)) |> 
     mutate(Pourcentage = round(occu_rep_quest / 107 * 100, 0)) |> #107 = 191 - 75 Autres - 9 communes de moins de 3500 habs 
     distinct(Question, Réponses, occu_rep_quest, Pourcentage) |> 
     mutate(p_oui = Pourcentage[Réponses == "Oui, au cours des deux dernières années"],
