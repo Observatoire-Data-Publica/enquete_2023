@@ -31,8 +31,9 @@ knitr::opts_chunk$set(
 	collapse = TRUE,
 	out.width = "100%",
 	results = "asis",
-	fig.height=9, 
-	fig.width=20
+	fig.height=45, 
+	fig.width=30,
+	cache=TRUE
 )
 ```
 
@@ -170,8 +171,8 @@ library(cowplot)
 library(gridExtra)
 library(glue)
 saving_plot <- function(graph, name) {
-  ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph, width = 14, height = 10)
-  ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 14, height = 10)
+  ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph, width = 30, height = 45)
+  ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 30, height = 45)
 }
 ```
 
@@ -259,7 +260,7 @@ stat_qs_simple(13, "Commençons par la protection de la vie privée. Considérez
 
 + **Visualisation**
 
-```{r fig.height=9, fig.width=20}
+```{r }
 dataviz <- function(nom_col){
     # Fonction graph ensemble
     dat <- all_stat |> 
@@ -352,16 +353,20 @@ dataviz <- function(nom_col){
         coord_flip() +
         theme_classic() +
         custom_theme() +
-        guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+        guides(fill = guide_legend(nrow = 2, title = "", reverse = T)) +
         theme(legend.position = "right",
               panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
               panel.grid.major.y = ggplot2::element_blank())
      legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 0, 12)))
     # All
-    p1.2 <- plot_grid(p1, p2, align = 'v', nrow = 2)
-    c2 <- plot_grid(p0_pond, legend)
-    c1 <- grid.arrange(p0, p1.2, ncol = 2, nrow = 1)
-    graph <- grid.arrange(c1, c2, ncol = 1, nrow = 2)
+    # p1.2 <- plot_grid(p1, p2, align = 'v', nrow = 2)
+    # c2 <- plot_grid(p0_pond, legend, nrow = 1)
+    # c1 <- plot_grid(p0, p1.2, nrow = 1)
+    # graph <- plot_grid(c1, c2, ncol = 1)
+    left_part <- plot_grid(p0, p0_pond, ncol = 1)
+    right_part <- plot_grid(p1, p2, ncol = 1)
+    all_plots <- plot_grid(left_part, right_part, ncol = 2)
+    graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(1, 0.1))
     assign("graph", graph, envir = .GlobalEnv)
     grid::grid.draw(graph)
 }
