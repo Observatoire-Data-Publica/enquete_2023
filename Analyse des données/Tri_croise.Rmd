@@ -1265,7 +1265,21 @@ table_qs_multiple <- rbind(lapply(ls(pattern="^all_stat_multiples_"), function(x
     bind_rows() |> 
     mutate(Réponses = replace_na(Réponses, "Sans réponse"))
     # Tout ensemble
-table_recap_stat <- rbind(table_qs_simples, table_qs_multiple) #|> mutate(Pourcentage = as.integer(Pourcentage))
+table_recap_stat <- rbind(table_qs_simples, table_qs_multiple)
+    # Ajout Total hors communes de moins de 3500 hab
+tot_plus3500 <- table_recap_stat |> 
+  filter(Structure == "Total" | Structure == "Communes de moins de 3 500 hab.") |> 
+  pivot_wider(names_from = Structure, values_from = c(Occurrences, `Nombre de réponses`)) |> 
+  mutate(Occurrences = sum(Occurrences_Total, -`Occurrences_Communes de moins de 3 500 hab.`, na.rm = T), 
+         `Nombre de réponses` = sum(`Nombre de réponses_Total`, -`Nombre de réponses_Communes de moins de 3 500 hab.`, na.rm = T), 
+         .by = c(Question, Réponses)) |> 
+  distinct(Question, Réponses, Occurrences, `Nombre de réponses`) |> 
+  mutate(`Effectifs par structure` = 191-9,
+         `Structure` = "Total hors communes < 3500 habitants",
+         Pourcentage = round(Occurrences/182 *100, 0))
+table_recap_stat <- rbind(table_recap_stat, tot_plus3500) |> 
+  arrange(Question, Structure)
+    # Export
 table_recap_stat |> rio::export("../Data/All_statistics.csv")
 ```
 

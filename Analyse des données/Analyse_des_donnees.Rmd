@@ -31,8 +31,8 @@ knitr::opts_chunk$set(
 	collapse = TRUE,
 	out.width = "100%",
 	results = "asis",
-	fig.height=45, 
-	fig.width=30,
+	fig.height=15, #45
+	fig.width=20, #30
 	cache=TRUE
 )
 ```
@@ -171,8 +171,8 @@ library(cowplot)
 library(gridExtra)
 library(glue)
 saving_plot <- function(graph, name) {
-  ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph, width = 30, height = 45)
-  ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 30, height = 45)
+  ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph, width = 20, height = 15)
+  ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 20, height = 15)
 }
 ```
 
@@ -353,11 +353,11 @@ dataviz <- function(nom_col){
         coord_flip() +
         theme_classic() +
         custom_theme() +
-        guides(fill = guide_legend(nrow = 2, title = "", reverse = T)) +
+        guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
         theme(legend.position = "right",
               panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
               panel.grid.major.y = ggplot2::element_blank())
-     legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 0, 12)))
+     legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 10, 12)))
     # All
     # p1.2 <- plot_grid(p1, p2, align = 'v', nrow = 2)
     # c2 <- plot_grid(p0_pond, legend, nrow = 1)
@@ -366,7 +366,7 @@ dataviz <- function(nom_col){
     left_part <- plot_grid(p0, p0_pond, ncol = 1)
     right_part <- plot_grid(p1, p2, ncol = 1)
     all_plots <- plot_grid(left_part, right_part, ncol = 2)
-    graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(1, 0.1))
+    graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(.9, .1))
     assign("graph", graph, envir = .GlobalEnv)
     grid::grid.draw(graph)
 }
@@ -635,7 +635,6 @@ graph
 saving_plot(graph, "Graphique général n°2 : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée")
 ```
 
-**Comparaison avec l'édition 2022 de l'enquête, sans les communes de moins de 3500 habitants**
 
 
 ```{r fig.height=8, fig.width=15}
@@ -680,8 +679,10 @@ ggsave(file = glue("../Graphiques/PNG/Graphique général n°3 (sans comm < 3500
 ggsave(file = glue("../Graphiques/SVG/Graphique général n°3 (sans comm < 3500 habs) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.svg"), plot = graph, width = 15, height = 9)
 ```
 
+**Comparaison avec l'édition 2022 de l'enquête, sans les communes de moins de 3500 habitants**
 
-```{r}
+
+```{r fig.height=10, fig.width=15}
 # Données
 data_2022 <- readxl::read_xlsx("../Data/data_enquete_2022.xlsx", "Resultats Bruts")
 dat22 <- data_2022 |> 
@@ -695,9 +696,11 @@ dat22 <- data_2022 |>
            cat = str_replace_all(cat, "\\]", ""),
            Pourcentage = round(n / 185 *100, 0),
            type = "2022") |> 
-    select(-n)
+    select(-n) |> mutate(Réponses = "Oui", labelpos = NA_real_)
 dat23 <- all_stat |> 
-    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure != "Communes de moins de 3 500 hab." & Structure != "Total" & Structure != "Une commune" & Réponses == "Oui, au cours des deux dernières années") |> 
+    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & 
+             Structure != "Communes de moins de 3 500 hab." & Structure != "Total" & Structure != "Une commune" & Structure != "Total pondéré" & 
+             (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
     filter(Question != "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]") |> #retrait dans la catégorie 'Autre' car non présente en 2022
     ungroup() |> 
     mutate(cat = str_extract(Question, "(?<=\\[).*"),
@@ -706,30 +709,45 @@ dat23 <- all_stat |>
     mutate(occu_rep_quest = sum(Occurrences, na.rm = TRUE), .by = c(Réponses, cat)) |> 
     mutate(Pourcentage = round(occu_rep_quest / 107 * 100, 0),
            type = "2023") |> 
-    distinct(cat, Pourcentage, type) 
+    distinct(cat, Pourcentage, type, Réponses) |> 
+    mutate(p_oui = Pourcentage[Réponses == "Oui, au cours des deux dernières années"],
+           p_non = Pourcentage[Réponses == "Non, mais c’est prévu dans les 12 prochains mois"],
+           labelpos = ifelse(Réponses == "Oui, au cours des deux dernières années", 
+                             Pourcentage/2, 
+                             p_oui + p_non /3 - 2),
+           .by = cat) |> select(-c(p_oui, p_non))
 comp_editions <- rbind(dat22, dat23) |> ungroup() |> 
     mutate(cat = fct_reorder(cat, Pourcentage), .by = type)
 
 # Graphique
 graph <- comp_editions |> 
-    ggplot(aes(y=Pourcentage, x=cat, fill = type)) + 
-            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+    ggplot(aes(y=Pourcentage, x=cat, fill = Réponses, group = Réponses)) + 
+            geom_bar(position="stack", stat="identity", width=.6, size = 1, alpha = .9) +
             labs(x = "", y = "Pourcentage de réponses", 
-                 title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données a été engagée au cours des deux dernières années", width = 55),
+                 title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données a été engagée au cours des deux dernières années ou va l'être dans les 12 prochains mois", width = 55),
                  subtitle = "Collectivités et EPCI sauf communes de moins de 3.500 habitants") +
-            geom_label(aes(x = cat, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
-                       size = 8, fill = "white", label.size = NA, hjust = 0) +
-            scale_fill_manual(values = c("#33bbc9", "#323465")) +
+            scale_fill_manual(values = c("Non, mais c’est prévu dans les 12 prochains mois" = "#e1b44d", 
+                                         "Oui, au cours des deux dernières années" = "#323465", 
+                                         "Oui" = "#33bbc9"),
+                              labels = c("Non, mais c’est prévu dans les 12 prochains mois" = "Prévue dans les 12 prochains mois", 
+                                         "Oui, au cours des deux dernières années" = "Engagée au cours des deux dernières années", 
+                                         "Oui" = "Engagée"),
+                              breaks = c("Oui", "Oui, au cours des deux dernières années", "Non, mais c’est prévu dans les 12 prochains mois")) +
+            geom_text(aes(x = cat, y = Pourcentage/2, label = ifelse(type == "2022", paste0(Pourcentage, "%"), NA)), 
+                       size = 6, hjust = 0, color = "white") +
+            geom_text(aes(x = cat, y = labelpos, label = paste0(Pourcentage, "%")), 
+                       size = 6, hjust = 0, color = "white") + 
             scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
             ylim(0, max(comp_editions$Pourcentage)+14) +
             coord_flip() +
             facet_wrap(~type) +
             theme_classic() +
             custom_theme() +
-            theme(legend.position = "none",
-                  #plot.title = element_text(hjust = 1),
+            theme(legend.position = "top",
+                  legend.title = element_text(family = font, size = 20, color = "#222222"),
                   panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
-                  panel.grid.major.y = ggplot2::element_blank())
+                  panel.grid.major.y = ggplot2::element_blank()) +
+            guides(fill = guide_legend(ncol = 1, title = "Expérimentation"))
 graph
 ggsave(file = glue("../Graphiques/PNG/Graphique général n°4 (comparaison 2022-2023) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.png"), plot = graph, width = 14)
 ggsave(file = glue("../Graphiques/SVG/Graphique général n°4 (comparaison 2022-2023) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.svg"), plot = graph, width = 14)
