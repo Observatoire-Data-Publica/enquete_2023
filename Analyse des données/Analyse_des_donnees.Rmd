@@ -113,9 +113,13 @@ all_stat_2022 <- read_csv("../Data/All_statistics_2022.csv") |> ungroup() |>
                     mutate(Structure = str_replace_all(Structure, c("Moins de 3 500 habitants" = "Communes de moins de 3 500 hab.",
                                                                     "Entre 3 500 et 10 000 habitants" = "Communes de 3 500 à 10 000 hab.",
                                                                     "Entre 10 000 et 100 000 habitants" = "Communes de 10 000 à 100 000 hab.",
-                                                                    "Plus de 100 000 habitants" = "Communes de plus de 100 000 hab.")))
+                                                                    "Plus de 100 000 habitants" = "Communes de plus de 100 000 hab.")),
+                           Question = str_extract(Question, "\\s+(.*)"), #remove first word ~ question id
+                           Question = substr(Question, 2, nchar(Question))) #remove white space before question
 # Jointure des stats des 2 éditions
-all_stat <- rbind(all_stat_2022, all_stat_2023)
+all_stat <- rbind(all_stat_2022, all_stat_2023) |> 
+  mutate(Question = str_replace_all(Question, " ", " ")) |> 
+  arrange(Question)
 
 
 # Données répartition des structures par type à échelle nationale
@@ -436,7 +440,67 @@ saving_plot(graph, "Commençons par la protection de la vie privée. Considérez
 + **Comparaison 2022 / 2022**
 
 ```{r}
+# Stats pour graphique
+table <- all_stat |> 
+  filter(Question == "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?" |
+         Question == "Commençons par la protection de la vie privée. Considérez-vous que votre collectivité est en conformité avec le RGPD ?") |> 
+  arrange(Structure, Réponses, Edition) |> 
+  group_by(Structure, Réponses) |> 
+  mutate(ecart = Pourcentage - lag(Pourcentage),
+         Pourcentage = Pourcentage /100) |> 
+  mutate(pos_ecart = case_when(!is.na(ecart) ~ max(Pourcentage) + .02, .default = NA_real_)) |> 
+  filter(Structure == "Total")
 
+
+# Graphique 1
+library(ggtext)
+table |> 
+  mutate(ecart = case_when(ecart >= 0 ~ paste0("+", ecart), .default = as.character(ecart))) |> 
+  ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition)) +
+    geom_bar(stat="identity", width=.6, size = 2, position = position_dodge2(preserve = "single", padding = 0)) +
+    coord_flip() +
+    labs(x = "", y = "Pourcentage des répondants", 
+         subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+         title = stringr::str_wrap("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?", width = 55)) +
+    scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+    scale_y_continuous(labels = scales::percent, limits = c(0, max(table$Pourcentage)+.1)) + # pourcentages
+    scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+    theme_classic() +
+    custom_theme() +
+    theme(legend.position = "none",
+          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+          panel.grid.major.y = ggplot2::element_blank(),
+          plot.subtitle = element_markdown()) +
+    geom_label(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, paste0(ecart, "% par rapport \nà 2022"))), 
+              color = "#333333", size = 4, check_overlap = T, fill = "white", label.size = NA, 
+              hjust = 0)
+
+# Graphique 2
+test <- table |> 
+  mutate(ecart = ecart/100,
+         type_ecart = case_when(ecart >= 0 ~ "positif",
+                                ecart < 0 ~ "negatif",
+                                .default = NA_character_)) |> 
+  select(Structure, Réponses, ecart, type_ecart) |> na.omit() 
+test |> 
+  ggplot(aes(x = Réponses, y = ecart, fill = type_ecart)) +
+    geom_bar(stat="identity", width=.6, size = 2, alpha = .7) +
+    coord_flip() +
+    labs(x = "", y = "Écart en points de pourcentage", 
+         subtitle = "Évolution des réponses entre l'édition 2022 et l'édition 2023",
+         title = stringr::str_wrap("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?", width = 55)) +
+    scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+    scale_y_continuous(labels = scales::percent) + # pourcentages
+    scale_fill_manual(values = c("positif" = "#288a28", "negatif" = "#a81008")) +
+    theme_classic() +
+    custom_theme() +
+    theme(legend.position = "none",
+          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+          panel.grid.major.y = ggplot2::element_blank(),
+          plot.subtitle = element_markdown()) +
+    geom_label(aes(x = Réponses, y = ecart, label = paste0(ecart*100, "%")), 
+              color = "#333333", size = 4, fill = "white", label.size = NA, 
+              hjust = ifelse(test$ecart >= 0, 0, 1))
 ```
 
 
