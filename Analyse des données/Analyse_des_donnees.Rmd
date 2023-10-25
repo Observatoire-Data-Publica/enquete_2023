@@ -44,6 +44,8 @@ htmltools::img(src = "https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/previ
                style = 'position:absolute; top:0; left:-0.5; padding-top:-2px; width:350px;') #padding=taille des espaces autour
 ```
 
+## Informations générales
+
 
 ```{r données}
 # Import de données
@@ -87,9 +89,34 @@ reg <- data_clean_unique |> filter(Catégorie == "Une région") |>
 ```
 
 
-```{r prepa graph}
+```{r prepa graphes}
 # Import des données des stats rassemblés
-all_stat <- read_csv("../Data/All_statistics.csv")
+  # 2023
+all_stat_2023 <- read_csv("../Data/All_statistics_2023.csv") |> 
+  mutate(Edition = "2023")
+# rassemble EPCI (hors métropoles) et métropoles pour correspondre à édition 2022
+epci_met <- all_stat_2023 |> 
+  filter(Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole") |> 
+  pivot_wider(names_from = Structure, values_from = c(Occurrences, `Nombre de réponses`)) |> 
+  mutate(Occurrences = sum(`Occurrences_Un EPCI (hors métropole)`, `Occurrences_Une métropole`, na.rm = T), 
+         `Nombre de réponses` = sum(`Nombre de réponses_Un EPCI (hors métropole)`, `Nombre de réponses_Une métropole`, na.rm = T), 
+         .by = c(Question, Réponses)) |> 
+  distinct(Question, Réponses, Occurrences, `Nombre de réponses`, Edition) |> 
+  mutate(`Effectifs par structure` = 69+36, #EPCI (hors métropoles) + métropoles
+         `Structure` = "Un EPCI",
+         Pourcentage = round(Occurrences/105 *100, 0))
+all_stat_2023 <- rbind(all_stat_2023, epci_met) |> 
+  arrange(Question, Structure) |> 
+  filter(Structure != "Un EPCI (hors métropole)", Structure != "Une métropole")
+  # 2022
+all_stat_2022 <- read_csv("../Data/All_statistics_2022.csv") |> ungroup() |> 
+                    mutate(Structure = str_replace_all(Structure, c("Moins de 3 500 habitants" = "Communes de moins de 3 500 hab.",
+                                                                    "Entre 3 500 et 10 000 habitants" = "Communes de 3 500 à 10 000 hab.",
+                                                                    "Entre 10 000 et 100 000 habitants" = "Communes de 10 000 à 100 000 hab.",
+                                                                    "Plus de 100 000 habitants" = "Communes de plus de 100 000 hab.")))
+# Jointure des stats des 2 éditions
+all_stat <- rbind(all_stat_2022, all_stat_2023)
+
 
 # Données répartition des structures par type à échelle nationale
 prop_nationales <- data.frame(Structure = c("Une commune",
@@ -176,6 +203,37 @@ saving_plot <- function(graph, name) {
   ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 20, height = 15)
 }
 ```
+
+
+
+(in fine combiner avec documentation du tri croisé)
+
+Une comparaison entre les éditions 2022 et 2023 sera présentée pour toutes les questions communes aux deux années. Avant cela, voilà la répartition des répondants par type de structure pour les deux années : 
+
+```{r}
+repartition_structures <- all_stat |> distinct(Structure, `Effectifs par structure`, Edition) |> 
+  pivot_wider(names_from = Edition, values_from = `Effectifs par structure`) |> 
+  mutate(index = case_match(Structure, 
+                            "Une commune" ~ 2,
+                            "Communes de moins de 3 500 hab." ~ 3,
+                            "Communes de 3 500 à 10 000 hab." ~ 4,
+                            "Communes de 10 000 à 100 000 hab." ~ 5,
+                            "Communes de plus de 100 000 hab." ~ 6,
+                            "Un EPCI" ~ 8,
+                            "Un département" ~ 9,
+                            "Une région" ~ 10,
+                            "Autre" ~ 11, 
+                            "Total" ~ 12,
+                            "Total hors communes < 3500 habitants" ~ 13,
+                            "Total pondéré" ~ 14,
+                            .default = 1)) |> 
+  arrange(index) |> select(-index) |> ungroup() |> 
+  filter(Structure != "Total pondéré")
+library(gt)
+repartition_structures |> gt()
+```
+
+
 
 ## Droit des données publiques
 
@@ -264,7 +322,7 @@ stat_qs_simple(13, "Commençons par la protection de la vie privée. Considérez
 ```{r }
 dataviz <- function(nom_col){
     # Fonction graph ensemble
-    dat <- all_stat |> 
+    dat <- all_stat_2023 |> 
         filter(Question == nom_col & Structure == "Total",
                Réponses != "Sans réponse")
     p0 <- dat |> 
@@ -285,7 +343,7 @@ dataviz <- function(nom_col){
                   panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
                   panel.grid.major.y = ggplot2::element_blank())
     # Fonction graph total pondéré
-    dat <- all_stat |> 
+    dat <- all_stat_2023 |> 
         filter(Question == nom_col & Structure == "Total pondéré",
                Réponses != "Sans réponse")
     p0_pond <- dat |> 
@@ -306,7 +364,7 @@ dataviz <- function(nom_col){
                   panel.grid.major.y = ggplot2::element_blank())+
             guides(fill = guide_legend(title = "Légende", ncol = 1))
     # Fonction type de collectivité
-    dat <- all_stat |> 
+    dat <- all_stat_2023 |> 
         filter(Question == nom_col & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre"),
                Réponses != "Sans réponse") |> 
         mutate(Pourcentage = as.numeric(Pourcentage)/100,
@@ -325,7 +383,7 @@ dataviz <- function(nom_col){
                   panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
                   panel.grid.major.y = ggplot2::element_blank())
     # Fonction taille de commune
-    dat <- all_stat |> 
+    dat <- all_stat_2023 |> 
         filter(Question == nom_col & grepl("Communes de", Structure) == TRUE,
                Réponses != "Sans réponse") |> 
         mutate(Pourcentage = as.numeric(Pourcentage)/100,
@@ -373,6 +431,12 @@ dataviz <- function(nom_col){
 }
 dataviz("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 saving_plot(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
+```
+
++ **Comparaison 2022 / 2022**
+
+```{r}
+
 ```
 
 
@@ -569,7 +633,7 @@ saving_plot(graph, "Votre organisation a-t-elle défini une politique en matièr
 **En résumé**
 
 ```{r fig.height=8, fig.width=15}
-dat <- all_stat |> 
+dat <- all_stat_2023 |> 
     filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure == "Total" & Réponses == "Oui, au cours des deux dernières années") |> 
     ungroup() |> 
     mutate(Question = str_extract(Question, "(?<=\\[).*"),
@@ -600,7 +664,7 @@ saving_plot(graph, "Graphique général : domaines dans lesquels une expériment
 
 
 ```{r fig.height=8, fig.width=15}
-dat <- all_stat |> 
+dat <- all_stat_2023 |> 
     filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure == "Total" & (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
     ungroup() |> 
     mutate(Question = str_extract(Question, "(?<=\\[).*"),
@@ -639,7 +703,7 @@ saving_plot(graph, "Graphique général n°2 : domaines dans lesquels une expér
 
 
 ```{r fig.height=8, fig.width=15}
-dat <- all_stat |> 
+dat <- all_stat_2023 |> 
     filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & (Structure != "Communes de moins de 3 500 hab.") & (Structure != "Total") & (Structure != "Autre") & (Structure != "Une commune") & (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
     ungroup() |> 
     mutate(Question = str_extract(Question, "(?<=\\[).*"),
@@ -697,7 +761,7 @@ dat22 <- data_2022 |>
            Pourcentage = round(n / 185 *100, 0),
            type = "2022") |> 
     select(-n) |> mutate(Réponses = "Oui", labelpos = NA_real_)
-dat23 <- all_stat |> 
+dat23 <- all_stat_2023 |> 
     filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & 
              Structure != "Communes de moins de 3 500 hab." & Structure != "Total" & Structure != "Une commune" & Structure != "Total pondéré" & 
              (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 

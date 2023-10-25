@@ -1243,22 +1243,31 @@ table_recap_multiple <- function(min_col, max_col){
 # Application des fonctions créées
     # Qs simples
 library(purrr)
-purrr::map(.x = c(13:16, 18, 26:38, 40:44, 46, 49, 55, 66:68, 70, 84:90, 93:96, 99:108, 111:113, 115, 139, 162:178, 180, 181, 188:197),
+purrr::map(.x = c(13:16, 18, 46, 49, 55, 70, 111:113, 115, 139, 162, 174:178, 180, 181, 197),
           .f = ~table_recap_simple(.x))
 table_qs_simples <- rbind(lapply(ls(pattern="^all_stat_"), function(x) get(x))) |> 
     bind_rows() |> 
     mutate(Réponses = replace_na(Réponses, "Sans réponse"))
     # Qs multiples
 table_recap_multiple(19,22)
+table_recap_multiple(26,38)
+table_recap_multiple(40,44)
 table_recap_multiple(50,53)
 table_recap_multiple(58,63)
+table_recap_multiple(66,68)
 table_recap_multiple(71,75)
 table_recap_multiple(77,82)
+table_recap_multiple(84,90)
+table_recap_multiple(93, 96)
+table_recap_multiple(99,108)
 table_recap_multiple(116,121)
 table_recap_multiple(123,136)
 table_recap_multiple(140,145)
 table_recap_multiple(147,160)
+table_recap_multiple(163,169)
+table_recap_multiple(170,173)
 table_recap_multiple(182,186)
+table_recap_multiple(188,196)
 table_recap_multiple(198,203)
 table_recap_multiple(205,213)
 table_qs_multiple <- rbind(lapply(ls(pattern="^all_stat_multiples_"), function(x) get(x))) |>
@@ -1278,9 +1287,12 @@ tot_plus3500 <- table_recap_stat |>
          `Structure` = "Total hors communes < 3500 habitants",
          Pourcentage = round(Occurrences/182 *100, 0))
 table_recap_stat <- rbind(table_recap_stat, tot_plus3500) |> 
-  arrange(Question, Structure)
+  arrange(Question, Structure) |> 
+  #quelques nb totales de communes ne sont pas 30, on remplace (il n'y a pas eu d'incidence sur le pourcentage, bien calculé avec occurrences/30)
+  mutate(`Effectifs par structure` = case_when(Structure == "Une commune" ~ 30,
+                                               .default = `Effectifs par structure`))
     # Export
-table_recap_stat |> rio::export("../Data/All_statistics.csv")
+table_recap_stat |> rio::export("../Data/All_statistics_2023.csv")
 ```
 
 
@@ -1289,7 +1301,7 @@ table_recap_stat |> rio::export("../Data/All_statistics.csv")
 
 ```{r all_stat_2022, eval=FALSE, include=FALSE}
 # On modifie la variable de type de structure pour correspondre à l'édition 2023
-data_2022 <- data_2022 |> 
+data_2022 <- readxl::read_xlsx("../Data/data_enquete_2022.xlsx", "Resultats Bruts") |> 
   mutate(Catégorie = str_replace_all(`Vousconnaitre1. Votre collectivité est :`, "Un EPCI \\(communauté de communes, communauté urbaine ou d’agglomération, métropole\\)", "Un EPCI"),
          Catégorie2 = case_when(is.na(`G1Q00004. Quel est le nombre d’habitants de votre commune ?`) ~ Catégorie,
                                 .default = `G1Q00004. Quel est le nombre d’habitants de votre commune ?`),
@@ -1486,7 +1498,10 @@ tot_plus3500 <- table_recap_stat |>
          Pourcentage = round(Occurrences/216 *100, 0))
 table_recap_stat <- rbind(table_recap_stat, tot_plus3500) |> 
   arrange(Question, Structure) |> 
-  mutate(Edition = "2022")
+  mutate(Edition = "2022") |> 
+  #quelques nb totales de communes ne sont pas 140, on remplace (il n'y a pas eu d'incidence sur le pourcentage, bien calculé avec occurrences/30)
+  mutate(`Effectifs par structure` = case_when(Structure == "Une commune" ~ 140,
+                                               .default = `Effectifs par structure`))
     # Export
 table_recap_stat |> rio::export("../Data/All_statistics_2022.csv")
 ```
