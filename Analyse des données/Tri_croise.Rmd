@@ -8,6 +8,7 @@ output:
       theme: paper
       toc: true
       toc_depth: 2
+      number_sections: true
       collapsed: true
       smooth_scroll: true
       css: styles.css
@@ -1243,31 +1244,22 @@ table_recap_multiple <- function(min_col, max_col){
 # Application des fonctions créées
     # Qs simples
 library(purrr)
-purrr::map(.x = c(13:16, 18, 46, 49, 55, 70, 111:113, 115, 139, 162, 174:178, 180, 181, 197),
+purrr::map(.x = c(13:16, 18, 26:38, 40:44, 46, 49, 55, 66:68, 70, 84:90, 93:96, 99:108, 111:113, 115, 139, 162:173, 174:178, 180, 181, 188:197),
           .f = ~table_recap_simple(.x))
 table_qs_simples <- rbind(lapply(ls(pattern="^all_stat_"), function(x) get(x))) |> 
     bind_rows() |> 
     mutate(Réponses = replace_na(Réponses, "Sans réponse"))
     # Qs multiples
 table_recap_multiple(19,22)
-table_recap_multiple(26,38)
-table_recap_multiple(40,44)
 table_recap_multiple(50,53)
 table_recap_multiple(58,63)
-table_recap_multiple(66,68)
 table_recap_multiple(71,75)
 table_recap_multiple(77,82)
-table_recap_multiple(84,90)
-table_recap_multiple(93, 96)
-table_recap_multiple(99,108)
 table_recap_multiple(116,121)
 table_recap_multiple(123,136)
 table_recap_multiple(140,145)
 table_recap_multiple(147,160)
-table_recap_multiple(163,169)
-table_recap_multiple(170,173)
 table_recap_multiple(182,186)
-table_recap_multiple(188,196)
 table_recap_multiple(198,203)
 table_recap_multiple(205,213)
 table_qs_multiple <- rbind(lapply(ls(pattern="^all_stat_multiples_"), function(x) get(x))) |>
@@ -1464,22 +1456,17 @@ table_recap_multiple22 <- function(min_col, max_col){
 # Application des fonctions créées - édition 2022
     # Qs simples
 library(purrr)
-purrr::map(.x = c(20:23, 29, 48, 52, 54, 56, 61, 91, 93:95, 97, 98, 100, 101, 105, 107, 113:116, 134),
+purrr::map(.x = c(20:23, 29, 33:48, 52, 54, 56, 61, 82:89, 91, 93:95, 97, 98, 100, 101, 105, 107:116, 122:130, 134),
           .f = ~table_recap_simple22(.x))
 table_qs_simples <- rbind(lapply(ls(pattern="^all_stat_"), function(x) get(x))) |> 
     bind_rows() |> 
     mutate(Réponses = replace_na(Réponses, "Sans réponse"))
     # Qs multiples
 table_recap_multiple22(24,27)
-table_recap_multiple22(33,44)
-table_recap_multiple22(45,47)
 table_recap_multiple22(62,66)
 table_recap_multiple22(68,73)
 table_recap_multiple22(75,78)
-table_recap_multiple22(82,89)
-table_recap_multiple22(108,112)
 table_recap_multiple22(117,120)
-table_recap_multiple22(122,130)
 table_qs_multiple <- rbind(lapply(ls(pattern="^all_stat_multiples_"), function(x) get(x))) |>
     bind_rows() |> 
     mutate(Réponses = replace_na(Réponses, "Sans réponse"))

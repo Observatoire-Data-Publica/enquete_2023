@@ -9,6 +9,7 @@ output:
       toc: true
       toc_float: true
       toc_depth: 5
+      number_sections: true
       collapsed: true
       smooth_scroll: true
       css: styles.css
@@ -115,7 +116,9 @@ all_stat_2022 <- read_csv("../Data/All_statistics_2022.csv") |> ungroup() |>
                                                                     "Entre 10 000 et 100 000 habitants" = "Communes de 10 000 à 100 000 hab.",
                                                                     "Plus de 100 000 habitants" = "Communes de plus de 100 000 hab.")),
                            Question = str_extract(Question, "\\s+(.*)"), #remove first word ~ question id
-                           Question = substr(Question, 2, nchar(Question))) #remove white space before question
+                           Question = substr(Question, 2, nchar(Question)), #remove white space before question
+                           Réponses = case_when(grepl("\\[", Réponses) == TRUE ~ str_extract(Réponses, "(?<=\\[).*"),
+                                                .default = Réponses)) 
 # Jointure des stats des 2 éditions
 all_stat <- rbind(all_stat_2022, all_stat_2023) |> 
   mutate(Question = str_replace_all(Question, " ", " ")) |> 
@@ -205,6 +208,10 @@ library(glue)
 saving_plot <- function(graph, name) {
   ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph, width = 20, height = 15)
   ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 20, height = 15)
+}
+saving_plot_comp <- function(graph, name) {
+  ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph, width = 25, height = 15)
+  ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 25, height = 15)
 }
 ```
 
@@ -437,71 +444,145 @@ dataviz("Commençons par la protection de la vie privée. Considérez-vous que v
 saving_plot(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
 
-+ **Comparaison 2022 / 2022**
++ **Comparaison 2022 / 2023**
 
-```{r}
-# Stats pour graphique
-table <- all_stat |> 
-  filter(Question == "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?" |
-         Question == "Commençons par la protection de la vie privée. Considérez-vous que votre collectivité est en conformité avec le RGPD ?") |> 
-  arrange(Structure, Réponses, Edition) |> 
-  group_by(Structure, Réponses) |> 
-  mutate(ecart = Pourcentage - lag(Pourcentage),
-         Pourcentage = Pourcentage /100) |> 
-  mutate(pos_ecart = case_when(!is.na(ecart) ~ max(Pourcentage) + .02, .default = NA_real_)) |> 
-  filter(Structure == "Total")
-
-
-# Graphique 1
+```{r fig.height=14, fig.width=20}
 library(ggtext)
-table |> 
-  mutate(ecart = case_when(ecart >= 0 ~ paste0("+", ecart), .default = as.character(ecart))) |> 
-  ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition)) +
-    geom_bar(stat="identity", width=.6, size = 2, position = position_dodge2(preserve = "single", padding = 0)) +
-    coord_flip() +
-    labs(x = "", y = "Pourcentage des répondants", 
-         subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
-         title = stringr::str_wrap("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?", width = 55)) +
-    scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
-    scale_y_continuous(labels = scales::percent, limits = c(0, max(table$Pourcentage)+.1)) + # pourcentages
-    scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
-    theme_classic() +
-    custom_theme() +
-    theme(legend.position = "none",
-          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
-          panel.grid.major.y = ggplot2::element_blank(),
-          plot.subtitle = element_markdown()) +
-    geom_label(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, paste0(ecart, "% par rapport \nà 2022"))), 
-              color = "#333333", size = 4, check_overlap = T, fill = "white", label.size = NA, 
-              hjust = 0)
+library(plotly)
+library(ggiraph)
 
-# Graphique 2
-test <- table |> 
-  mutate(ecart = ecart/100,
-         type_ecart = case_when(ecart >= 0 ~ "positif",
-                                ecart < 0 ~ "negatif",
-                                .default = NA_character_)) |> 
-  select(Structure, Réponses, ecart, type_ecart) |> na.omit() 
-test |> 
-  ggplot(aes(x = Réponses, y = ecart, fill = type_ecart)) +
-    geom_bar(stat="identity", width=.6, size = 2, alpha = .7) +
-    coord_flip() +
-    labs(x = "", y = "Écart en points de pourcentage", 
-         subtitle = "Évolution des réponses entre l'édition 2022 et l'édition 2023",
-         title = stringr::str_wrap("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?", width = 55)) +
-    scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
-    scale_y_continuous(labels = scales::percent) + # pourcentages
-    scale_fill_manual(values = c("positif" = "#288a28", "negatif" = "#a81008")) +
-    theme_classic() +
-    custom_theme() +
-    theme(legend.position = "none",
-          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
-          panel.grid.major.y = ggplot2::element_blank(),
-          plot.subtitle = element_markdown()) +
-    geom_label(aes(x = Réponses, y = ecart, label = paste0(ecart*100, "%")), 
-              color = "#333333", size = 4, fill = "white", label.size = NA, 
-              hjust = ifelse(test$ecart >= 0, 0, 1))
+dataviz_comp <- function(nom_col22, nom_col23){
+  # Stats pour graphique
+  table_all <- all_stat |> 
+    filter(Question == nom_col22 | Question == nom_col23) |> 
+    arrange(Structure, Réponses, Edition) |> 
+    group_by(Structure, Réponses) |> 
+    mutate(ecart = Pourcentage - lag(Pourcentage),
+           Pourcentage = Pourcentage /100) |> 
+    mutate(pos_ecart = case_when(!is.na(ecart) ~ max(Pourcentage) + .02, .default = NA_real_)) |> 
+    mutate(ecart = case_when(ecart >= 0 ~ paste0("+", ecart), .default = as.character(ecart)))
+    
+  
+  # Graphique Total
+    # data
+  table_total <- table_all |> 
+    filter(Structure == "Total")
+    # viz
+  graph_total <- table_total |> 
+    ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition,
+               tooltip = paste0(Pourcentage*100, "% en ", Edition))) +
+      geom_bar_interactive(stat="identity", width=.6, size = 2, alpha = .9, position = position_dodge2(preserve = "single", padding = 0)) +
+      coord_flip() +
+      labs(x = "", y = "Pourcentage des répondants", 
+           subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+           title = "Toutes les collectivités") +
+      scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+      scale_y_continuous(labels = scales::percent, limits = c(0, max(table_total$Pourcentage)+.5*max(table_total$Pourcentage))) + # pourcentages
+      scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+      theme_classic() +
+      custom_theme() +
+      theme(legend.position = "none",
+            panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+            panel.grid.major.y = ggplot2::element_blank(),
+            plot.subtitle = element_markdown()) +
+      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, paste0(ecart, "% par rapport \nà 2022"))), 
+                color = "#333333", size = 5, fill = "white", label.size = NA, 
+                hjust = 0)
+  #girafe(print(graph_total), width_svg = 11, height_svg = 7)
+  graph_total
+  
+  
+  # Graphique Total hors communes < 3500 hab.
+    # data
+  table_total_plus3500 <- table_all |> 
+    filter(Structure == "Total hors communes < 3500 habitants")
+    # viz
+  graph_total_plus3500 <- table_total_plus3500 |> 
+    ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition,
+               tooltip = paste0(Pourcentage*100, "% en ", Edition))) +
+      geom_bar_interactive(stat="identity", width=.6, size = 2, alpha = .9, position = position_dodge2(preserve = "single", padding = 0)) +
+      coord_flip() +
+      labs(x = "", y = "Pourcentage des répondants", 
+           subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+           title = "Collectivités hors communes de moins \nde 3500 habitants") +
+      scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+      scale_y_continuous(labels = scales::percent, limits = c(0, max(table_total$Pourcentage)+.5*max(table_total$Pourcentage))) + # pourcentages
+      scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+      theme_classic() +
+      custom_theme() +
+      theme(legend.position = "none",
+            panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+            panel.grid.major.y = ggplot2::element_blank(),
+            plot.subtitle = element_markdown()) +
+      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, paste0(ecart, "% par rapport \nà 2022"))), 
+                color = "#333333", size = 5, fill = "white", label.size = NA, 
+                hjust = 0)
+  #girafe(print(graph_total), width_svg = 11, height_svg = 7)
+  graph_total_plus3500
+
+  # Graphique Collectivités
+  graph_coll <- table_all |> 
+    filter(Structure == "Une commune" | Structure == "Un EPCI" | Structure == "Un département" | 
+             Structure == "Une région" | Structure == "Autre") |> 
+    mutate(Structure = factor(Structure, levels = c("Autre","Une région","Un département","Un EPCI","Une commune"))) |> 
+      ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+                 text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+        geom_bar(position = "fill", color = "white", stat="identity", aes(alpha = Edition != "2023")) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        scale_alpha_manual(values=c(.9, .7)) +
+        facet_wrap(~Edition) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = F)) +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+  #ggplotly(graph_coll, tooltip = "text")
+  graph_coll
+    
+    # Graphique communes
+  graph_comm <- table_all |> 
+    filter(grepl("Communes de", Structure) == TRUE) |> 
+    mutate(Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
+           Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab."))) |> 
+      ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+                 text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+        geom_bar(position = "fill", color = "white", stat="identity", aes(alpha = Edition != "2023")) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        scale_alpha_manual(values=c(.9, .7)) +
+        facet_wrap(~Edition) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = F)) +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank(),
+                  axis.text.x = ggplot2::element_text(size = 18))
+  #ggplotly(graph_comm, tooltip = "text")
+  graph_comm
+
+    # Tous ensemble
+  left_part <- plot_grid(graph_total, graph_total_plus3500, ncol = 2)
+  right_part <- plot_grid(graph_coll, graph_comm, ncol = 2)
+  all <- plot_grid(left_part, right_part, ncol = 1)
+  grid::grid.draw(all)
+  #girafe(print(graph_total))
+  #right_part <- subplot(G1, G2, nrows = 2)
+  #right_part
+    # Save graphe
+  assign("graph", all, envir = .GlobalEnv)
+}
+dataviz_comp("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?",
+             "Commençons par la protection de la vie privée. Considérez-vous que votre collectivité est en conformité avec le RGPD ?")
+saving_plot_comp(graph, "Comparaison 2022-2023 : Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
+
 
 
 ### Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?
@@ -519,6 +600,13 @@ dataviz("Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO
 saving_plot(graph, "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp("Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?",
+             "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+saving_plot_comp(graph, "Comparaison 2022-2023 : Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+```
 
 ### Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?
 
@@ -536,6 +624,15 @@ dataviz("Afin de respecter le RGPD, avez-vous modifié des processus de gestion 
 saving_plot(graph, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp("Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de la collectivité ?",
+             "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
+saving_plot_comp(graph, "Comparaison 2022-2023 : Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
+```
+
+
 ### De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?
 
 + **Statistiques**
@@ -550,6 +647,15 @@ stat_qs_simple(18, "De manière générale, avez-vous mis en place des clauses j
 dataviz("De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 saving_plot(graph, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp("De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?",
+             "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
+saving_plot_comp(graph, "Comparaison 2022-2023 : De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
+```
+
 
 
 
@@ -669,6 +775,15 @@ saving_plot(graph, "Quels sont le ou les domaines concernés par ces clauses ?"
 ```
 
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp("Quels sont le ou les domaines concernés par ces clauses ?",
+             "Quels sont le ou les domaines concernés par ces clauses ?")
+saving_plot_comp(graph, "Comparaison 2022-2023 : Quels sont le ou les domaines concernés par ces clauses ?")
+```
+
+
 
 ### La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?
 
@@ -684,6 +799,15 @@ stat_qs_simple(16, "La question de la souveraineté numérique préoccupe de plu
 ```{r}
 dataviz("La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 saving_plot(graph, "Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
+```
+
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp("La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre collectivité a-t-elle défini une politique en matière de souveraineté publique sur les données ?",
+             "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
+saving_plot_comp(graph, "Comparaison 2022-2023 : Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 ```
 
 
@@ -895,6 +1019,15 @@ stat_qs_simple(26, "Pour chacun de ces domaines, pouvez-vous préciser si votre 
 ```{r}
 dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
+```
+
+
++ **Comparaison 2022 / 2023**
+
+```{r eval=FALSE, fig.height=14, fig.width=20, include=FALSE}
+dataviz_comp("La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre collectivité a-t-elle défini une politique en matière de souveraineté publique sur les données ?",
+             "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
+saving_plot_comp(graph, "Comparaison 2022-2023 : La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 ```
 
 
@@ -2422,4 +2555,33 @@ stat_qs_multiple(205, 213, "Concernant les thématiques de l’inclusion et de l
 #saving_plot(graph, "Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants")
 ```
 
+
+```{r brouillon, eval=FALSE, include=FALSE}
+# Dataviz n°2 comparaison 2022-2023 (montrant seulement les écarts en pourcentage)
+test <- table |> 
+  mutate(ecart = ecart/100,
+         type_ecart = case_when(ecart >= 0 ~ "positif",
+                                ecart < 0 ~ "negatif",
+                                .default = NA_character_)) |> 
+  select(Structure, Réponses, ecart, type_ecart) |> na.omit() 
+test |> 
+  ggplot(aes(x = Réponses, y = ecart, fill = type_ecart)) +
+    geom_bar(stat="identity", width=.6, size = 2, alpha = .7) +
+    coord_flip() +
+    labs(x = "", y = "Écart en points de pourcentage", 
+         subtitle = "Évolution des réponses entre l'édition 2022 et l'édition 2023",
+         title = stringr::str_wrap("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?", width = 55)) +
+    scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+    scale_y_continuous(labels = scales::percent) + # pourcentages
+    scale_fill_manual(values = c("positif" = "#288a28", "negatif" = "#a81008")) +
+    theme_classic() +
+    custom_theme() +
+    theme(legend.position = "none",
+          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+          panel.grid.major.y = ggplot2::element_blank(),
+          plot.subtitle = element_markdown()) +
+    geom_label(aes(x = Réponses, y = ecart, label = paste0(ecart*100, "%")), 
+              color = "#333333", size = 4, fill = "white", label.size = NA, 
+              hjust = ifelse(test$ecart >= 0, 0, 1))
+```
 
