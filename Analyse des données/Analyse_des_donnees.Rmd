@@ -45,7 +45,7 @@ htmltools::img(src = "https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/previ
                style = 'position:absolute; top:0; left:-0.5; padding-top:-2px; width:350px;') #padding=taille des espaces autour
 ```
 
-## Informations générales
+# Informations générales
 
 
 ```{r données}
@@ -246,9 +246,9 @@ repartition_structures |> gt()
 
 
 
-## Droit des données publiques
+# Droit des données publiques
 
-### Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
+## Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
 
 + **Statistiques**
 
@@ -585,7 +585,7 @@ saving_plot_comp(graph, "Comparaison 2022-2023 : Commençons par la protection d
 
 
 
-### Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?
+## Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?
 
 + **Statistiques**
 
@@ -608,7 +608,7 @@ dataviz_comp("Avez-vous nommé un(e) Délégué(e) à la Protection des Données
 saving_plot_comp(graph, "Comparaison 2022-2023 : Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
 ```
 
-### Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?
+## Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?
 
 + **Statistiques**
 
@@ -633,7 +633,7 @@ saving_plot_comp(graph, "Comparaison 2022-2023 : Afin de respecter le RGPD, avez
 ```
 
 
-### De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?
+## De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?
 
 + **Statistiques**
 
@@ -659,7 +659,7 @@ saving_plot_comp(graph, "Comparaison 2022-2023 : De manière générale, avez-vo
 
 
 
-### Quels sont le ou les domaines concernés par ces clauses ?
+## Quels sont le ou les domaines concernés par ces clauses ?
 
 + **Statistiques**
 
@@ -785,7 +785,7 @@ saving_plot_comp(graph, "Comparaison 2022-2023 : Quels sont le ou les domaines c
 
 
 
-### La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?
+## La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?
 
 + **Statistiques**
 
@@ -814,9 +814,9 @@ saving_plot_comp(graph, "Comparaison 2022-2023 : Votre organisation a-t-elle dé
 
 
 
-## Les objectifs et les priorités pour l'utilisation des données
+# Les objectifs et les priorités pour l'utilisation des données
 
-### Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?
+## Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?
 
 **En résumé**
 
@@ -1224,7 +1224,7 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 ```
 
 
-### Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)
+## Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)
 
 
 **Classement 1**
@@ -1314,7 +1314,7 @@ saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou 
 
 
 
-### Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?
+## Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?
 
 * **Statistiques**
 
@@ -1332,9 +1332,9 @@ saving_plot(graph, "Selon-vous, la maîtrise de la donnée constitue-t-elle un o
 
 
 
-## La gouvernance des données
+# La gouvernance des données
 
-### Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ?
+## Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ?
 
 * **Statistiques**
 
@@ -1350,7 +1350,7 @@ saving_plot(graph, "Votre structure a-t-elle défini des règles de gouvernance 
 ```
 
 
-### Pouvez-vous préciser quelles sont ces règles ?
+## Pouvez-vous préciser quelles sont ces règles ?
 
 * **Statistiques**
 
@@ -1367,7 +1367,7 @@ saving_plot(graph, "Pouvez-vous préciser quelles sont ces règles ?")
 
 
 
-### Votre structure a-t-elle adopté une charte éthique de la donnée ?
+## Votre structure a-t-elle adopté une charte éthique de la donnée ?
 
 * **Statistiques**
 
@@ -1384,7 +1384,7 @@ saving_plot(graph, "Votre structure a-t-elle adopté une charte éthique de la d
 
 
 
-### La structure a-t-elle associé des acteurs externes à la définition de ces règles de gouvernance ?
+## La structure a-t-elle associé des acteurs externes à la définition de ces règles de gouvernance ?
 
 * **Statistiques**
 
@@ -1402,7 +1402,7 @@ saving_plot(graph, "La structure a-t-elle associé des acteurs externes à la d�
 
 
 
-### Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?
+## Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?
 
 **Des plateformes générales de partage et d'accès aux données locales (ex : plateforme OpenDataSoft avec accès privés, plateforme Dawex…)**
 
@@ -1453,10 +1453,10 @@ saving_plot(graph, "Votre structure a-t-elle mis en place des systèmes d’éch
 
 
 
-## Le management de la donnée
+# Le management de la donnée
 
 
-### Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?
+## Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?
 
 * **Statistiques**
 
@@ -1473,7 +1473,7 @@ saving_plot(graph, "Comment estimez-vous le niveau d’acculturation de votre st
 
 
 
-### Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?
+## Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?
 
 * **Statistiques**
 
@@ -1490,7 +1490,7 @@ saving_plot(graph, "Quels sont, selon vous, les principaux obstacles à la diffu
 
 
 
-### En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?
+## En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?
 
 * **Statistiques**
 
@@ -1507,7 +1507,7 @@ saving_plot(graph, "En matière de formation sur la gestion des données, quels 
 
 
 
-### Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est
+## Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est
 
 
 **Direction générale**
@@ -1629,7 +1629,7 @@ saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire
 
 
 
-### Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?
+## Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?
 
 **Comité data**
 
@@ -1697,7 +1697,7 @@ saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la don
 
 
 
-### Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?
+## Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?
 
 **Un Assistant à la maîtrise d’ouvrage (AMO)**
 
@@ -1860,10 +1860,9 @@ saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous,
 
 
 
+# L’ouverture et la transparence
 
-## L’ouverture et la transparence
-
-### Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?
+## Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?
 
 * **Statistiques**
 
@@ -1880,7 +1879,7 @@ saving_plot(graph, "Pensez-vous que les services de votre structure sont bien in
 
 
 
-### Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?
+## Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?
 
 * **Statistiques**
 
@@ -1897,7 +1896,7 @@ saving_plot(graph, "Depuis le 1er juillet 2020, les collectivités sont égaleme
 
 
 
-### Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?
+## Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?
 
 * **Statistiques**
 
@@ -1915,9 +1914,9 @@ saving_plot(graph, "Votre structure a-t-elle conduit des actions pour mettre en 
 
 
 
-## L'intelligence artificielle
+# L'intelligence artificielle
 
-### Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?
+## Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?
 
 * **Statistiques**
 
@@ -1934,7 +1933,7 @@ saving_plot(graph, "Votre structure a-t-elle déjà mis en place des projets ou 
 
 
 
-### À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?
+## À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?
 
 * **Statistiques**
 
@@ -1951,7 +1950,7 @@ saving_plot(graph, "À quel type de technique d’intelligence artificielle votr
 
 
 
-### Quel(s) est (sont) le(s) domaine(s) concerné(s) ?
+## Quel(s) est (sont) le(s) domaine(s) concerné(s) ?
 
 * **Statistiques**
 
@@ -1969,7 +1968,7 @@ stat_qs_multiple(123, 136, "Quel(s) est (sont) le(s) domaine(s) concerné(s) ?")
 
 
 
-### Envisagez-vous de déployer des projets ou expérimentations recourant à de l’IA dans les 12 prochains mois ?
+## Envisagez-vous de déployer des projets ou expérimentations recourant à de l’IA dans les 12 prochains mois ?
 
 * **Statistiques**
 
@@ -1986,7 +1985,7 @@ saving_plot(graph, "Envisagez-vous de déployer des projets ou expérimentations
 
 
 
-### À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?
+## À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?
 
 * **Statistiques**
 
@@ -2003,7 +2002,7 @@ saving_plot(graph, "À quel type de technique d’intelligence artificielle votr
 
 
 
-### Quel(s) sera (seront) le(s) domaine(s) concerné(s) ?
+## Quel(s) sera (seront) le(s) domaine(s) concerné(s) ?
 
 * **Statistiques**
 
@@ -2020,9 +2019,9 @@ stat_qs_multiple(147, 160, "Quel(s) sera (seront) le(s) domaine(s) concerné(s) 
 
 
 
-## Les enjeux techniques de la gestion des données
+# Les enjeux techniques de la gestion des données
 
-### Aujourd’hui, les données de votre structure sont majoritairement hébergées
+## Aujourd’hui, les données de votre structure sont majoritairement hébergées
 
 * **Statistiques**
 
@@ -2039,7 +2038,7 @@ saving_plot(graph, "Aujourd’hui, les données de votre structure sont majorita
 
 
 
-### Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ?
+## Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ?
 
 
 **Plateforme de données (ingestion, stockage, traitement, analyse  et visualisation de données)**
@@ -2161,7 +2160,7 @@ saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivante
 
 
 
-### Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants
+## Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants
 
 
 **Une plateforme régionale d’information géographique**
@@ -2229,7 +2228,7 @@ saving_plot(graph, "Votre structure a-t-elle mis en place des technologies mutua
 
 
 
-### Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs).   Pour le choix de ses outils et logiciels, votre structure :
+## Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs).   Pour le choix de ses outils et logiciels, votre structure :
 
 * **Statistiques**
 
@@ -2245,7 +2244,7 @@ saving_plot(graph, "Certaines structures attachent une importance particulière 
 ```
 
 
-### Lorsqu'une alternative open source est identifiée :
+## Lorsqu'une alternative open source est identifiée :
 
 * **Statistiques**
 
@@ -2261,7 +2260,7 @@ saving_plot(graph, "Lorsqu'une alternative open source est identifiée")
 ```
 
 
-### Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
+## Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
 
 * **Statistiques**
 
@@ -2278,7 +2277,7 @@ saving_plot(graph, "La réversibilité est-elle un critère entrant en compte da
 
 
 
-### L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
+## L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
 
 * **Statistiques**
 
@@ -2296,9 +2295,9 @@ saving_plot(graph, "L’interopérabilité est-elle un critère entrant en compt
 
 
 
-## La cybersécurité
+# La cybersécurité
 
-### Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?
+## Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?
 
 * **Statistiques**
 
@@ -2313,7 +2312,7 @@ dataviz("Votre structure a-t-elle déjà dû faire face à une cyberattaque impo
 saving_plot(graph, "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
 ```
 
-### Pensez-vous que votre structure est exposée à des attaques cyber ?
+## Pensez-vous que votre structure est exposée à des attaques cyber ?
 
 * **Statistiques**
 
@@ -2330,7 +2329,7 @@ saving_plot(graph, "Pensez-vous que votre structure est exposée à des attaques
 
 
 
-### Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?
+## Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?
 
 * **Statistiques**
 
@@ -2347,7 +2346,7 @@ saving_plot(graph, "Comment estimez-vous le niveau de prise en compte du risque 
 
 
 
-### Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?
+## Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?
 
 * **Statistiques**
 
@@ -2364,7 +2363,7 @@ saving_plot(graph, "Quels sont, selon vous, les principaux obstacles à la mise 
 
 
 
-### Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place
+## Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place
 
 
 **Une formation pour les agents et les élus**
@@ -2504,10 +2503,10 @@ saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risqu
 
 
 
-## Le numérique responsable
+# Le numérique responsable
 
 
-### Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?
+## Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?
 
 * **Statistiques**
 
@@ -2524,7 +2523,7 @@ saving_plot(graph, "Votre structure a-t-elle engagé une réflexion sur les enje
 
 
 
-### Cette stratégie aborde-t-elle les thématiques suivantes ?
+## Cette stratégie aborde-t-elle les thématiques suivantes ?
 
 * **Statistiques**
 
@@ -2540,7 +2539,7 @@ saving_plot(graph, "Cette stratégie aborde-t-elle les thématiques suivantes ?"
 ```
 
 
-### Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants
+## Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants
 
 * **Statistiques**
 
