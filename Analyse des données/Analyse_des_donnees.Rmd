@@ -106,7 +106,7 @@ epci_met <- all_stat_2023 |>
   mutate(`Effectifs par structure` = 69+36, #EPCI (hors métropoles) + métropoles
          `Structure` = "Un EPCI",
          Pourcentage = round(Occurrences/105 *100, 0))
-all_stat_2023 <- rbind(all_stat_2023, epci_met) |> 
+all_stat_2023_comp <- rbind(all_stat_2023, epci_met) |> 
   arrange(Question, Structure) |> 
   filter(Structure != "Un EPCI (hors métropole)", Structure != "Une métropole")
   # 2022
@@ -120,7 +120,7 @@ all_stat_2022 <- read_csv("../Data/All_statistics_2022.csv") |> ungroup() |>
                            Réponses = case_when(grepl("\\[", Réponses) == TRUE ~ str_extract(Réponses, "(?<=\\[).*"),
                                                 .default = Réponses)) 
 # Jointure des stats des 2 éditions
-all_stat <- rbind(all_stat_2022, all_stat_2023) |> 
+all_stat <- rbind(all_stat_2022, all_stat_2023_comp) |> 
   mutate(Question = str_replace_all(Question, " ", " ")) |> 
   arrange(Question)
 
@@ -239,7 +239,8 @@ repartition_structures <- all_stat |> distinct(Structure, `Effectifs par structu
                             "Total pondéré" ~ 14,
                             .default = 1)) |> 
   arrange(index) |> select(-index) |> ungroup() |> 
-  filter(Structure != "Total pondéré")
+  filter(Structure != "Total pondéré") |> 
+  select(Structure, `2022`, `2023`)
 library(gt)
 repartition_structures |> gt()
 ```
