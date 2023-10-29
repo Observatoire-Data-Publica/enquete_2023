@@ -210,8 +210,8 @@ saving_plot <- function(graph, name) {
   ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 20, height = 15)
 }
 saving_plot_comp <- function(graph, name) {
-  ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph, width = 25, height = 15)
-  ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 25, height = 15)
+  ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 : {name}.png"), plot = graph, width = 25, height = 15)
+  ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 : {name}.svg"), plot = graph, width = 25, height = 15)
 }
 ```
 
@@ -452,10 +452,10 @@ library(ggtext)
 library(plotly)
 library(ggiraph)
 
-dataviz_comp <- function(nom_col22, nom_col23){
+dataviz_comp <- function(all_stat, nom_col22, nom_col23){
   # Stats pour graphique
   table_all <- all_stat |> 
-    filter(Question == nom_col22 | Question == nom_col23) |> 
+    filter((Question == nom_col22 | Question == nom_col23) & Réponses != "Sans réponse") |> 
     arrange(Structure, Réponses, Edition) |> 
     group_by(Structure, Réponses) |> 
     mutate(ecart = Pourcentage - lag(Pourcentage),
@@ -505,7 +505,7 @@ dataviz_comp <- function(nom_col22, nom_col23){
       coord_flip() +
       labs(x = "", y = "Pourcentage des répondants", 
            subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
-           title = "Collectivités hors communes de moins \nde 3500 habitants") +
+           title = "Total hors communes de moins \nde 3500 habitants") +
       scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
       scale_y_continuous(labels = scales::percent, limits = c(0, max(table_total$Pourcentage)+.5*max(table_total$Pourcentage))) + # pourcentages
       scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
@@ -528,11 +528,10 @@ dataviz_comp <- function(nom_col22, nom_col23){
     mutate(Structure = factor(Structure, levels = c("Autre","Une région","Un département","Un EPCI","Une commune"))) |> 
       ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
                  text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
-        geom_bar(position = "fill", color = "white", stat="identity", aes(alpha = Edition != "2023")) +
+        geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
         labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
         scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
         scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
-        scale_alpha_manual(values=c(.9, .7)) +
         facet_wrap(~Edition) +
         coord_flip() +
         theme_classic() +
@@ -551,11 +550,10 @@ dataviz_comp <- function(nom_col22, nom_col23){
            Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab."))) |> 
       ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
                  text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
-        geom_bar(position = "fill", color = "white", stat="identity", aes(alpha = Edition != "2023")) +
+        geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
         labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
         scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
         scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
-        scale_alpha_manual(values=c(.9, .7)) +
         facet_wrap(~Edition) +
         coord_flip() +
         theme_classic() +
@@ -568,20 +566,43 @@ dataviz_comp <- function(nom_col22, nom_col23){
   #ggplotly(graph_comm, tooltip = "text")
   graph_comm
 
+  # Légende
+  graph_leg <- table_all |> 
+  filter(Structure == "Une commune" | Structure == "Un EPCI" | Structure == "Un département" | 
+           Structure == "Une région" | Structure == "Autre") |> 
+  mutate(Structure = factor(Structure, levels = c("Autre","Une région","Un département","Un EPCI","Une commune"))) |> 
+    ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+               text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+      geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
+      labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+      scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+      scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+      facet_wrap(~Edition) +
+      coord_flip() +
+      theme_classic() +
+      custom_theme() +
+      guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
+      theme(legend.position = "top",
+                panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                panel.grid.major.y = ggplot2::element_blank())
+   legend <- get_legend(graph_leg + theme(legend.box.margin = margin(0, 0, 10, 12)))
+
+     
     # Tous ensemble
   left_part <- plot_grid(graph_total, graph_total_plus3500, ncol = 2)
   right_part <- plot_grid(graph_coll, graph_comm, ncol = 2)
   all <- plot_grid(left_part, right_part, ncol = 1)
-  grid::grid.draw(all)
+  graph <- plot_grid(all, legend, nrow = 2, rel_heights = c(.9, .1))
+  grid::grid.draw(graph)
   #girafe(print(graph_total))
   #right_part <- subplot(G1, G2, nrows = 2)
   #right_part
     # Save graphe
-  assign("graph", all, envir = .GlobalEnv)
+  assign("graph", graph, envir = .GlobalEnv)
 }
-dataviz_comp("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?",
+dataviz_comp(all_stat,"Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?",
              "Commençons par la protection de la vie privée. Considérez-vous que votre collectivité est en conformité avec le RGPD ?")
-saving_plot_comp(graph, "Comparaison 2022-2023 : Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
+saving_plot_comp(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
 
 
@@ -604,9 +625,9 @@ saving_plot(graph, "Avez-vous nommé un(e) Délégué(e) à la Protection des Do
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
-dataviz_comp("Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?",
+dataviz_comp(all_stat,"Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?",
              "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
-saving_plot_comp(graph, "Comparaison 2022-2023 : Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+saving_plot_comp(graph, "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
 ```
 
 ## Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?
@@ -628,9 +649,9 @@ saving_plot(graph, "Afin de respecter le RGPD, avez-vous modifié des processus 
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
-dataviz_comp("Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de la collectivité ?",
+dataviz_comp(all_stat,"Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de la collectivité ?",
              "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
-saving_plot_comp(graph, "Comparaison 2022-2023 : Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
+saving_plot_comp(graph, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 ```
 
 
@@ -652,9 +673,9 @@ saving_plot(graph, "De manière générale, avez-vous mis en place des clauses j
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
-dataviz_comp("De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?",
+dataviz_comp(all_stat,"De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?",
              "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
-saving_plot_comp(graph, "Comparaison 2022-2023 : De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
+saving_plot_comp(graph, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
 
 
@@ -779,9 +800,9 @@ saving_plot(graph, "Quels sont le ou les domaines concernés par ces clauses ?"
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
-dataviz_comp("Quels sont le ou les domaines concernés par ces clauses ?",
+dataviz_comp(all_stat,"Quels sont le ou les domaines concernés par ces clauses ?",
              "Quels sont le ou les domaines concernés par ces clauses ?")
-saving_plot_comp(graph, "Comparaison 2022-2023 : Quels sont le ou les domaines concernés par ces clauses ?")
+saving_plot_comp(graph, "Quels sont le ou les domaines concernés par ces clauses ?")
 ```
 
 
@@ -806,9 +827,9 @@ saving_plot(graph, "Votre organisation a-t-elle défini une politique en matièr
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
-dataviz_comp("La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre collectivité a-t-elle défini une politique en matière de souveraineté publique sur les données ?",
+dataviz_comp(all_stat,"La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre collectivité a-t-elle défini une politique en matière de souveraineté publique sur les données ?",
              "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
-saving_plot_comp(graph, "Comparaison 2022-2023 : Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
+saving_plot_comp(graph, "Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 ```
 
 
@@ -827,18 +848,19 @@ dat <- all_stat_2023 |>
     ungroup() |> 
     mutate(Question = str_extract(Question, "(?<=\\[).*"),
            Question = substr(Question, 1, nchar(Question)-1),
-           Question = fct_reorder(Question, Pourcentage))
+           Question = fct_reorder(Question, Pourcentage),
+           Pourcentage = Pourcentage / 100)
 graph <- dat |> 
     ggplot(aes(y=Pourcentage, x=Question)) + 
             geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9, fill = "#323465") +
             labs(x = "", y = "Pourcentage de réponses", 
                  title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données a été engagée au cours des deux dernières années", width = 55),
                  subtitle = "Toutes les collectivités") +
-            geom_label(aes(x = Question, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
+            geom_label(aes(x = Question, y = Pourcentage+.01, label = paste0(Pourcentage*100, "%")), 
                        size = 8, fill = "white", label.size = NA, hjust = 0) +
             scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
             scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
-            ylim(0, max(dat$Pourcentage)+14) +
+            scale_y_continuous(labels = scales::percent, limits = c(0, .53)) +
             coord_flip() +
             theme_classic() +
             custom_theme() +
@@ -864,6 +886,8 @@ dat <- all_stat_2023 |>
            labelpos = ifelse(Réponses == "Oui, au cours des deux dernières années", 
                              Pourcentage/2, 
                              p_oui + p_non /3),
+           Pourcentage = Pourcentage / 100,
+           labelpos = labelpos / 100,
            .by = Question)
 graph <- dat |> 
     ggplot(aes(y=Pourcentage, x=Question, 
@@ -874,10 +898,10 @@ graph <- dat |>
                  title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données va être ou a déjà été engagée", width = 55),
                  subtitle = "Toutes les collectivités") +
             scale_fill_manual(values = c("#e1b44d", "#323465")) +
-            geom_text(aes(x = Question, y = labelpos, label = paste0(Pourcentage, "%")), 
+            geom_text(aes(x = Question, y = labelpos, label = paste0(Pourcentage*100, "%")), 
                        size = 6, hjust = 0, color = "white") +
             scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
-            ylim(0, max(dat$Pourcentage)+14) +
+            scale_y_continuous(labels = scales::percent) +
             coord_flip() +
             theme_classic() +
             custom_theme() +
@@ -893,19 +917,23 @@ saving_plot(graph, "Graphique général n°2 : domaines dans lesquels une expér
 
 ```{r fig.height=8, fig.width=15}
 dat <- all_stat_2023 |> 
-    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & (Structure != "Communes de moins de 3 500 hab.") & (Structure != "Total") & (Structure != "Autre") & (Structure != "Une commune") & (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
+    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & 
+             (Structure == "Total hors communes < 3500 habitants") & 
+             (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
     ungroup() |> 
     mutate(Question = str_extract(Question, "(?<=\\[).*"),
            Question = substr(Question, 1, nchar(Question)-1),
            Question = fct_reorder(Question, Pourcentage)) |> 
-    mutate(occu_rep_quest = sum(Occurrences, na.rm = TRUE), .by = c(Réponses, Question)) |> 
-    mutate(Pourcentage = round(occu_rep_quest / 107 * 100, 0)) |> #107 = 191 - 75 Autres - 9 communes de moins de 3500 habs 
-    distinct(Question, Réponses, occu_rep_quest, Pourcentage) |> 
+    #mutate(occu_rep_quest = sum(Occurrences, na.rm = TRUE), .by = c(Réponses, Question)) |> 
+    #mutate(Pourcentage = round(occu_rep_quest / 107 * 100, 0)) |> #107 = 191 - 75 Autres - 9 communes de moins de 3500 habs 
+    #distinct(Question, Réponses, occu_rep_quest, Pourcentage) |> 
     mutate(p_oui = Pourcentage[Réponses == "Oui, au cours des deux dernières années"],
            p_non = Pourcentage[Réponses == "Non, mais c’est prévu dans les 12 prochains mois"],
            labelpos = ifelse(Réponses == "Oui, au cours des deux dernières années", 
                              Pourcentage/2, 
                              p_oui + p_non /3),
+           Pourcentage = Pourcentage / 100,
+           labelpos = labelpos / 100,
            .by = Question)
 graph <- dat |> 
     mutate(Question = fct_reorder(Question, Pourcentage)) |> 
@@ -915,12 +943,12 @@ graph <- dat |>
             geom_bar(position="stack", stat="identity", width=.6, size = 1, alpha = .9) +
             labs(x = "", y = "Pourcentage de réponses", 
                  title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données va être ou a déjà été engagée", width = 55),
-                 subtitle = "Collectivités et EPCI sauf communes de moins de 3.500 habitants - édition 2023") +
+                 subtitle = "Total hors communes de moins de 3.500 habitants") +
             scale_fill_manual(values = c("#e1b44d", "#323465")) +
-            geom_text(aes(x = Question, y = labelpos, label = paste0(Pourcentage, "%")), 
+            geom_text(aes(x = Question, y = labelpos, label = paste0(Pourcentage*100, "%")), 
                        size = 6, hjust = 0, color = "white") +
             scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
-            ylim(0, max(dat$Pourcentage)+14) +
+            scale_y_continuous(labels = scales::percent) +
             coord_flip() +
             theme_classic() +
             custom_theme() +
@@ -938,30 +966,25 @@ ggsave(file = glue("../Graphiques/SVG/Graphique général n°3 (sans comm < 3500
 
 ```{r fig.height=10, fig.width=15}
 # Données
-dat22 <- data_2022 |> 
-    filter(`G1Q00004. Quel est le nombre d’habitants de votre commune ?` != "Moins de 3 500 habitants" | is.na(`G1Q00004. Quel est le nombre d’habitants de votre commune ?`),
-           `Vousconnaitre1. Votre collectivité est :` != "Autre") |> 
-    select(33:44) |> 
-    summarise_all(funs(sum(. == "Oui"))) |> 
-    pivot_longer(cols = everything(), names_to = "cat", values_to = "n") |> 
-    mutate(cat = str_extract(cat, "(?<=\\[).*"),
-           cat = str_extract(cat, "(?<=\\[).*"),
-           cat = str_replace_all(cat, "\\]", ""),
-           Pourcentage = round(n / 185 *100, 0),
-           type = "2022") |> 
-    select(-n) |> mutate(Réponses = "Oui", labelpos = NA_real_)
+dat22 <- all_stat_2022 |> 
+    filter(grepl("Au sein de votre collectivité, avez-vous identifié parmi les domaines suivants de nouveaux usages de la donnée qui pourraient être utiles ?", Question) == TRUE & Structure == "Total hors communes < 3500 habitants" & Réponses == "Oui") |> 
+    ungroup() |> 
+    mutate(cat = str_extract(Question, "(?<=\\[).*"),
+           cat = substr(cat, 1, nchar(cat)-1),
+           cat = fct_reorder(cat, Pourcentage)) |> 
+    mutate(type = "2022", labelpos = NA) |> 
+    distinct(cat, Pourcentage, type, Réponses, labelpos)
+
 dat23 <- all_stat_2023 |> 
     filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & 
-             Structure != "Communes de moins de 3 500 hab." & Structure != "Total" & Structure != "Une commune" & Structure != "Total pondéré" & 
+             Structure == "Total hors communes < 3500 habitants" & 
              (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
     filter(Question != "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]") |> #retrait dans la catégorie 'Autre' car non présente en 2022
     ungroup() |> 
     mutate(cat = str_extract(Question, "(?<=\\[).*"),
            cat = substr(cat, 1, nchar(cat)-1),
            cat = fct_reorder(cat, Pourcentage)) |> 
-    mutate(occu_rep_quest = sum(Occurrences, na.rm = TRUE), .by = c(Réponses, cat)) |> 
-    mutate(Pourcentage = round(occu_rep_quest / 107 * 100, 0),
-           type = "2023") |> 
+    mutate(type = "2023") |> 
     distinct(cat, Pourcentage, type, Réponses) |> 
     mutate(p_oui = Pourcentage[Réponses == "Oui, au cours des deux dernières années"],
            p_non = Pourcentage[Réponses == "Non, mais c’est prévu dans les 12 prochains mois"],
@@ -969,8 +992,11 @@ dat23 <- all_stat_2023 |>
                              Pourcentage/2, 
                              p_oui + p_non /3 - 2),
            .by = cat) |> select(-c(p_oui, p_non))
+
 comp_editions <- rbind(dat22, dat23) |> ungroup() |> 
-    mutate(cat = fct_reorder(cat, Pourcentage), .by = type)
+    mutate(cat = fct_reorder(cat, Pourcentage), .by = type) |> 
+    mutate(Pourcentage = Pourcentage / 100,
+           labelpos = labelpos / 100)
 
 # Graphique
 graph <- comp_editions |> 
@@ -978,7 +1004,7 @@ graph <- comp_editions |>
             geom_bar(position="stack", stat="identity", width=.6, size = 1, alpha = .9) +
             labs(x = "", y = "Pourcentage de réponses", 
                  title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données a été engagée au cours des deux dernières années ou va l'être dans les 12 prochains mois", width = 55),
-                 subtitle = "Collectivités et EPCI sauf communes de moins de 3.500 habitants") +
+                 subtitle = "Total hors communes de moins de 3.500 habitants") +
             scale_fill_manual(values = c("Non, mais c’est prévu dans les 12 prochains mois" = "#e1b44d", 
                                          "Oui, au cours des deux dernières années" = "#323465", 
                                          "Oui" = "#33bbc9"),
@@ -986,12 +1012,12 @@ graph <- comp_editions |>
                                          "Oui, au cours des deux dernières années" = "Engagée au cours des deux dernières années", 
                                          "Oui" = "Engagée"),
                               breaks = c("Oui", "Oui, au cours des deux dernières années", "Non, mais c’est prévu dans les 12 prochains mois")) +
-            geom_text(aes(x = cat, y = Pourcentage/2, label = ifelse(type == "2022", paste0(Pourcentage, "%"), NA)), 
+            geom_text(aes(x = cat, y = Pourcentage/2, label = ifelse(type == "2022", paste0(Pourcentage*100, "%"), NA)), 
                        size = 6, hjust = 0, color = "white") +
-            geom_text(aes(x = cat, y = labelpos, label = paste0(Pourcentage, "%")), 
+            geom_text(aes(x = cat, y = labelpos, label = paste0(Pourcentage*100, "%")), 
                        size = 6, hjust = 0, color = "white") + 
             scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
-            ylim(0, max(comp_editions$Pourcentage)+14) +
+            scale_y_continuous(labels = scales::percent) +
             coord_flip() +
             facet_wrap(~type) +
             theme_classic() +
@@ -1022,14 +1048,6 @@ dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
 ```
 
-
-+ **Comparaison 2022 / 2023**
-
-```{r eval=FALSE, fig.height=14, fig.width=20, include=FALSE}
-dataviz_comp("La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre collectivité a-t-elle défini une politique en matière de souveraineté publique sur les données ?",
-             "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
-saving_plot_comp(graph, "Comparaison 2022-2023 : La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
-```
 
 
 **Mobilité**
@@ -1244,7 +1262,6 @@ saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou 
 ```
 
 
-
 **Classement 2**
 
 * **Statistiques**
@@ -1351,6 +1368,15 @@ saving_plot(graph, "Votre structure a-t-elle défini des règles de gouvernance 
 ```
 
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp(all_stat,"Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ? ",
+             "Votre collectivité a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ? ")
+saving_plot_comp(graph, "Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ?")
+```
+
+
 ## Pouvez-vous préciser quelles sont ces règles ?
 
 * **Statistiques**
@@ -1364,6 +1390,7 @@ stat_qs_multiple(50, 53, "Pouvez-vous préciser quelles sont ces règles ?")
 ```{r}
 dataviz("Pouvez-vous préciser quelles sont ces règles ? ")
 saving_plot(graph, "Pouvez-vous préciser quelles sont ces règles ?")
+# Pas de comparaison avec 2022 : en 2022 c'était un champ libre
 ```
 
 
@@ -1381,6 +1408,15 @@ stat_qs_simple(55, "Votre structure a-t-elle adopté une charte éthique de la d
 ```{r}
 dataviz("Votre structure a-t-elle adopté une charte éthique de la donnée ?")
 saving_plot(graph, "Votre structure a-t-elle adopté une charte éthique de la donnée ?")
+```
+
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp(all_stat,"Votre structure a-t-elle adopté une charte éthique de la donnée ?",
+             "Votre collectivité a-t-elle élaboré une charte éthique de la donnée ?")
+saving_plot_comp(graph, "Votre structure a-t-elle adopté une charte éthique de la donnée ?")
 ```
 
 
@@ -1418,6 +1454,7 @@ stat_qs_simple(66, "Votre structure a-t-elle mis en place des systèmes d’éch
 ```{r}
 dataviz("Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?    [Des plateformes générales de partage et d'accès aux données locales (ex : plateforme OpenDataSoft avec accès privés, plateforme Dawex…)]")
 saving_plot(graph, "Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données ? [Des plateformes générales de partage et d'accès aux données locales (ex : plateforme OpenDataSoft avec accès privés, plateforme Dawex…)]")
+# Pas de comparaison 2022 : pas de catégories (ex: [Des plateformes générales de partage et d'accès aux données locales...) proposées et réponses différentes
 ```
 
 
@@ -1473,6 +1510,15 @@ saving_plot(graph, "Comment estimez-vous le niveau d’acculturation de votre st
 ```
 
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp(all_stat,"Comment estimez-vous le niveau d’acculturation de votre collectivité aux enjeux des données ?",
+             "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
+saving_plot_comp(graph, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
+```
+
+
 
 ## Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?
 
@@ -1488,6 +1534,15 @@ stat_qs_multiple(71, 75, "Quels sont, selon vous, les principaux obstacles à la
 dataviz("Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
 saving_plot(graph, "Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
 ```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp(all_stat,"Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?",
+             "Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
+saving_plot_comp(graph, "Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
+```
+
 
 
 
@@ -1505,6 +1560,15 @@ stat_qs_multiple(77, 82, "En matière de formation sur la gestion des données, 
 dataviz("En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
 saving_plot(graph, "En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
 ```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=17, fig.width=20}
+dataviz_comp(all_stat,"En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre collectivité ?",
+             "En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
+saving_plot_comp(graph, "En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
+```
+
 
 
 
@@ -1526,6 +1590,17 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
+  dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Direction générale]",
+             "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
+saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
+```
+
+
 
 **Direction Informatique**
 
@@ -1541,6 +1616,17 @@ stat_qs_simple(85, "Pour chacune des directions suivantes, pouvez-vous nous dire
 dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
 ```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
+  dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Direction Informatique]",
+             "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
+saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
+```
+
 
 
 
@@ -1559,6 +1645,17 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
+  dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Service d’information géographique (SIG)]",
+             "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)]")
+saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)]")
+```
+
+
 
 
 **Archives**
@@ -1576,6 +1673,15 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
+  dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Archives ]",
+             "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
+saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
+```
 
 
 **Communication**
@@ -1591,6 +1697,16 @@ stat_qs_simple(88, "Pour chacune des directions suivantes, pouvez-vous nous dire
 ```{r}
 dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
+```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
+  dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Communication]",
+             "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
+saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
 ```
 
 
@@ -1610,6 +1726,16 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
+  dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Services techniques]",
+             "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
+saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
+```
+
 
 
 **Ressources humaines**
@@ -1626,6 +1752,17 @@ stat_qs_simple(90, "Pour chacune des directions suivantes, pouvez-vous nous dire
 dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
 ```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
+  dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Ressources humaines]",
+             "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
+saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
+```
+
 
 
 
@@ -1645,7 +1782,9 @@ stat_qs_simple(93, "Dans votre organisation, ces fonctions consacrées à la don
 ```{r}
 dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Comité data]")
 saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Comité data]")
+# Pas de comparaison car question générale en 2022 et détaillé par fonction en 2023 avec plusieurs réponses possibles
 ```
+
 
 
 **Réseau de référent(e)s data**
@@ -1713,6 +1852,7 @@ stat_qs_simple(99, "Avec lesquels de ces partenaires potentiels collaborez-vous,
 ```{r}
 dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un Assistant à la maîtrise d’ouvrage (AMO) ]")
 saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un Assistant à la maîtrise d’ouvrage (AMO) ]")
+# question non posée en 2022
 ```
 
 
@@ -1878,6 +2018,16 @@ dataviz("Pensez-vous que les services de votre structure sont bien informés des
 saving_plot(graph, "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  mutate(Réponses = str_replace_all(Réponses, "Ma collectivité n’est pas concernée par cette obligation", "Ma structure n’est pas concernée par cette obligation")) |> 
+  dataviz_comp("Pensez-vous que les services de votre collectivité sont bien informés des obligations d’open data applicables depuis 2018 à toutes les collectivités de plus de 3 500 habitants ?",
+             "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
+#saving_plot_comp(graph, "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP et notamment les collectivités de plus de 3 500 habitants")
+```
+
 
 
 ## Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?
@@ -1888,11 +2038,20 @@ saving_plot(graph, "Pensez-vous que les services de votre structure sont bien in
 stat_qs_simple(112, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 ```
 
-+ **Visualisation**
++ **Visualisation** 
 
 ```{r}
 dataviz("Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 saving_plot(graph, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
+```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre collectivité sont bien informés de cette obligation légale ?",
+             "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
+saving_plot_comp(graph, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 ```
 
 
@@ -1911,6 +2070,16 @@ stat_qs_simple(113, "Votre structure a-t-elle conduit des actions pour mettre en
 dataviz("Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
 saving_plot(graph, "Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
 ```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Votre collectivité a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?",
+             "Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
+saving_plot_comp(graph, "Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
+```
+
 
 
 
@@ -1932,6 +2101,16 @@ dataviz("Votre structure a-t-elle déjà mis en place des projets ou expériment
 saving_plot(graph, "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Votre collectivité a-t-elle déjà mis en place des expérimentations ayant recours à l’intelligence artificielle ? ",
+             "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
+saving_plot_comp(graph, "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
+```
+
+
 
 
 ## À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?
@@ -1947,6 +2126,7 @@ stat_qs_multiple(116, 121, "À quel type de technique d’intelligence artificie
 ```{r}
 dataviz("À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?")
 saving_plot(graph, "À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?")
+# Question libre en 2022
 ```
 
 
@@ -1964,6 +2144,7 @@ stat_qs_multiple(123, 136, "Quel(s) est (sont) le(s) domaine(s) concerné(s) ?")
 ```{r}
 #dataviz("Quel(s) est (sont) le(s) domaine(s) concerné(s) ?")
 #saving_plot(graph, "Quel(s) est (sont) le(s) domaine(s) concerné(s) ?")
+# Question pas posée en 2022
 ```
 
 
@@ -1982,6 +2163,7 @@ stat_qs_simple(139, "Envisagez-vous de déployer des projets ou expérimentation
 ```{r}
 dataviz("Envisagez-vous de déployer des projets ou expérimentations recourant à de l’IA dans les 12 prochains mois ?")
 saving_plot(graph, "Envisagez-vous de déployer des projets ou expérimentations recourant à de l’IA dans les 12 prochains mois ?")
+# Question pas posée en 2022
 ```
 
 
@@ -1999,6 +2181,7 @@ stat_qs_multiple(140, 145, "À quel type de technique d’intelligence artificie
 ```{r}
 dataviz("À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?")
 saving_plot(graph, "À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?")
+# Question pas posée en 2022
 ```
 
 
@@ -2016,6 +2199,7 @@ stat_qs_multiple(147, 160, "Quel(s) sera (seront) le(s) domaine(s) concerné(s) 
 ```{r}
 #dataviz("Quel(s) sera (seront) le(s) domaine(s) concerné(s) ?")
 #saving_plot(graph, "Quel(s) sera (seront) le(s) domaine(s) concerné(s) ?")
+# Question pas posée en 2022
 ```
 
 
@@ -2037,6 +2221,14 @@ dataviz("Aujourd’hui, les données de votre structure sont majoritairement hé
 saving_plot(graph, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp(all_stat,"Aujourd’hui, les données de votre collectivité sont majoritairement hébergées :",
+             "Aujourd’hui, les données de votre structure sont majoritairement hébergées :")
+saving_plot_comp(graph, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
+```
+
 
 
 ## Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ?
@@ -2055,6 +2247,7 @@ stat_qs_simple(163, "Votre structure a-t-elle déployé les technologies suivant
 ```{r}
 dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Plateforme de données (ingestion, stockage, traitement, analyse  et visualisation de données)]")
 saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Plateforme de données (ingestion, stockage, traitement, analyse  et visualisation de données)]")
+# Question pas trouvée en 2022
 ```
 
 
@@ -2177,6 +2370,7 @@ stat_qs_simple(170, "Votre structure a-t-elle mis en place des technologies mutu
 ```{r}
 dataviz("Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une plateforme régionale d’information géographique]")
 saving_plot(graph, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une plateforme régionale d’information géographique]")
+# Question pas trouvée en 2022
 ```
 
 
@@ -2244,6 +2438,15 @@ dataviz("Certaines structures attachent une importance particulière au caractè
 saving_plot(graph, "Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Pour le choix de ses outils et logiciels, votre structure :")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp(all_stat,"Certaines collectivités locales attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Ce caractère « souverain » peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (c'est-à-dire dont le code informatique est libre de droits et géré par des communautés d'utilisateurs).  Pour le choix de ses outils et logiciels, votre collectivité :",
+             "Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs).   Pour le choix de ses outils et logiciels, votre structure :")
+saving_plot_comp(graph, "Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Pour le choix de ses outils et logiciels, votre structure :")
+```
+
+
 
 ## Lorsqu'une alternative open source est identifiée :
 
@@ -2260,6 +2463,16 @@ dataviz("Lorsqu'une alternative open source est identifiée :")
 saving_plot(graph, "Lorsqu'une alternative open source est identifiée")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  mutate(Réponses = str_replace_all(Réponses, "structure", "collectivité")) |> 
+  dataviz_comp("Lorsqu'une alternative open source est identifiée :",
+             "Lorsqu'une alternative open source est identifiée :")
+saving_plot_comp(graph, "Lorsqu'une alternative open source est identifiée")
+```
+
 
 ## Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
 
@@ -2274,6 +2487,7 @@ stat_qs_simple(176, "Des critères de réversibilité (facilitation de la récup
 ```{r}
 dataviz("Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
 saving_plot(graph, "La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
+# Question pas trouvée en 2022
 ```
 
 
@@ -2292,6 +2506,7 @@ stat_qs_simple(177, "L’interopérabilité est-elle un critère entrant en comp
 ```{r}
 dataviz("L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
 saving_plot(graph, "L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
+# Question pas trouvée en 2022
 ```
 
 
@@ -2313,6 +2528,17 @@ dataviz("Votre structure a-t-elle déjà dû faire face à une cyberattaque impo
 saving_plot(graph, "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Votre collectivité a-t-elle déjà dû faire face à une cyberattaque importante ?",
+               "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
+saving_plot_comp(graph, "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
+```
+
+
+
 ## Pensez-vous que votre structure est exposée à des attaques cyber ?
 
 * **Statistiques**
@@ -2326,6 +2552,15 @@ stat_qs_simple(180, "Pensez-vous que votre structure est exposée à des attaque
 ```{r}
 dataviz("Pensez-vous que votre structure est exposée à des attaques cyber ?")
 saving_plot(graph, "Pensez-vous que votre structure est exposée à des attaques cyber ?")
+```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Pensez-vous que votre collectivité est exposée à des attaques cyber ?",
+               "Pensez-vous que votre structure est exposée à des attaques cyber ?")
+saving_plot_comp(graph, "Pensez-vous que votre structure est exposée à des attaques cyber ?")
 ```
 
 
@@ -2345,6 +2580,16 @@ dataviz("Comment estimez-vous le niveau de prise en compte du risque cyber par v
 saving_plot(graph, "Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  mutate(Réponses = str_replace_all(Réponses, "structure", "collectivité")) |> 
+  dataviz_comp("Comment estimez-vous le niveau de prise en compte du risque cyber par votre collectivité ?",
+               "Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
+saving_plot_comp(graph, "Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
+```
+
 
 
 ## Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?
@@ -2360,6 +2605,15 @@ stat_qs_multiple(182, 186, "Quels sont, selon vous, les principaux obstacles à 
 ```{r}
 dataviz("Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
 saving_plot(graph, "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
+```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Quels sont, selon vous, les principaux obstacles à la diffusion d’outils de sécurité informatique dans votre collectivité ?",
+               "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
+saving_plot_comp(graph, "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
 ```
 
 
@@ -2382,6 +2636,15 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une formation pour les agents et les élus]")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Une formation pour les agents et les élus ]",
+               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une formation pour les agents et les élus]")
+saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une formation pour les agents et les élus]")
+```
+
 **La désignation d’un responsable de sécurité informatique (RSSI ou autre)**
 
 * **Statistiques**
@@ -2395,6 +2658,15 @@ stat_qs_simple(189, "Parmi les mesures suivantes, qui visent à réduire le risq
 ```{r}
 dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
+```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]",
+               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
+saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
 ```
 
 **Une stratégie de sécurité informatique**
@@ -2412,6 +2684,16 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une stratégie de sécurité informatique]")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Une stratégie de sécurité informatique]",
+               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une stratégie de sécurité informatique]")
+saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une stratégie de sécurité informatique]")
+```
+
+
 **Un processus de certification (ISO 27001)**
 
 * **Statistiques**
@@ -2426,6 +2708,16 @@ stat_qs_simple(191, "Parmi les mesures suivantes, qui visent à réduire le risq
 dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
 ```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Un processus de certification (ISO 27001)]",
+               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
+saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
+```
+
 
 **Une obligation d’hébergement souverain (français ou européen)**
 
@@ -2442,6 +2734,16 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une obligation d’hébergement souverain (français ou européen)]")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Une obligation d’hébergement souverain (français ou européen)]",
+               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une obligation d’hébergement souverain (français ou européen)]")
+saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une obligation d’hébergement souverain (français ou européen)]")
+```
+
+
 **Des clauses de sécurité dans les contrats informatiques**
 
 * **Statistiques**
@@ -2456,6 +2758,16 @@ stat_qs_simple(193, "Parmi les mesures suivantes, qui visent à réduire le risq
 dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
 ```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Des clauses de sécurité dans les contrats informatiques]",
+               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
+saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
+```
+
 
 **Des clauses de sécurité pour les délégations de service public**
 
@@ -2472,6 +2784,16 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité pour les délégations de service public]")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Des clauses de sécurité pour les délégations de service public]",
+               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité pour les délégations de service public]")
+saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité pour les délégations de service public]")
+```
+
+
 **Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional**
 
 * **Statistiques**
@@ -2484,8 +2806,18 @@ stat_qs_simple(195, "Parmi les mesures suivantes, qui visent à réduire le risq
 
 ```{r}
 dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]")
-saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’informationou avec un cyber campus régional]")
+saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information ou avec un cyber campus régional]")
 ```
+
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]",
+               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]")
+#saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information ou avec un cyber campus régional]")
+```
+
 
 **Le déploiement d’outils techniques de sécurisation des réseaux informatiques**
 
@@ -2500,7 +2832,10 @@ stat_qs_simple(196, "Parmi les mesures suivantes, qui visent à réduire le risq
 ```{r}
 dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
+# Catégorie pas présente en 2022
 ```
+
+
 
 
 
@@ -2522,6 +2857,16 @@ dataviz("Votre structure a-t-elle engagé une réflexion sur les enjeux du numé
 saving_plot(graph, "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
 ```
 
++ **Comparaison 2022 / 2023**
+
+```{r fig.height=14, fig.width=20}
+all_stat |> 
+  #mutate(Réponses = str_replace_all(Réponses, "structure", "collectivité")) |> 
+  dataviz_comp("Votre collectivité a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?",
+               "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
+saving_plot_comp(graph, "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
+```
+
 
 
 ## Cette stratégie aborde-t-elle les thématiques suivantes ?
@@ -2537,6 +2882,7 @@ stat_qs_multiple(198, 203, "Cette stratégie aborde-t-elle les thématiques suiv
 ```{r}
 dataviz("Cette stratégie aborde-t-elle les thématiques suivantes ?")
 saving_plot(graph, "Cette stratégie aborde-t-elle les thématiques suivantes ?")
+# Question pas trouvée en 2022
 ```
 
 
@@ -2553,6 +2899,7 @@ stat_qs_multiple(205, 213, "Concernant les thématiques de l’inclusion et de l
 ```{r}
 #dataviz("Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants :")
 #saving_plot(graph, "Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants")
+# Question pas trouvée en 2022
 ```
 
 
