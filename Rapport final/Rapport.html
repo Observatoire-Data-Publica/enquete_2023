@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Deuxième édition  du baromètre national  sur la data dans les territoires  par l’observatoire Data Publica  et ses partenaires</title>
+
+<script src="Rapport_files/header-attrs-2.23/header-attrs.js"></script>
+<script src="Rapport_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="Rapport_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="Rapport_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="Rapport_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="Rapport_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="Rapport_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="Rapport_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="Rapport_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="Rapport_files/navigation-1.1/tabsets.js"></script>
+<html>
+
+<head>
+
+<link rel="shortcut icon" href="https://nextcloud.datactivist.coop/s/DoQ53PQJHt5bEzN/preview"/>
+
+</head>
+
+</html>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 250px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 80%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-top: 0px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Deuxième édition <br>du baromètre national
+<br>sur la data dans les territoires <br>par l’observatoire Data Publica
+<br>et ses partenaires</h1>
+
+</div>
+
+
+<script>
+  $(document).ready(function() {
+    $('#TOC').parent().prepend('<div id=\"nav_logo\"><img src=\"https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/preview"></div>');
+  });
+</script>
+<style type="text/css">
+#nav_logo { /*paramètres logo Data Publica en haut à gauche*/
+  width: 60%;
+  margin-top: 0px;
+  margin-left: -15px;
+}
+#TOC ul>li {
+  color: white;
+  background-color: #323465;
+  font-weight: normal; /*gras*/
+  padding: 8px; /*espace avant*/
+  /*margin-top: 1px; /*espace avant*/
+}
+#TOC {
+  max-width: fit-content;
+  white-space: nowrap;
+  font-size: .7em; /*taille*/
+  margin-left: -1%;
+  z-index: 2; /*met la TOC au premier plan devant marginnote*/
+  font-family: "Nexa Bold"; /*police*/
+}
+.sidenote, .marginnote { 
+  float: left;
+  clear: left;
+  margin-left: -27%; 
+  margin-right: -40%;
+  margin-top: -70px; /*vertical alignement*/
+  position: relative;
+}
+.sidenote2, .marginnote2 { 
+  float: left;
+  clear: left;
+  margin-left: -43%; 
+  margin-right: -40%;
+  margin-top: 15px; /*vertical alignement*/
+  position: relative;
+}
+</style>
+<img src="https://nextcloud.datactivist.coop/s/oEqjKtbKBnm5j22/preview" alt="logo" style="position:absolute; top:0; right:0; width:440px"/>
+<p><img src="images/logos.png" /></p>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
+condimentum sit amet elit ut tincidunt. Morbi dignissim non risus eget
+interdum. Mauris dapibus, enim vitae commodo ultricies, ante dui
+sagittis diam, non rutrum sapien ligula et lectus. Donec ullamcorper,
+felis tristique eleifend sodales, neque lorem tristique ante, at
+fermentum nulla ex ac ipsum. Interdum et malesuada fames ac ante ipsum
+primis in faucibus. Fusce ac sodales nisi, ac pellentesque magna.
+Praesent in arcu velit. Donec nibh dui, commodo a ullamcorper id,
+fermentum et quam. Aenean venenatis vel sem ac commodo. Donec aliquet
+faucibus neque ut tristique. Mauris ut erat ut nisl efficitur accumsan.
+Curabitur quis magna quis erat fringilla malesuada viverra ut nibh. Ut
+volutpat facilisis mauris, sed fringilla arcu dictum sed. Vestibulum sed
+hendrerit massa. Etiam dui nisi, mollis nec erat ac, aliquet viverra
+magna.</p>
+<div class="sidenote">
+<img src="https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview"
+width="200" />
+</div>
+<div id="informations-générales" class="section level1">
+<h1>1. INFORMATIONS GÉNÉRALES</h1>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
+condimentum sit amet elit ut tincidunt. Morbi dignissim non risus eget
+interdum. Mauris dapibus, enim vitae commodo ultricies, ante dui
+sagittis diam, non rutrum sapien ligula et lectus. Donec ullamcorper,
+felis tristique eleifend sodales, neque lorem tristique ante, at
+fermentum nulla ex ac ipsum. Interdum et malesuada fames ac ante ipsum
+primis in faucibus. Fusce ac sodales nisi, ac pellentesque magna.
+Praesent in arcu velit. Donec nibh dui, commodo a ullamcorper id,
+fermentum et quam. Aenean venenatis vel sem ac commodo. Donec aliquet
+faucibus neque ut tristique. Mauris ut erat ut nisl efficitur accumsan.
+Curabitur quis magna quis erat fringilla malesuada viverra ut nibh. Ut
+volutpat facilisis mauris, sed fringilla arcu dictum sed. Vestibulum sed
+hendrerit massa. Etiam dui nisi, mollis nec erat ac, aliquet viverra
+magna.</p>
+<div class="sidenote">
+<img src="https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview"
+width="200" />
+</div>
+</div>
+<div id="droit-des-données-publiques" class="section level1">
+<h1>2. DROIT DES DONNÉES PUBLIQUES</h1>
+<div
+id="commençons-par-la-protection-de-la-vie-privée.-considérez-vous-que-votre-structure-est-en-conformité-avec-le-rgpd"
+class="section level2">
+<h2><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="45" /> 2.1. Commençons par la protection de la vie privée.
+Considérez-vous que votre structure est en conformité avec le RGPD
+?</h2>
+<div id="statistiques" class="section level4">
+<h4><img
+src="https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview"
+width="38" /> Statistiques</h4>
+</div>
+<div id="visualisation" class="section level4">
+<h4><img
+src="https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview"
+width="38" /> Visualisation</h4>
+</div>
+<div id="comparaison-20222023" class="section level4">
+<h4><img
+src="https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview"
+width="38" /> Comparaison 2022/2023</h4>
+</div>
+</div>
+<div
+id="pour-chacun-de-ces-domaines-pouvez-vous-préciser-si-votre-structure-a-engagé-ces-deux-dernières-années-un-ou-plusieurs-projets-ou-expérimentations-en-matière-dutilisation-des-données-ou-prévoit-den-engager-au-cours-des-douze-prochains-mois"
+class="section level2">
+<h2><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="45" /> 3.1. Pour chacun de ces domaines, pouvez-vous préciser si
+votre structure a engagé ces deux dernières années un ou plusieurs
+projets ou expérimentations en matière d’utilisation des données, ou
+prévoit d’en engager au cours des douze prochains mois ?</h2>
+<div class="sidenote2">
+<img src="https://nextcloud.datactivist.coop/s/F334sriR8zT5cLt/preview"
+width="400" />
+</div>
+<div id="aménagement-du-territoire" class="section level3">
+<h3>AMÉNAGEMENT DU TERRITOIRE</h3>
+<div id="statistiques-1" class="section level4">
+<h4><img
+src="https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview"
+width="38" /> Statistiques</h4>
+</div>
+<div id="visualisation-1" class="section level4">
+<h4><img
+src="https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview"
+width="38" /> Visualisation</h4>
+</div>
+<div id="comparaison-20222023-1" class="section level4">
+<h4><img
+src="https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview"
+width="38" /> Comparaison 2022/2023</h4>
+<div class="sidenote2">
+<img src="https://nextcloud.datactivist.coop/s/F334sriR8zT5cLt/preview"
+width="400" />
+</div>
+</div>
+</div>
+<div id="mobilité" class="section level3">
+<h3>MOBILITÉ</h3>
+<div id="statistiques-2" class="section level4">
+<h4><img
+src="https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview"
+width="38" /> Statistiques</h4>
+</div>
+<div id="visualisation-2" class="section level4">
+<h4><img
+src="https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview"
+width="38" /> Visualisation</h4>
+</div>
+<div id="comparaison-20222023-2" class="section level4">
+<h4><img
+src="https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview"
+width="38" /> Comparaison 2022/2023</h4>
+<div class="tocify-extend-page" data-unique="tocify-extend-page"
+style="height: 0;">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+&nbsp;
+
+<p style="text-align: center;">Réalisé par <a href="https://datactivist.coop/fr/">Datactivist</a></p>
+<p style="text-align: center;"><span style="color: #808080;"><em>16/11/2023</em></span></p>
+
+
+&nbsp;
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+
+</body>
+</html>
