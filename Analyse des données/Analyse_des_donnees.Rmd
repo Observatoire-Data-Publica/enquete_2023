@@ -33,8 +33,7 @@ knitr::opts_chunk$set(
 	out.width = "100%",
 	results = "asis",
 	fig.height=15, #45
-	fig.width=20, 
-	cache=TRUE
+	fig.width=20
 )
 ```
 
@@ -383,7 +382,7 @@ stat_qs_simple <- function(n_col, nom_col){
         mutate(`NA` = ifelse("NA" %in% names(stat_indiv), `NA`, "0%")) |> 
         mutate(`Sans réponse` = `NA`, .after = ncol(stat_indiv)) |> 
         select(-`NA`) |> 
-        rename({{ nom_col }} := 1)
+        rename(Structure = 1)
     # On affiche la table finale
     knitr::kable(stat_indiv, format = "html") |> 
       kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
@@ -501,7 +500,7 @@ dataviz <- function(nom_col){
     all_plots <- plot_grid(left_part, right_part, ncol = 2)
     graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(.9, .1))
     assign("graph", graph, envir = .GlobalEnv)
-    grid::grid.draw(graph)
+    #grid::grid.draw(graph)
 }
 dataviz("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 saving_plot(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
@@ -657,7 +656,8 @@ dataviz_comp <- function(all_stat, nom_col22, nom_col23){
   right_part <- plot_grid(graph_coll, graph_comm, ncol = 2)
   all <- plot_grid(left_part, right_part, ncol = 1)
   graph <- plot_grid(all, legend, nrow = 2, rel_heights = c(.9, .1))
-  grid::grid.draw(graph)
+  #grid::grid.draw(graph)
+  
   #girafe(print(graph_total))
   #right_part <- subplot(G1, G2, nrows = 2)
   #right_part
@@ -672,6 +672,7 @@ saving_plot_comp(graph, "Commençons par la protection de la vie privée. Consid
 
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)
+
 
 
 
@@ -691,6 +692,8 @@ dataviz("Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO
 saving_plot(graph, "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avez-vous%20nomm%C3%A9%20un(e)%20D%C3%A9l%C3%A9gu%C3%A9(e)%20%C3%A0%20la%20Protection%20des%20Donn%C3%A9es%20(DPO)%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avez-vous%20nomm%C3%A9%20un(e)%20D%C3%A9l%C3%A9gu%C3%A9(e)%20%C3%A0%20la%20Protection%20des%20Donn%C3%A9es%20(DPO)%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -698,6 +701,8 @@ dataviz_comp(all_stat,"Avez-vous nommé un(e) Délégué(e) à la Protection des
              "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
 saving_plot_comp(graph, "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Avez-vous%20nomm%C3%A9%20un(e)%20D%C3%A9l%C3%A9gu%C3%A9(e)%20%C3%A0%20la%20Protection%20des%20Donn%C3%A9es%20(DPO)%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Avez-vous%20nomm%C3%A9%20un(e)%20D%C3%A9l%C3%A9gu%C3%A9(e)%20%C3%A0%20la%20Protection%20des%20Donn%C3%A9es%20(DPO)%20%3F.png)
 
 ## Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?
 
@@ -715,6 +720,8 @@ dataviz("Afin de respecter le RGPD, avez-vous modifié des processus de gestion 
 saving_plot(graph, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Afin%20de%20respecter%20le%20RGPD%2C%20avez-vous%20modifi%C3%A9%20des%20processus%20de%20gestion%20des%20donn%C3%A9es%20au%20sein%20de%20l'organisation%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Afin%20de%20respecter%20le%20RGPD%2C%20avez-vous%20modifi%C3%A9%20des%20processus%20de%20gestion%20des%20donn%C3%A9es%20au%20sein%20de%20l'organisation%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -722,6 +729,8 @@ dataviz_comp(all_stat,"Afin de respecter le RGPD, avez-vous modifié des process
              "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 saving_plot_comp(graph, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Afin%20de%20respecter%20le%20RGPD%2C%20avez-vous%20modifi%C3%A9%20des%20processus%20de%20gestion%20des%20donn%C3%A9es%20au%20sein%20de%20l'organisation%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Afin%20de%20respecter%20le%20RGPD%2C%20avez-vous%20modifi%C3%A9%20des%20processus%20de%20gestion%20des%20donn%C3%A9es%20au%20sein%20de%20l'organisation%20%3F.png)
 
 
 ## De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?
@@ -739,6 +748,8 @@ dataviz("De manière générale, avez-vous mis en place des clauses juridiques s
 saving_plot(graph, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/De%20mani%C3%A8re%20g%C3%A9n%C3%A9rale%2C%20avez-vous%20mis%20en%20place%20des%20clauses%20juridiques%20sur%20la%20gestion%20des%20donn%C3%A9es%20dans%20les%20contrats%20de%20d%C3%A9l%C3%A9gation%20et%20dans%20les%20march%C3%A9s%20publics%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/De%20mani%C3%A8re%20g%C3%A9n%C3%A9rale%2C%20avez-vous%20mis%20en%20place%20des%20clauses%20juridiques%20sur%20la%20gestion%20des%20donn%C3%A9es%20dans%20les%20contrats%20de%20d%C3%A9l%C3%A9gation%20et%20dans%20les%20march%C3%A9s%20publics%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -746,6 +757,8 @@ dataviz_comp(all_stat,"De manière générale, avez-vous mis en place des clause
              "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 saving_plot_comp(graph, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20De%20mani%C3%A8re%20g%C3%A9n%C3%A9rale%2C%20avez-vous%20mis%20en%20place%20des%20clauses%20juridiques%20sur%20la%20gestion%20des%20donn%C3%A9es%20dans%20les%20contrats%20de%20d%C3%A9l%C3%A9gation%20et%20dans%20les%20march%C3%A9s%20publics%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20De%20mani%C3%A8re%20g%C3%A9n%C3%A9rale%2C%20avez-vous%20mis%20en%20place%20des%20clauses%20juridiques%20sur%20la%20gestion%20des%20donn%C3%A9es%20dans%20les%20contrats%20de%20d%C3%A9l%C3%A9gation%20et%20dans%20les%20march%C3%A9s%20publics%20%3F.png)
 
 
 
@@ -850,7 +863,7 @@ stat_qs_multiple <- function(min_col, max_col, nom_col){
         select(1, order(colnames(stat_indiv))) |> 
         mutate(`Sans réponse` = `NA`, .after = ncol(stat_indiv)) |> 
         select(-`NA`) |> 
-        rename({{ nom_col }} := 1)
+        rename(Structure = 1)
     
     knitr::kable(stat_indiv, format = "html") |> 
       kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
@@ -865,6 +878,8 @@ dataviz("Quels sont le ou les domaines concernés par ces clauses ?")
 saving_plot(graph, "Quels sont le ou les domaines concernés par ces clauses ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quels%20sont%20le%20ou%20les%20domaines%20concern%C3%A9s%20par%20ces%20clauses%C2%A0%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quels%20sont%20le%20ou%20les%20domaines%20concern%C3%A9s%20par%20ces%20clauses%C2%A0%3F.png)
+
 
 + **Comparaison 2022 / 2023**
 
@@ -873,6 +888,8 @@ dataviz_comp(all_stat,"Quels sont le ou les domaines concernés par ces clauses 
              "Quels sont le ou les domaines concernés par ces clauses ?")
 saving_plot_comp(graph, "Quels sont le ou les domaines concernés par ces clauses ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Quels%20sont%20le%20ou%20les%20domaines%20concern%C3%A9s%20par%20ces%20clauses%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Quels%20sont%20le%20ou%20les%20domaines%20concern%C3%A9s%20par%20ces%20clauses%20%3F.png)
 
 
 
@@ -892,6 +909,8 @@ dataviz("La question de la souveraineté numérique préoccupe de plus en plus d
 saving_plot(graph, "Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20organisation%20a-t-elle%20d%C3%A9fini%20une%20politique%20en%20mati%C3%A8re%20de%20souverainet%C3%A9%20publique%20sur%20les%20donn%C3%A9es%C2%A0%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20organisation%20a-t-elle%20d%C3%A9fini%20une%20politique%20en%20mati%C3%A8re%20de%20souverainet%C3%A9%20publique%20sur%20les%20donn%C3%A9es%C2%A0%3F.png)
+
 
 + **Comparaison 2022 / 2023**
 
@@ -900,6 +919,8 @@ dataviz_comp(all_stat,"La question de la souveraineté numérique préoccupe de 
              "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 saving_plot_comp(graph, "Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20organisation%20a-t-elle%20d%C3%A9fini%20une%20politique%20en%20mati%C3%A8re%20de%20souverainet%C3%A9%20publique%20sur%20les%20donn%C3%A9es%C2%A0%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20organisation%20a-t-elle%20d%C3%A9fini%20une%20politique%20en%20mati%C3%A8re%20de%20souverainet%C3%A9%20publique%20sur%20les%20donn%C3%A9es%C2%A0%3F.png)
 
 
 
@@ -937,9 +958,11 @@ graph <- dat |>
                   #plot.title = element_text(hjust = 1),
                   panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
                   panel.grid.major.y = ggplot2::element_blank())
-graph
+#graph
 saving_plot(graph, "Graphique général : domaines dans lesquels une expérimentation des données a été engagée au cours des deux dernières années")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20a%20%C3%A9t%C3%A9%20engag%C3%A9e%20au%20cours%20des%20deux%20derni%C3%A8res%20ann%C3%A9es.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20a%20%C3%A9t%C3%A9%20engag%C3%A9e%20au%20cours%20des%20deux%20derni%C3%A8res%20ann%C3%A9es.png)
 
 
 
@@ -978,9 +1001,11 @@ graph <- dat |>
                   panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
                   panel.grid.major.y = ggplot2::element_blank()) +
             guides(fill = guide_legend(title = "", nrow = 2, reverse = TRUE))
-graph
+#graph
 saving_plot(graph, "Graphique général n°2 : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B02%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B02%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)
 
 
 
@@ -1025,10 +1050,12 @@ graph <- dat |>
                   panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
                   panel.grid.major.y = ggplot2::element_blank()) +
             guides(fill = guide_legend(title = "", nrow = 2, reverse = TRUE))
-graph
+#graph
 ggsave(file = glue("../Graphiques/PNG/Graphique général n°3 (sans comm < 3500 habs) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.png"), plot = graph, width = 15, height = 9)
 ggsave(file = glue("../Graphiques/SVG/Graphique général n°3 (sans comm < 3500 habs) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.svg"), plot = graph, width = 15, height = 9)
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B03%20(sans%20comm%20%3C%203500%20habs)%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B03%20(sans%20comm%20%3C%203500%20habs)%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)
 
 **Comparaison avec l'édition 2022 de l'enquête, sans les communes de moins de 3500 habitants**
 
@@ -1096,10 +1123,12 @@ graph <- comp_editions |>
                   panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
                   panel.grid.major.y = ggplot2::element_blank()) +
             guides(fill = guide_legend(ncol = 1, title = "Expérimentation"))
-graph
+#graph
 ggsave(file = glue("../Graphiques/PNG/Graphique général n°4 (comparaison 2022-2023) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.png"), plot = graph, width = 14)
 ggsave(file = glue("../Graphiques/SVG/Graphique général n°4 (comparaison 2022-2023) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.svg"), plot = graph, width = 14)
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B04%20(comparaison%202022-2023)%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B04%20(comparaison%202022-2023)%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)
 
 
 **Aménagement du territoire**
@@ -1116,6 +1145,8 @@ stat_qs_simple(26, "Pour chacun de ces domaines, pouvez-vous préciser si votre 
 dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BAm%C3%A9nagement%20du%20territoire%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BAm%C3%A9nagement%20du%20territoire%5D.png)
 
 
 
@@ -1134,6 +1165,8 @@ dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Mobilité]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BMobilit%C3%A9%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BMobilit%C3%A9%5D.png)
+
 
 **Administration**
 
@@ -1149,6 +1182,8 @@ stat_qs_simple(28, "Pour chacun de ces domaines, pouvez-vous préciser si votre 
 dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Administration]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Administration]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BAdministration%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BAdministration%5D.png)
 
 
 **Développement économique**
@@ -1166,6 +1201,8 @@ dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Développement économique]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BD%C3%A9veloppement%20%C3%A9conomique%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BD%C3%A9veloppement%20%C3%A9conomique%5D.png)
+
 
 **Gestion de l’espace public**
 
@@ -1181,6 +1218,8 @@ stat_qs_simple(30, "Pour chacun de ces domaines, pouvez-vous préciser si votre 
 dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Gestion de l’espace public]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Gestion de l’espace public]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BGestion%20de%20l%E2%80%99espace%20public%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BGestion%20de%20l%E2%80%99espace%20public%5D.png)
 
 
 **Sécurité**
@@ -1198,6 +1237,8 @@ dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Sécurité]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BS%C3%A9curit%C3%A9%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BS%C3%A9curit%C3%A9%5D.png)
+
 
 **Patrimoine**
 
@@ -1213,6 +1254,8 @@ stat_qs_simple(32, "Pour chacun de ces domaines, pouvez-vous préciser si votre 
 dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Patrimoine]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Patrimoine]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BPatrimoine%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BPatrimoine%5D.png)
 
 
 **Energie et éclairage**
@@ -1230,6 +1273,8 @@ dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Energie et éclairage]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BEnergie%20et%20%C3%A9clairage%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BEnergie%20et%20%C3%A9clairage%5D.png)
+
 
 **Déchets**
 
@@ -1245,6 +1290,8 @@ stat_qs_simple(38, "Pour chacun de ces domaines, pouvez-vous préciser si votre 
 dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Déchets]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Déchets]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BD%C3%A9chets%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BD%C3%A9chets%5D.png)
 
 
 **Tourisme**
@@ -1262,6 +1309,8 @@ dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Tourisme]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BTourisme%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BTourisme%5D.png)
+
 
 **Citoyenneté**
 
@@ -1277,6 +1326,8 @@ stat_qs_simple(35, "Pour chacun de ces domaines, pouvez-vous préciser si votre 
 dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Citoyenneté]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Citoyenneté]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BCitoyennet%C3%A9%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BCitoyennet%C3%A9%5D.png)
 
 
 **Environnement**
@@ -1294,6 +1345,9 @@ dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Environnement]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BEnvironnement%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BEnvironnement%5D.png)
+
+
 
 **Autre**
 
@@ -1310,6 +1364,8 @@ stat_qs_simple(37, "Pour chacun de ces domaines, pouvez-vous préciser si votre 
 dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BAutre%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20si%20votre%20structure%20a%20engag%C3%A9%20plusieurs%20projets%20ou%20exp%C3%A9rimentations%20en%20mati%C3%A8re%20d'utilisation%20des%20donn%C3%A9es%2C%20ou%20pr%C3%A9voit%20d%E2%80%99en%20engager%20au%20cours%20des%20douze%20prochains%20mois%20%3F%20%5BAutre%5D.png)
 
 
 ## Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)
@@ -1331,6 +1387,8 @@ saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou 
 ```
 
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%201%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%201%5D.png)
+
 **Classement 2**
 
 * **Statistiques**
@@ -1345,6 +1403,8 @@ stat_qs_simple(41, "Quelles sont, selon vous, les priorités qui justifient (ou 
 dataviz("Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 2]")
 saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 2]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%202%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%202%5D.png)
 
 
 
@@ -1364,6 +1424,8 @@ dataviz("Quelles sont, selon vous, les priorités qui justifient (ou justifierai
 saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 3]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%203%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%203%5D.png)
+
 
 **Classement 4**
 
@@ -1379,6 +1441,8 @@ stat_qs_simple(43, "Quelles sont, selon vous, les priorités qui justifient (ou 
 dataviz("Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 4]")
 saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 4]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%204%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%204%5D.png)
 
 
 
@@ -1398,6 +1462,8 @@ dataviz("Quelles sont, selon vous, les priorités qui justifient (ou justifierai
 saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou justifieraient) une utilisation plus importante des données au sein de votre organisation ? Classez du plus important au moins important (de haut en bas)  [Classement 5]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%205%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%205%5D.png)
+
 
 
 
@@ -1415,6 +1481,8 @@ stat_qs_simple(46, "Selon-vous, la maîtrise de la donnée constitue-t-elle un o
 dataviz("Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
 saving_plot(graph, "Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Selon-vous%2C%20la%20ma%C3%AEtrise%20de%20la%20donn%C3%A9e%20constitue-t-elle%20un%20outil%20pertinent%20pour%20r%C3%A9pondre%20aux%20enjeux%20environnementaux%20de%20votre%20territoire%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Selon-vous%2C%20la%20ma%C3%AEtrise%20de%20la%20donn%C3%A9e%20constitue-t-elle%20un%20outil%20pertinent%20pour%20r%C3%A9pondre%20aux%20enjeux%20environnementaux%20de%20votre%20territoire%20%3F.png)
 
 
 
@@ -1436,6 +1504,8 @@ dataviz("Votre structure a-t-elle défini des règles de gouvernance de la donn�
 saving_plot(graph, "Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9fini%20des%20r%C3%A8gles%20de%20gouvernance%20de%20la%20donn%C3%A9e%20(internes%20ou%20externes)%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9fini%20des%20r%C3%A8gles%20de%20gouvernance%20de%20la%20donn%C3%A9e%20(internes%20ou%20externes)%20%3F.png)
+
 
 + **Comparaison 2022 / 2023**
 
@@ -1444,6 +1514,8 @@ dataviz_comp(all_stat,"Votre structure a-t-elle défini des règles de gouvernan
              "Votre collectivité a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ? ")
 saving_plot_comp(graph, "Votre structure a-t-elle défini des règles de gouvernance de la donnée (internes ou externes) ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20d%C3%A9fini%20des%20r%C3%A8gles%20de%20gouvernance%20de%20la%20donn%C3%A9e%20(internes%20ou%20externes)%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20d%C3%A9fini%20des%20r%C3%A8gles%20de%20gouvernance%20de%20la%20donn%C3%A9e%20(internes%20ou%20externes)%20%3F.png)
 
 
 ## Pouvez-vous préciser quelles sont ces règles ?
@@ -1462,6 +1534,8 @@ saving_plot(graph, "Pouvez-vous préciser quelles sont ces règles ?")
 # Pas de comparaison avec 2022 : en 2022 c'était un champ libre
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20quelles%20sont%20ces%20r%C3%A8gles%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pouvez-vous%20pr%C3%A9ciser%20quelles%20sont%20ces%20r%C3%A8gles%20%3F.png)
+
 
 
 ## Votre structure a-t-elle adopté une charte éthique de la donnée ?
@@ -1479,6 +1553,8 @@ dataviz("Votre structure a-t-elle adopté une charte éthique de la donnée ?")
 saving_plot(graph, "Votre structure a-t-elle adopté une charte éthique de la donnée ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20adopt%C3%A9%20une%20charte%20%C3%A9thique%20de%20la%20donn%C3%A9e%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20adopt%C3%A9%20une%20charte%20%C3%A9thique%20de%20la%20donn%C3%A9e%20%3F.png)
+
 
 + **Comparaison 2022 / 2023**
 
@@ -1487,6 +1563,8 @@ dataviz_comp(all_stat,"Votre structure a-t-elle adopté une charte éthique de l
              "Votre collectivité a-t-elle élaboré une charte éthique de la donnée ?")
 saving_plot_comp(graph, "Votre structure a-t-elle adopté une charte éthique de la donnée ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20adopt%C3%A9%20une%20charte%20%C3%A9thique%20de%20la%20donn%C3%A9e%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20adopt%C3%A9%20une%20charte%20%C3%A9thique%20de%20la%20donn%C3%A9e%20%3F.png)
 
 
 
@@ -1504,6 +1582,8 @@ stat_qs_multiple(58, 63, "La structure a-t-elle associé des acteurs externes à
 dataviz("La structure a-t-elle associé des acteurs externes à la définition de ces règles de gouvernance ? ")
 saving_plot(graph, "La structure a-t-elle associé des acteurs externes à la définition de ces règles de gouvernance ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/La%20structure%20a-t-elle%20associ%C3%A9%20des%20acteurs%20externes%20%C3%A0%20la%20d%C3%A9finition%20de%20ces%20r%C3%A8gles%20de%20gouvernance%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/La%20structure%20a-t-elle%20associ%C3%A9%20des%20acteurs%20externes%20%C3%A0%20la%20d%C3%A9finition%20de%20ces%20r%C3%A8gles%20de%20gouvernance%20%3F.png)
 
 
 
@@ -1526,6 +1606,8 @@ saving_plot(graph, "Votre structure a-t-elle mis en place des systèmes d’éch
 # Pas de comparaison 2022 : pas de catégories (ex: [Des plateformes générales de partage et d'accès aux données locales...) proposées et réponses différentes
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20syst%C3%A8mes%20d%E2%80%99%C3%A9changes%20et%20de%20partage%20de%20donn%C3%A9es%20%3F%20%5BDes%20plateformes%20g%C3%A9n%C3%A9rales%20de%20partage%20et%20d'acc%C3%A8s%20aux%20donn%C3%A9es%20locales%20(ex%20%3A%20plateforme%20OpenDataSoft%20avec%20acc%C3%A8s%20priv%C3%A9s%2C%20plateforme%20Dawex%E2%80%A6)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20syst%C3%A8mes%20d%E2%80%99%C3%A9changes%20et%20de%20partage%20de%20donn%C3%A9es%20%3F%20%5BDes%20plateformes%20g%C3%A9n%C3%A9rales%20de%20partage%20et%20d'acc%C3%A8s%20aux%20donn%C3%A9es%20locales%20(ex%20%3A%20plateforme%20OpenDataSoft%20avec%20acc%C3%A8s%20priv%C3%A9s%2C%20plateforme%20Dawex%E2%80%A6)%5D.png)
+
 
 **Des  communications ponctuelles de données avec des partenaires/prestataires (par exemple communication de données foncières dans le cadre de la réalisation d’une étude ou d’une AMO)**
 
@@ -1535,12 +1617,15 @@ saving_plot(graph, "Votre structure a-t-elle mis en place des systèmes d’éch
 stat_qs_simple(67, "Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?    [Des  communications ponctuelles de données avec des partenaires/prestataires (par exemple communication de données foncières dans le cadre de la réalisation d’une étude ou d’une AMO) ]")
 ```
 
+
 + **Visualisation**
 
 ```{r}
 dataviz("Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?    [Des  communications ponctuelles de données avec des partenaires/prestataires (par exemple communication de données foncières dans le cadre de la réalisation d’une étude ou d’une AMO) ]")
 saving_plot(graph, "Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données ? [Des  communications ponctuelles de données]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20syst%C3%A8mes%20d%E2%80%99%C3%A9changes%20et%20de%20partage%20de%20donn%C3%A9es%20%3F%20%5BDes%20%20communications%20ponctuelles%20de%20donn%C3%A9es%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20syst%C3%A8mes%20d%E2%80%99%C3%A9changes%20et%20de%20partage%20de%20donn%C3%A9es%20%3F%20%5BDes%20%20communications%20ponctuelles%20de%20donn%C3%A9es%5D.png)
 
 
 **Des échanges de cas d’usage/bonnes pratiques concernant la gestion et la valorisation des données ou algorithmes**
@@ -1557,6 +1642,8 @@ stat_qs_simple(68, "Votre structure a-t-elle mis en place des systèmes d’éch
 dataviz("Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données avec des acteurs privés du territoire, ou prévoit-elle d’en mettre en place dans les douze prochains mois ?    [Des échanges de cas d’usage/bonnes pratiques concernant la gestion et la valorisation des données ou algorithmes ]")
 saving_plot(graph, "Votre structure a-t-elle mis en place des systèmes d’échanges et de partage de données ? [Des échanges de cas d’usage bonnes pratiques concernant la gestion et la valorisation des données ou algorithmes]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20syst%C3%A8mes%20d%E2%80%99%C3%A9changes%20et%20de%20partage%20de%20donn%C3%A9es%20%3F%20%5BDes%20%C3%A9changes%20de%20cas%20d%E2%80%99usage%20bonnes%20pratiques%20concernant%20la%20gestion%20et%20la%20valorisation%20des%20donn%C3%A9es%20ou%20algorithmes%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20syst%C3%A8mes%20d%E2%80%99%C3%A9changes%20et%20de%20partage%20de%20donn%C3%A9es%20%3F%20%5BDes%20%C3%A9changes%20de%20cas%20d%E2%80%99usage%20bonnes%20pratiques%20concernant%20la%20gestion%20et%20la%20valorisation%20des%20donn%C3%A9es%20ou%20algorithmes%5D.png)
 
 
 
@@ -1578,6 +1665,8 @@ dataviz("Comment estimez-vous le niveau d’acculturation de votre structure aux
 saving_plot(graph, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comment%20estimez-vous%20le%20niveau%20d%E2%80%99acculturation%20de%20votre%20structure%20aux%20enjeux%20des%20donn%C3%A9es%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comment%20estimez-vous%20le%20niveau%20d%E2%80%99acculturation%20de%20votre%20structure%20aux%20enjeux%20des%20donn%C3%A9es%20%3F.png)
+
 
 + **Comparaison 2022 / 2023**
 
@@ -1586,6 +1675,8 @@ dataviz_comp(all_stat,"Comment estimez-vous le niveau d’acculturation de votre
              "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
 saving_plot_comp(graph, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Comment%20estimez-vous%20le%20niveau%20d%E2%80%99acculturation%20de%20votre%20structure%20aux%20enjeux%20des%20donn%C3%A9es%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Comment%20estimez-vous%20le%20niveau%20d%E2%80%99acculturation%20de%20votre%20structure%20aux%20enjeux%20des%20donn%C3%A9es%20%3F.png)
 
 
 
@@ -1604,6 +1695,8 @@ dataviz("Quels sont, selon vous, les principaux obstacles à la diffusion d’ou
 saving_plot(graph, "Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quels%20sont%2C%20selon%20vous%2C%20les%20principaux%20obstacles%20%C3%A0%20la%20diffusion%20d%E2%80%99outils%20innovants%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quels%20sont%2C%20selon%20vous%2C%20les%20principaux%20obstacles%20%C3%A0%20la%20diffusion%20d%E2%80%99outils%20innovants%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -1611,6 +1704,8 @@ dataviz_comp(all_stat,"Quels sont, selon vous, les principaux obstacles à la di
              "Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
 saving_plot_comp(graph, "Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Quels%20sont%2C%20selon%20vous%2C%20les%20principaux%20obstacles%20%C3%A0%20la%20diffusion%20d%E2%80%99outils%20innovants%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Quels%20sont%2C%20selon%20vous%2C%20les%20principaux%20obstacles%20%C3%A0%20la%20diffusion%20d%E2%80%99outils%20innovants%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20%3F.png)
 
 
 
@@ -1630,6 +1725,8 @@ dataviz("En matière de formation sur la gestion des données, quels sont, selon
 saving_plot(graph, "En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/En%20mati%C3%A8re%20de%20formation%20sur%20la%20gestion%20des%20donn%C3%A9es%2C%20quels%20sont%2C%20selon%20vous%2C%20les%20besoins%20prioritaires%20pour%20votre%20structure%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/En%20mati%C3%A8re%20de%20formation%20sur%20la%20gestion%20des%20donn%C3%A9es%2C%20quels%20sont%2C%20selon%20vous%2C%20les%20besoins%20prioritaires%20pour%20votre%20structure%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=17, fig.width=20}
@@ -1637,6 +1734,8 @@ dataviz_comp(all_stat,"En matière de formation sur la gestion des données, que
              "En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
 saving_plot_comp(graph, "En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20En%20mati%C3%A8re%20de%20formation%20sur%20la%20gestion%20des%20donn%C3%A9es%2C%20quels%20sont%2C%20selon%20vous%2C%20les%20besoins%20prioritaires%20pour%20votre%20structure%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20En%20mati%C3%A8re%20de%20formation%20sur%20la%20gestion%20des%20donn%C3%A9es%2C%20quels%20sont%2C%20selon%20vous%2C%20les%20besoins%20prioritaires%20pour%20votre%20structure%20%3F.png)
 
 
 
@@ -1659,6 +1758,8 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20g%C3%A9n%C3%A9rale%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20g%C3%A9n%C3%A9rale%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -1668,6 +1769,8 @@ all_stat |>
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
 saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20g%C3%A9n%C3%A9rale%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20g%C3%A9n%C3%A9rale%5D.png)
 
 
 
@@ -1686,6 +1789,8 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20Informatique%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20Informatique%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -1695,6 +1800,8 @@ all_stat |>
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
 saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20Informatique%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20Informatique%5D.png)
 
 
 
@@ -1714,6 +1821,8 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BService%20d%E2%80%99information%20g%C3%A9ographique%20(SIG).png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BService%20d%E2%80%99information%20g%C3%A9ographique%20(SIG).png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -1723,6 +1832,8 @@ all_stat |>
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)]")
 saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BService%20d%E2%80%99information%20g%C3%A9ographique%20(SIG)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BService%20d%E2%80%99information%20g%C3%A9ographique%20(SIG)%5D.png)
 
 
 
@@ -1742,6 +1853,8 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BArchives%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BArchives%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -1751,6 +1864,8 @@ all_stat |>
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
 saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BArchives%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BArchives%5D.png)
 
 
 **Communication**
@@ -1768,6 +1883,8 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BCommunication%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BCommunication%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -1777,6 +1894,8 @@ all_stat |>
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
 saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BCommunication%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BCommunication%5D.png)
 
 
 
@@ -1795,6 +1914,8 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BServices%20techniques%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BServices%20techniques%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -1804,6 +1925,8 @@ all_stat |>
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
 saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BServices%20techniques%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BServices%20techniques%5D.png)
 
 
 
@@ -1822,6 +1945,8 @@ dataviz("Pour chacune des directions suivantes, pouvez-vous nous dire si leur im
 saving_plot(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BRessources%20humaines%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BRessources%20humaines%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -1831,6 +1956,8 @@ all_stat |>
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
 saving_plot_comp(graph, "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BRessources%20humaines%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BRessources%20humaines%5D.png)
 
 
 
@@ -1854,6 +1981,8 @@ saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la don
 # Pas de comparaison car question générale en 2022 et détaillé par fonction en 2023 avec plusieurs réponses possibles
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Dans%20votre%20organisation%2C%20ces%20fonctions%20consacr%C3%A9es%20%C3%A0%20la%20donn%C3%A9e%20existent-elles%20ou%20seront-elles%20cr%C3%A9%C3%A9es%20dans%20les%20douze%20prochains%20mois%20%3F%20%20%5BComit%C3%A9%20data%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Dans%20votre%20organisation%2C%20ces%20fonctions%20consacr%C3%A9es%20%C3%A0%20la%20donn%C3%A9e%20existent-elles%20ou%20seront-elles%20cr%C3%A9%C3%A9es%20dans%20les%20douze%20prochains%20mois%20%3F%20%20%5BComit%C3%A9%20data%5D.png)
+
 
 
 **Réseau de référent(e)s data**
@@ -1871,6 +2000,8 @@ dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existe
 saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Réseau de référent(e)s data]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Dans%20votre%20organisation%2C%20ces%20fonctions%20consacr%C3%A9es%20%C3%A0%20la%20donn%C3%A9e%20existent-elles%20ou%20seront-elles%20cr%C3%A9%C3%A9es%20dans%20les%20douze%20prochains%20mois%20%3F%20%20%5BR%C3%A9seau%20de%20r%C3%A9f%C3%A9rent(e)s%20data%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Dans%20votre%20organisation%2C%20ces%20fonctions%20consacr%C3%A9es%20%C3%A0%20la%20donn%C3%A9e%20existent-elles%20ou%20seront-elles%20cr%C3%A9%C3%A9es%20dans%20les%20douze%20prochains%20mois%20%3F%20%20%5BR%C3%A9seau%20de%20r%C3%A9f%C3%A9rent(e)s%20data%5D.png)
+
 
 **Direction de la donnée**
 
@@ -1887,6 +2018,8 @@ dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existe
 saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Direction de la donnée]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Dans%20votre%20organisation%2C%20ces%20fonctions%20consacr%C3%A9es%20%C3%A0%20la%20donn%C3%A9e%20existent-elles%20ou%20seront-elles%20cr%C3%A9%C3%A9es%20dans%20les%20douze%20prochains%20mois%20%3F%20%20%5BDirection%20de%20la%20donn%C3%A9e%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Dans%20votre%20organisation%2C%20ces%20fonctions%20consacr%C3%A9es%20%C3%A0%20la%20donn%C3%A9e%20existent-elles%20ou%20seront-elles%20cr%C3%A9%C3%A9es%20dans%20les%20douze%20prochains%20mois%20%3F%20%20%5BDirection%20de%20la%20donn%C3%A9e%5D.png)
+
 
 **Chief data officer / administrateur général des données**
 
@@ -1902,6 +2035,8 @@ stat_qs_simple(96, "Dans votre organisation, ces fonctions consacrées à la don
 dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Chief data officer / administrateur général des données]")
 saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Chief data officer - administrateur général des données]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Dans%20votre%20organisation%2C%20ces%20fonctions%20consacr%C3%A9es%20%C3%A0%20la%20donn%C3%A9e%20existent-elles%20ou%20seront-elles%20cr%C3%A9%C3%A9es%20dans%20les%20douze%20prochains%20mois%20%3F%20%20%5BChief%20data%20officer%20-%20administrateur%20g%C3%A9n%C3%A9ral%20des%20donn%C3%A9es%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Dans%20votre%20organisation%2C%20ces%20fonctions%20consacr%C3%A9es%20%C3%A0%20la%20donn%C3%A9e%20existent-elles%20ou%20seront-elles%20cr%C3%A9%C3%A9es%20dans%20les%20douze%20prochains%20mois%20%3F%20%20%5BChief%20data%20officer%20-%20administrateur%20g%C3%A9n%C3%A9ral%20des%20donn%C3%A9es%5D.png)
 
 
 
@@ -1924,6 +2059,8 @@ saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous,
 # question non posée en 2022
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20Assistant%20%C3%A0%20la%20ma%C3%AEtrise%20d%E2%80%99ouvrage%20(AMO)%20%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20Assistant%20%C3%A0%20la%20ma%C3%AEtrise%20d%E2%80%99ouvrage%20(AMO)%20%5D.png)
+
 
 **Un prestataire informatique**
 
@@ -1939,6 +2076,8 @@ stat_qs_simple(100, "Avec lesquels de ces partenaires potentiels collaborez-vous
 dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un prestataire informatique]")
 saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un prestataire informatique]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20prestataire%20informatique%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20prestataire%20informatique%5D.png)
 
 
 **Un délégataire de service public**
@@ -1956,6 +2095,8 @@ dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoy
 saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un délégataire de service public]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20d%C3%A9l%C3%A9gataire%20de%20service%20public%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20d%C3%A9l%C3%A9gataire%20de%20service%20public%5D.png)
+
 
 **Un opérateur public de service numérique (OPSN)**
 
@@ -1971,6 +2112,8 @@ stat_qs_simple(102, "Avec lesquels de ces partenaires potentiels collaborez-vous
 dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un opérateur public de service numérique (OPSN)]")
 saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un opérateur public de service numérique (OPSN)]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20op%C3%A9rateur%20public%20de%20service%20num%C3%A9rique%20(OPSN)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20op%C3%A9rateur%20public%20de%20service%20num%C3%A9rique%20(OPSN)%5D.png)
 
 
 **Une plateforme régionale d’information géographique**
@@ -1988,6 +2131,8 @@ dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoy
 saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une plateforme régionale d’information géographique]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUne%20plateforme%20r%C3%A9gionale%20d%E2%80%99information%20g%C3%A9ographique%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUne%20plateforme%20r%C3%A9gionale%20d%E2%80%99information%20g%C3%A9ographique%5D.png)
+
 
 **Un opérateur numérique**
 
@@ -2003,6 +2148,8 @@ stat_qs_simple(104, "Avec lesquels de ces partenaires potentiels collaborez-vous
 dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un opérateur numérique]")
 saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un opérateur numérique]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20op%C3%A9rateur%20num%C3%A9rique%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20op%C3%A9rateur%20num%C3%A9rique%5D.png)
 
 
 **Une collectivité territoriale plus grande (ex : EPCI, métropole, région)**
@@ -2020,6 +2167,8 @@ dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoy
 saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une collectivité territoriale plus grande (ex : EPCI, métropole, région)]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUne%20collectivit%C3%A9%20territoriale%20plus%20grande%20(ex%20%3A%20EPCI%2C%20m%C3%A9tropole%2C%20r%C3%A9gion)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUne%20collectivit%C3%A9%20territoriale%20plus%20grande%20(ex%20%3A%20EPCI%2C%20m%C3%A9tropole%2C%20r%C3%A9gion)%5D.png)
+
 
 **Une association de collectivités (ex : OpenData France, FNCCR…)**
 
@@ -2035,6 +2184,8 @@ stat_qs_simple(106, "Avec lesquels de ces partenaires potentiels collaborez-vous
 dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une association de collectivités (ex : OpenData France, FNCCR…)]")
 saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Une association de collectivités (ex : OpenData France, FNCCR…)]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUne%20association%20de%20collectivit%C3%A9s%20(ex%20%3A%20OpenData%20France%2C%20FNCCR%E2%80%A6)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUne%20association%20de%20collectivit%C3%A9s%20(ex%20%3A%20OpenData%20France%2C%20FNCCR%E2%80%A6)%5D.png)
 
 
 **Un service de l’Etat (ex : ANCT, SGAR…)**
@@ -2052,6 +2203,8 @@ dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoy
 saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Un service de l’Etat (ex : ANCT, SGAR…)]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20service%20de%20l%E2%80%99Etat%20(ex%20%3A%20ANCT%2C%20SGAR%E2%80%A6)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20service%20de%20l%E2%80%99Etat%20(ex%20%3A%20ANCT%2C%20SGAR%E2%80%A6)%5D.png)
+
 
 **Autres**
 
@@ -2067,6 +2220,8 @@ stat_qs_simple(108, "Avec lesquels de ces partenaires potentiels collaborez-vous
 dataviz("Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Autres]")
 saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous, ou prévoyez-vous de le faire, au sujet des données ?  [Autres]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BAutres%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BAutres%5D.png)
 
 
 
@@ -2087,6 +2242,8 @@ dataviz("Pensez-vous que les services de votre structure sont bien informés des
 saving_plot(graph, "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20des%20obligations%20d%E2%80%99open%20data%20applicables%20depuis%202018%20%C3%A0%20toutes%20les%20administrations%20publiques%20de%20plus%20de%2050%20ETP%2C%20et%20notamment%20les%20collectivit%C3%A9s%20de%20plus%20de%203%20500%20habitants%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20des%20obligations%20d%E2%80%99open%20data%20applicables%20depuis%202018%20%C3%A0%20toutes%20les%20administrations%20publiques%20de%20plus%20de%2050%20ETP%2C%20et%20notamment%20les%20collectivit%C3%A9s%20de%20plus%20de%203%20500%20habitants%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2094,8 +2251,11 @@ all_stat |>
   mutate(Réponses = str_replace_all(Réponses, "Ma collectivité n’est pas concernée par cette obligation", "Ma structure n’est pas concernée par cette obligation")) |> 
   dataviz_comp("Pensez-vous que les services de votre collectivité sont bien informés des obligations d’open data applicables depuis 2018 à toutes les collectivités de plus de 3 500 habitants ?",
              "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
-#saving_plot_comp(graph, "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP et notamment les collectivités de plus de 3 500 habitants")
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 : Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP et notamment les collectivités de plus de 3 500 habitants.png"), plot = graph, width = 25, height = 15)
+#ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 : Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP et notamment les collectivités de plus de 3 500 habitants.svg"), plot = graph, width = 25, height = 15)    #ne fonctionne pas
 ```
+
+[![]()]()
 
 
 
@@ -2114,6 +2274,8 @@ dataviz("Depuis le 1er juillet 2020, les collectivités sont également soumises
 saving_plot(graph, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Depuis%20le%201er%20juillet%202020%2C%20les%20collectivit%C3%A9s%20sont%20%C3%A9galement%20soumises%20%C3%A0%20une%20obligation%20de%20%C2%AB%20transparence%20algorithmique%20%C2%BB.%20Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20de%20cette%20obligation%20l%C3%A9gale%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Depuis%20le%201er%20juillet%202020%2C%20les%20collectivit%C3%A9s%20sont%20%C3%A9galement%20soumises%20%C3%A0%20une%20obligation%20de%20%C2%AB%20transparence%20algorithmique%20%C2%BB.%20Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20de%20cette%20obligation%20l%C3%A9gale%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2122,6 +2284,8 @@ all_stat |>
              "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 saving_plot_comp(graph, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Depuis%20le%201er%20juillet%202020%2C%20les%20collectivit%C3%A9s%20sont%20%C3%A9galement%20soumises%20%C3%A0%20une%20obligation%20de%20%C2%AB%20transparence%20algorithmique%20%C2%BB.%20Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20de%20cette%20obligation%20l%C3%A9gale%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Depuis%20le%201er%20juillet%202020%2C%20les%20collectivit%C3%A9s%20sont%20%C3%A9galement%20soumises%20%C3%A0%20une%20obligation%20de%20%C2%AB%20transparence%20algorithmique%20%C2%BB.%20Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20de%20cette%20obligation%20l%C3%A9gale%20%3F.png)
 
 
 
@@ -2140,6 +2304,8 @@ dataviz("Votre structure a-t-elle conduit des actions pour mettre en œuvre les 
 saving_plot(graph, "Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20conduit%20des%20actions%20pour%20mettre%20en%20%C5%93uvre%20les%20obligations%20de%20transparence%20algorithmique%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20conduit%20des%20actions%20pour%20mettre%20en%20%C5%93uvre%20les%20obligations%20de%20transparence%20algorithmique%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2148,6 +2314,8 @@ all_stat |>
              "Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
 saving_plot_comp(graph, "Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20conduit%20des%20actions%20pour%20mettre%20en%20%C5%93uvre%20les%20obligations%20de%20transparence%20algorithmique%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20conduit%20des%20actions%20pour%20mettre%20en%20%C5%93uvre%20les%20obligations%20de%20transparence%20algorithmique%20%3F.png)
 
 
 
@@ -2170,6 +2338,8 @@ dataviz("Votre structure a-t-elle déjà mis en place des projets ou expériment
 saving_plot(graph, "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20mis%20en%20place%20des%20projets%20ou%20exp%C3%A9rimentations%20ayant%20recours%20%C3%A0%20l%E2%80%99intelligence%20artificielle%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20mis%20en%20place%20des%20projets%20ou%20exp%C3%A9rimentations%20ayant%20recours%20%C3%A0%20l%E2%80%99intelligence%20artificielle%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2178,6 +2348,8 @@ all_stat |>
              "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
 saving_plot_comp(graph, "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20mis%20en%20place%20des%20projets%20ou%20exp%C3%A9rimentations%20ayant%20recours%20%C3%A0%20l%E2%80%99intelligence%20artificielle%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20mis%20en%20place%20des%20projets%20ou%20exp%C3%A9rimentations%20ayant%20recours%20%C3%A0%20l%E2%80%99intelligence%20artificielle%20%3F.png)
 
 
 
@@ -2197,6 +2369,8 @@ dataviz("À quel type de technique d’intelligence artificielle votre (vos) pro
 saving_plot(graph, "À quel type de technique d’intelligence artificielle votre (vos) projet (s) ou expérimentation(s) recoure(nt)-elle(s) ?")
 # Question libre en 2022
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/%C3%80%20quel%20type%20de%20technique%20d%E2%80%99intelligence%20artificielle%20votre%20(vos)%20projet%20(s)%20ou%20exp%C3%A9rimentation(s)%20recoure(nt)-elle(s)%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/%C3%80%20quel%20type%20de%20technique%20d%E2%80%99intelligence%20artificielle%20votre%20(vos)%20projet%20(s)%20ou%20exp%C3%A9rimentation(s)%20recoure(nt)-elle(s)%20%3F.png)
 
 
 
@@ -2235,6 +2409,8 @@ saving_plot(graph, "Envisagez-vous de déployer des projets ou expérimentations
 # Question pas posée en 2022
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Envisagez-vous%20de%20d%C3%A9ployer%20des%20projets%20ou%20exp%C3%A9rimentations%20recourant%20%C3%A0%20de%20l%E2%80%99IA%20dans%20les%2012%20prochains%20mois%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Envisagez-vous%20de%20d%C3%A9ployer%20des%20projets%20ou%20exp%C3%A9rimentations%20recourant%20%C3%A0%20de%20l%E2%80%99IA%20dans%20les%2012%20prochains%20mois%20%3F.png)
+
 
 
 ## À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?
@@ -2252,6 +2428,8 @@ dataviz("À quel type de technique d’intelligence artificielle votre (vos) pro
 saving_plot(graph, "À quel type de technique d’intelligence artificielle votre (vos) projet(s) ou expérimentation(s) recourera(ont)-elle(s) ?")
 # Question pas posée en 2022
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/%C3%80%20quel%20type%20de%20technique%20d%E2%80%99intelligence%20artificielle%20votre%20(vos)%20projet(s)%20ou%20exp%C3%A9rimentation(s)%20recourera(ont)-elle(s)%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/%C3%80%20quel%20type%20de%20technique%20d%E2%80%99intelligence%20artificielle%20votre%20(vos)%20projet(s)%20ou%20exp%C3%A9rimentation(s)%20recourera(ont)-elle(s)%20%3F.png)
 
 
 
@@ -2290,6 +2468,8 @@ dataviz("Aujourd’hui, les données de votre structure sont majoritairement hé
 saving_plot(graph, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Aujourd%E2%80%99hui%2C%20les%20donn%C3%A9es%20de%20votre%20structure%20sont%20majoritairement%20h%C3%A9berg%C3%A9es.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Aujourd%E2%80%99hui%2C%20les%20donn%C3%A9es%20de%20votre%20structure%20sont%20majoritairement%20h%C3%A9berg%C3%A9es.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2297,6 +2477,8 @@ dataviz_comp(all_stat,"Aujourd’hui, les données de votre collectivité sont m
              "Aujourd’hui, les données de votre structure sont majoritairement hébergées :")
 saving_plot_comp(graph, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Aujourd%E2%80%99hui%2C%20les%20donn%C3%A9es%20de%20votre%20structure%20sont%20majoritairement%20h%C3%A9berg%C3%A9es.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Aujourd%E2%80%99hui%2C%20les%20donn%C3%A9es%20de%20votre%20structure%20sont%20majoritairement%20h%C3%A9berg%C3%A9es.png)
 
 
 
@@ -2319,6 +2501,8 @@ saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivante
 # Question pas trouvée en 2022
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BPlateforme%20de%20donn%C3%A9es%20(ingestion%2C%20stockage%2C%20traitement%2C%20analyse%20%20et%20visualisation%20de%20donn%C3%A9es)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BPlateforme%20de%20donn%C3%A9es%20(ingestion%2C%20stockage%2C%20traitement%2C%20analyse%20%20et%20visualisation%20de%20donn%C3%A9es)%5D.png)
+
 
 **Outils de traitement et d'analyse de données**
 
@@ -2334,6 +2518,8 @@ stat_qs_simple(164, "Votre structure a-t-elle déployé les technologies suivant
 dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Outils de traitement et d'analyse de données]")
 saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Outils de traitement et d'analyse de données]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BOutils%20de%20traitement%20et%20d'analyse%20de%20donn%C3%A9es%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BOutils%20de%20traitement%20et%20d'analyse%20de%20donn%C3%A9es%5D.png)
 
 
 
@@ -2352,6 +2538,8 @@ dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prév
 saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Lac de données]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BLac%20de%20donn%C3%A9es%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BLac%20de%20donn%C3%A9es%5D.png)
+
 
 
 **Capteurs et réseaux IoT**
@@ -2368,6 +2556,8 @@ stat_qs_simple(166, "Votre structure a-t-elle déployé les technologies suivant
 dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Capteurs et réseaux IoT]")
 saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Capteurs et réseaux IoT]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BCapteurs%20et%20r%C3%A9seaux%20IoT%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BCapteurs%20et%20r%C3%A9seaux%20IoT%5D.png)
 
 
 
@@ -2386,6 +2576,8 @@ dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prév
 saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Catalogue de données]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BCatalogue%20de%20donn%C3%A9es%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BCatalogue%20de%20donn%C3%A9es%5D.png)
+
 
 
 **Jumeau numérique**
@@ -2403,6 +2595,8 @@ dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prév
 saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Jumeau numérique]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BJumeau%20num%C3%A9rique%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BJumeau%20num%C3%A9rique%5D.png)
+
 
 
 **Hyperviseur**
@@ -2419,6 +2613,8 @@ stat_qs_simple(169, "Votre structure a-t-elle déployé les technologies suivant
 dataviz("Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Hyperviseur]")
 saving_plot(graph, "Votre structure a-t-elle déployé les technologies suivantes, ou prévoit-elle de le faire dans les 12 prochains mois ? [Hyperviseur]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BHyperviseur%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BHyperviseur%5D.png)
 
 
 
@@ -2442,6 +2638,8 @@ saving_plot(graph, "Votre structure a-t-elle mis en place des technologies mutua
 # Question pas trouvée en 2022
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20technologies%20mutualis%C3%A9es%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%20douze%20prochains%20mois%2C%20avec%20les%20acteurs%20publics%20ou%20associatifs%20suivants%20%3A%20%5BUne%20plateforme%20r%C3%A9gionale%20d%E2%80%99information%20g%C3%A9ographique%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20technologies%20mutualis%C3%A9es%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%20douze%20prochains%20mois%2C%20avec%20les%20acteurs%20publics%20ou%20associatifs%20suivants%20%3A%20%5BUne%20plateforme%20r%C3%A9gionale%20d%E2%80%99information%20g%C3%A9ographique%5D.png)
+
 
 **Un OPSN (opérateur public de services numériques)**
 
@@ -2457,6 +2655,8 @@ stat_qs_simple(171, "Votre structure a-t-elle mis en place des technologies mutu
 dataviz("Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Un OPSN (opérateur public de services numériques)]")
 saving_plot(graph, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Un OPSN (opérateur public de services numériques)]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20technologies%20mutualis%C3%A9es%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%20douze%20prochains%20mois%2C%20avec%20les%20acteurs%20publics%20ou%20associatifs%20suivants%20%3A%20%5BUn%20OPSN%20(op%C3%A9rateur%20public%20de%20services%20num%C3%A9riques)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20technologies%20mutualis%C3%A9es%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%20douze%20prochains%20mois%2C%20avec%20les%20acteurs%20publics%20ou%20associatifs%20suivants%20%3A%20%5BUn%20OPSN%20(op%C3%A9rateur%20public%20de%20services%20num%C3%A9riques)%5D.png)
 
 
 **Une collectivité territoriale plus grande (ex : EPCI, métropole, région…)**
@@ -2474,6 +2674,8 @@ dataviz("Votre structure a-t-elle mis en place des technologies mutualisées, ou
 saving_plot(graph, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une collectivité territoriale plus grande]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20technologies%20mutualis%C3%A9es%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%20douze%20prochains%20mois%2C%20avec%20les%20acteurs%20publics%20ou%20associatifs%20suivants%20%3A%20%5BUne%20collectivit%C3%A9%20territoriale%20plus%20grande%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20technologies%20mutualis%C3%A9es%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%20douze%20prochains%20mois%2C%20avec%20les%20acteurs%20publics%20ou%20associatifs%20suivants%20%3A%20%5BUne%20collectivit%C3%A9%20territoriale%20plus%20grande%5D.png)
+
 
 **Une association de collectivités (ex : OpenData France, FNCCR…)**
 
@@ -2489,6 +2691,8 @@ stat_qs_simple(173, "Votre structure a-t-elle mis en place des technologies mutu
 dataviz("Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une association de collectivités (ex : OpenData France, FNCCR…)]")
 saving_plot(graph, "Votre structure a-t-elle mis en place des technologies mutualisées, ou prévoit-elle de le faire dans les douze prochains mois, avec les acteurs publics ou associatifs suivants : [Une association de collectivités]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20technologies%20mutualis%C3%A9es%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%20douze%20prochains%20mois%2C%20avec%20les%20acteurs%20publics%20ou%20associatifs%20suivants%20%3A%20%5BUne%20association%20de%20collectivit%C3%A9s%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20technologies%20mutualis%C3%A9es%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%20douze%20prochains%20mois%2C%20avec%20les%20acteurs%20publics%20ou%20associatifs%20suivants%20%3A%20%5BUne%20association%20de%20collectivit%C3%A9s%5D.png)
 
 
 
@@ -2507,6 +2711,8 @@ dataviz("Certaines structures attachent une importance particulière au caractè
 saving_plot(graph, "Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Pour le choix de ses outils et logiciels, votre structure :")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Certaines%20structures%20attachent%20une%20importance%20particuli%C3%A8re%20au%20caract%C3%A8re%20%C2%AB%20souverain%20%C2%BB%20des%20outils%20et%20des%20logiciels%20qu'elles%20utilisent.%20Pour%20le%20choix%20de%20ses%20outils%20et%20logiciels%2C%20votre%20structure%20%3A.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Certaines%20structures%20attachent%20une%20importance%20particuli%C3%A8re%20au%20caract%C3%A8re%20%C2%AB%20souverain%20%C2%BB%20des%20outils%20et%20des%20logiciels%20qu'elles%20utilisent.%20Pour%20le%20choix%20de%20ses%20outils%20et%20logiciels%2C%20votre%20structure%20%3A.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2514,6 +2720,8 @@ dataviz_comp(all_stat,"Certaines collectivités locales attachent une importance
              "Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs).   Pour le choix de ses outils et logiciels, votre structure :")
 saving_plot_comp(graph, "Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Pour le choix de ses outils et logiciels, votre structure :")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Certaines%20structures%20attachent%20une%20importance%20particuli%C3%A8re%20au%20caract%C3%A8re%20%C2%AB%20souverain%20%C2%BB%20des%20outils%20et%20des%20logiciels%20qu'elles%20utilisent.%20Pour%20le%20choix%20de%20ses%20outils%20et%20logiciels%2C%20votre%20structure%20%3A.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Certaines%20structures%20attachent%20une%20importance%20particuli%C3%A8re%20au%20caract%C3%A8re%20%C2%AB%20souverain%20%C2%BB%20des%20outils%20et%20des%20logiciels%20qu'elles%20utilisent.%20Pour%20le%20choix%20de%20ses%20outils%20et%20logiciels%2C%20votre%20structure%20%3A.png)
 
 
 
@@ -2532,6 +2740,9 @@ dataviz("Lorsqu'une alternative open source est identifiée :")
 saving_plot(graph, "Lorsqu'une alternative open source est identifiée")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Lorsqu'une%20alternative%20open%20source%20est%20identifi%C3%A9e.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Lorsqu'une%20alternative%20open%20source%20est%20identifi%C3%A9e.png)
+
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2542,6 +2753,8 @@ all_stat |>
 saving_plot_comp(graph, "Lorsqu'une alternative open source est identifiée")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Lorsqu'une%20alternative%20open%20source%20est%20identifi%C3%A9e.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Lorsqu'une%20alternative%20open%20source%20est%20identifi%C3%A9e.png)
+
 
 ## Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
 
@@ -2551,6 +2764,7 @@ saving_plot_comp(graph, "Lorsqu'une alternative open source est identifiée")
 stat_qs_simple(176, "Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
 ```
 
+
 + **Visualisation**
 
 ```{r}
@@ -2558,6 +2772,8 @@ dataviz("Des critères de réversibilité (facilitation de la récupération de 
 saving_plot(graph, "La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
 # Question pas trouvée en 2022
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/La%20r%C3%A9versibilit%C3%A9%20est-elle%20un%20crit%C3%A8re%20entrant%20en%20compte%20dans%20le%20choix%20des%20solutions%20de%20votre%20structure%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/La%20r%C3%A9versibilit%C3%A9%20est-elle%20un%20crit%C3%A8re%20entrant%20en%20compte%20dans%20le%20choix%20des%20solutions%20de%20votre%20structure%20%3F.png)
 
 
 
@@ -2570,6 +2786,7 @@ stat_qs_simple(177, "L’interopérabilité est-elle un critère entrant en comp
 ```
 
 
+
 + **Visualisation**
 
 ```{r}
@@ -2577,6 +2794,8 @@ dataviz("L’interopérabilité est-elle un critère entrant en compte dans le c
 saving_plot(graph, "L’interopérabilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?")
 # Question pas trouvée en 2022
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/L%E2%80%99interop%C3%A9rabilit%C3%A9%20est-elle%20un%20crit%C3%A8re%20entrant%20en%20compte%20dans%20le%20choix%20des%20solutions%20de%20votre%20structure%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/L%E2%80%99interop%C3%A9rabilit%C3%A9%20est-elle%20un%20crit%C3%A8re%20entrant%20en%20compte%20dans%20le%20choix%20des%20solutions%20de%20votre%20structure%20%3F.png)
 
 
 
@@ -2597,6 +2816,8 @@ dataviz("Votre structure a-t-elle déjà dû faire face à une cyberattaque impo
 saving_plot(graph, "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20d%C3%BB%20faire%20face%20%C3%A0%20une%20cyberattaque%20importante%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20d%C3%BB%20faire%20face%20%C3%A0%20une%20cyberattaque%20importante%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2605,6 +2826,8 @@ all_stat |>
                "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
 saving_plot_comp(graph, "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20d%C3%BB%20faire%20face%20%C3%A0%20une%20cyberattaque%20importante%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20d%C3%BB%20faire%20face%20%C3%A0%20une%20cyberattaque%20importante%20%3F.png)
 
 
 
@@ -2623,6 +2846,8 @@ dataviz("Pensez-vous que votre structure est exposée à des attaques cyber ?")
 saving_plot(graph, "Pensez-vous que votre structure est exposée à des attaques cyber ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pensez-vous%20que%20votre%20structure%20est%20expos%C3%A9e%20%C3%A0%20des%20attaques%20cyber%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Pensez-vous%20que%20votre%20structure%20est%20expos%C3%A9e%20%C3%A0%20des%20attaques%20cyber%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2631,6 +2856,8 @@ all_stat |>
                "Pensez-vous que votre structure est exposée à des attaques cyber ?")
 saving_plot_comp(graph, "Pensez-vous que votre structure est exposée à des attaques cyber ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pensez-vous%20que%20votre%20structure%20est%20expos%C3%A9e%20%C3%A0%20des%20attaques%20cyber%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pensez-vous%20que%20votre%20structure%20est%20expos%C3%A9e%20%C3%A0%20des%20attaques%20cyber%20%3F.png)
 
 
 
@@ -2649,6 +2876,8 @@ dataviz("Comment estimez-vous le niveau de prise en compte du risque cyber par v
 saving_plot(graph, "Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comment%20estimez-vous%20le%20niveau%20de%20prise%20en%20compte%20du%20risque%20cyber%20par%20votre%20structure%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comment%20estimez-vous%20le%20niveau%20de%20prise%20en%20compte%20du%20risque%20cyber%20par%20votre%20structure%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2658,6 +2887,8 @@ all_stat |>
                "Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
 saving_plot_comp(graph, "Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Comment%20estimez-vous%20le%20niveau%20de%20prise%20en%20compte%20du%20risque%20cyber%20par%20votre%20structure%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Comment%20estimez-vous%20le%20niveau%20de%20prise%20en%20compte%20du%20risque%20cyber%20par%20votre%20structure%20%3F.png)
 
 
 
@@ -2676,6 +2907,8 @@ dataviz("Quels sont, selon vous, les principaux obstacles à la mise en place d�
 saving_plot(graph, "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quels%20sont%2C%20selon%20vous%2C%20les%20principaux%20obstacles%20%C3%A0%20la%20mise%20en%20place%20d%E2%80%99outils%20de%20s%C3%A9curit%C3%A9%20informatique%20dans%20votre%20structure%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Quels%20sont%2C%20selon%20vous%2C%20les%20principaux%20obstacles%20%C3%A0%20la%20mise%20en%20place%20d%E2%80%99outils%20de%20s%C3%A9curit%C3%A9%20informatique%20dans%20votre%20structure%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2684,6 +2917,8 @@ all_stat |>
                "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
 saving_plot_comp(graph, "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Quels%20sont%2C%20selon%20vous%2C%20les%20principaux%20obstacles%20%C3%A0%20la%20mise%20en%20place%20d%E2%80%99outils%20de%20s%C3%A9curit%C3%A9%20informatique%20dans%20votre%20structure%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Quels%20sont%2C%20selon%20vous%2C%20les%20principaux%20obstacles%20%C3%A0%20la%20mise%20en%20place%20d%E2%80%99outils%20de%20s%C3%A9curit%C3%A9%20informatique%20dans%20votre%20structure%20%3F.png)
 
 
 
@@ -2705,6 +2940,8 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une formation pour les agents et les élus]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20formation%20pour%20les%20agents%20et%20les%20%C3%A9lus%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20formation%20pour%20les%20agents%20et%20les%20%C3%A9lus%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2713,6 +2950,8 @@ all_stat |>
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une formation pour les agents et les élus]")
 saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une formation pour les agents et les élus]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20formation%20pour%20les%20agents%20et%20les%20%C3%A9lus%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20formation%20pour%20les%20agents%20et%20les%20%C3%A9lus%5D.png)
 
 **La désignation d’un responsable de sécurité informatique (RSSI ou autre)**
 
@@ -2729,6 +2968,8 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BLa%20d%C3%A9signation%20d%E2%80%99un%20responsable%20de%20s%C3%A9curit%C3%A9%20informatique%20(RSSI%20ou%20autre)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BLa%20d%C3%A9signation%20d%E2%80%99un%20responsable%20de%20s%C3%A9curit%C3%A9%20informatique%20(RSSI%20ou%20autre)%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2737,6 +2978,8 @@ all_stat |>
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
 saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BLa%20d%C3%A9signation%20d%E2%80%99un%20responsable%20de%20s%C3%A9curit%C3%A9%20informatique%20(RSSI%20ou%20autre)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BLa%20d%C3%A9signation%20d%E2%80%99un%20responsable%20de%20s%C3%A9curit%C3%A9%20informatique%20(RSSI%20ou%20autre)%5D.png)
 
 **Une stratégie de sécurité informatique**
 
@@ -2753,6 +2996,8 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une stratégie de sécurité informatique]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20strat%C3%A9gie%20de%20s%C3%A9curit%C3%A9%20informatique%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20strat%C3%A9gie%20de%20s%C3%A9curit%C3%A9%20informatique%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2761,6 +3006,8 @@ all_stat |>
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une stratégie de sécurité informatique]")
 saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une stratégie de sécurité informatique]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20strat%C3%A9gie%20de%20s%C3%A9curit%C3%A9%20informatique%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20strat%C3%A9gie%20de%20s%C3%A9curit%C3%A9%20informatique%5D.png)
 
 
 **Un processus de certification (ISO 27001)**
@@ -2778,6 +3025,8 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUn%20processus%20de%20certification%20(ISO%2027001)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUn%20processus%20de%20certification%20(ISO%2027001)%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2786,6 +3035,8 @@ all_stat |>
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
 saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUn%20processus%20de%20certification%20(ISO%2027001)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUn%20processus%20de%20certification%20(ISO%2027001)%5D.png)
 
 
 **Une obligation d’hébergement souverain (français ou européen)**
@@ -2803,6 +3054,9 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une obligation d’hébergement souverain (français ou européen)]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20obligation%20d%E2%80%99h%C3%A9bergement%20souverain%20(fran%C3%A7ais%20ou%20europ%C3%A9en)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20obligation%20d%E2%80%99h%C3%A9bergement%20souverain%20(fran%C3%A7ais%20ou%20europ%C3%A9en)%5D.png)
+
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2811,6 +3065,8 @@ all_stat |>
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une obligation d’hébergement souverain (français ou européen)]")
 saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une obligation d’hébergement souverain (français ou européen)]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20obligation%20d%E2%80%99h%C3%A9bergement%20souverain%20(fran%C3%A7ais%20ou%20europ%C3%A9en)%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20obligation%20d%E2%80%99h%C3%A9bergement%20souverain%20(fran%C3%A7ais%20ou%20europ%C3%A9en)%5D.png)
 
 
 **Des clauses de sécurité dans les contrats informatiques**
@@ -2828,6 +3084,8 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BDes%20clauses%20de%20s%C3%A9curit%C3%A9%20dans%20les%20contrats%20informatiques%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BDes%20clauses%20de%20s%C3%A9curit%C3%A9%20dans%20les%20contrats%20informatiques%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2836,6 +3094,8 @@ all_stat |>
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
 saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BDes%20clauses%20de%20s%C3%A9curit%C3%A9%20dans%20les%20contrats%20informatiques%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BDes%20clauses%20de%20s%C3%A9curit%C3%A9%20dans%20les%20contrats%20informatiques%5D.png)
 
 
 **Des clauses de sécurité pour les délégations de service public**
@@ -2853,6 +3113,8 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité pour les délégations de service public]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BDes%20clauses%20de%20s%C3%A9curit%C3%A9%20pour%20les%20d%C3%A9l%C3%A9gations%20de%20service%20public%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BDes%20clauses%20de%20s%C3%A9curit%C3%A9%20pour%20les%20d%C3%A9l%C3%A9gations%20de%20service%20public%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2861,6 +3123,8 @@ all_stat |>
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité pour les délégations de service public]")
 saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité pour les délégations de service public]")
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BDes%20clauses%20de%20s%C3%A9curit%C3%A9%20dans%20les%20contrats%20informatiques%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BDes%20clauses%20de%20s%C3%A9curit%C3%A9%20dans%20les%20contrats%20informatiques%5D.png)
 
 
 **Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional**
@@ -2878,14 +3142,19 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information ou avec un cyber campus régional]")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20coop%C3%A9ration%20avec%20l%E2%80%99Agence%20nationale%20de%20la%20s%C3%A9curit%C3%A9%20des%20syst%C3%A8mes%20d%E2%80%99informationou%20avec%20un%20cyber%20campus%20r%C3%A9gional%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20coop%C3%A9ration%20avec%20l%E2%80%99Agence%20nationale%20de%20la%20s%C3%A9curit%C3%A9%20des%20syst%C3%A8mes%20d%E2%80%99informationou%20avec%20un%20cyber%20campus%20r%C3%A9gional%5D.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
 all_stat |>  
   dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]",
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]")
-#saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information ou avec un cyber campus régional]")
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 : Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information ou avec un cyber campus régional].png"), plot = graph, width = 25, height = 15)
+ggsave(file = glue("../Graphiques/SVG/Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information ou avec un cyber campus régional].svg"), plot = graph, width = 25, height = 15)   
 ```
+
+[![]()]()
 
 
 **Le déploiement d’outils techniques de sécurisation des réseaux informatiques**
@@ -2896,6 +3165,7 @@ all_stat |>
 stat_qs_simple(196, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
 ```
 
+
 + **Visualisation**
 
 ```{r}
@@ -2904,9 +3174,20 @@ saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risqu
 # Catégorie pas présente en 2022
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BLe%20d%C3%A9ploiement%20d%E2%80%99outils%20techniques%20de%20s%C3%A9curisation%20des%20r%C3%A9seaux%20informatiques%5D.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BLe%20d%C3%A9ploiement%20d%E2%80%99outils%20techniques%20de%20s%C3%A9curisation%20des%20r%C3%A9seaux%20informatiques%5D.png)
 
 
++ **Comparaison 2022 / 2023**
 
+```{r fig.height=14, fig.width=20}
+all_stat |>  
+  dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]",
+               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
+saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
+```
+
+
+[![]()]()
 
 # Le numérique responsable
 
@@ -2926,6 +3207,8 @@ dataviz("Votre structure a-t-elle engagé une réflexion sur les enjeux du numé
 saving_plot(graph, "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
 ```
 
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20engag%C3%A9%20une%20r%C3%A9flexion%20sur%20les%20enjeux%20du%20num%C3%A9rique%20responsable%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20engag%C3%A9%20une%20r%C3%A9flexion%20sur%20les%20enjeux%20du%20num%C3%A9rique%20responsable%20%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -2936,6 +3219,8 @@ all_stat |>
 saving_plot_comp(graph, "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
 ```
 
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20engag%C3%A9%20une%20r%C3%A9flexion%20sur%20les%20enjeux%20du%20num%C3%A9rique%20responsable%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20engag%C3%A9%20une%20r%C3%A9flexion%20sur%20les%20enjeux%20du%20num%C3%A9rique%20responsable%20%3F.png)
 
 
 ## Cette stratégie aborde-t-elle les thématiques suivantes ?
@@ -2953,6 +3238,8 @@ dataviz("Cette stratégie aborde-t-elle les thématiques suivantes ?")
 saving_plot(graph, "Cette stratégie aborde-t-elle les thématiques suivantes ?")
 # Question pas trouvée en 2022
 ```
+
+[![](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Cette%20strat%C3%A9gie%20aborde-t-elle%20les%20th%C3%A9matiques%20suivantes%20%3F.png)](https://github.com/datactivist/enquete_data_publica/blob/main/Graphiques/PNG/Cette%20strat%C3%A9gie%20aborde-t-elle%20les%20th%C3%A9matiques%20suivantes%20%3F.png)
 
 
 ## Concernant les thématiques de l’inclusion et de l’accessibilité numérique, votre structure a-t-elle engagé une réflexion sur les sujets suivants
