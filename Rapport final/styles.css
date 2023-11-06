@@ -6,14 +6,19 @@
 }
 
 @font-face {
-  font-family: "Quicksand";
-  src: url("fonts/Quicksand.ttf");
+  font-family: "Quicksand bold";
+  src: url("fonts/Quicksand-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Quicksand regular";
+  src: url("fonts/Quicksand-Regular.ttf");
 }
 
 h1.title { /*titre général du document*/
   color: #323465; /*couleur titre*/
   font-size: 2.5em; /*taille*/
-  font-family: "Quicksand"; /*police*/
+  font-family: "Quicksand bold"; /*police*/
   font-weight: bold; /*gras*/
   border-top: 0px; /*pas de ligne horizontale avant*/
   padding-left: 0px; /*tout à gauche, pas d'alinéa*/
@@ -24,7 +29,7 @@ h1.title { /*titre général du document*/
 h1 { /*titre de niveau #1*/
   color: #323465; /*couleur titre*/
   font-size: 2.5em; /*taille*/
-  font-family: "Quicksand"; /*police*/
+  font-family: "Quicksand bold"; /*police*/
   font-weight: bold; /*gras*/
   padding-left: 0px; /*alinéa, espace à gauche du titre*/
   padding-top: 20px; /*espace avant titre*/
@@ -34,7 +39,7 @@ h1 { /*titre de niveau #1*/
 h2 { /*titre de niveau #2*/
   color: #bf0001; /*couleur titre*/
   font-size: 2em; /*taille*/
-  font-family: "Quicksand"; /*police*/
+  font-family: "Quicksand bold"; /*police*/
   font-weight: bold; /*gras*/
   padding: 0px; /*alinéa*/
   padding-top: 30px; /*espace avant titre*/
@@ -42,7 +47,7 @@ h2 { /*titre de niveau #2*/
 h3 { /*titre de niveau #3*/
   color: #323465; /*couleur titre*/
   font-size: 1.8em; /*taille*/
-  font-family: "Quicksand"; /*police*/
+  font-family: "Quicksand bold"; /*police*/
   font-weight: bold; /*gras*/
   padding: 10px; /*alinéa*/
   padding-top: 30px; /*alinéa*/
@@ -51,14 +56,14 @@ h3 { /*titre de niveau #3*/
 h4 { /*titre de niveau #4*/
   color: #bf0001; /*couleur titre*/
   font-size: 1.5em; /*taille*/
-  font-family: "Quicksand"; /*police*/
+  font-family: "Quicksand regular"; /*police*/
   padding: 10px; /*alinéa*/
   padding-left: 40px; /*alinéa*/
 }
 h5 { /*titre de niveau #5*/
   color: #e73458; /*couleur titre*/
   font-size: 1em; /*taille*/
-  font-family: "Quicksand"; /*police*/
+  font-family: "Quicksand regular"; /*police*/
   font-weight: bold; /*gras*/
   padding: 0px; /*alinéa*/
 }
