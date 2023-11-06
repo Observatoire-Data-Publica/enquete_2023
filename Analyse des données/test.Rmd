@@ -1,39 +1,231 @@
 ---
-title: "Untitled"
-author: "Diane Thierry"
-date: "`r Sys.Date()`"
-output: html_document
+title: "Enquête Data Publica, édition 2023"
+subtitle: "Analyse des données de l’enquête"
+date: "Dernière modification le `r format(Sys.time(), '%d %B %Y')`"
+output:
+    rmarkdown::html_document:
+      #number_sections: true
+      theme: paper
+      toc: true
+      toc_float: true
+      toc_depth: 5
+      number_sections: true
+      collapsed: true
+      smooth_scroll: true
+      css: styles.css
+      self_contained: false
+      includes:
+        in_header: header.html
+        after_body: footer.html
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Paramètres généraux
+knitr::opts_chunk$set(
+	eval = TRUE,
+	echo = FALSE,
+	fig.align = "center",
+	fig.show = "hold",
+	message = FALSE,
+	warning = FALSE,
+	error = FALSE,
+	collapse = TRUE,
+	out.width = "100%",
+	results = "asis",
+	fig.height=15, #45
+	fig.width=20, 
+	cache=TRUE
+)
 ```
 
+```{r logo}
+# Logo Datactivist haut de page
+htmltools::img(src = "https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/preview", 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; left:-0.5; padding-top:-2px; width:350px;') #padding=taille des espaces autour
+```
 
+# Informations générales
 
-# Visualisation des donnnées
-
-```{r}
+```{r données}
+# Import de données
 library(tidyverse)
+data <- read_csv("../Data/results-survey396597.csv") |> select(1:220)
+CT_enrichies <- read_csv("../Data/interim_data.csv")
+data_2022 <- readxl::read_xlsx("../Data/data_enquete_2022.xlsx", "Resultats Bruts")
+
+# Jointure questionnaire + type de structure récupéré en pre-processing
+data <- data |> 
+    left_join(CT_enrichies |> select(-2), by = "ID de la réponse") |> 
+    mutate(Catégorie = case_when(Catégorie == "Commune" ~ "Une commune",
+                                 Catégorie == "Metropole" ~ "Une métropole",
+                                 Catégorie == "Departement" ~ "Un département",
+                                 Catégorie == "Region" ~ "Une région",
+                                 Catégorie == "EPCI" ~ "Un EPCI (hors métropole)"),
+           Catégorie2 = case_when(Catégorie == "Une commune" & `Population totale` < 3500 ~ "Communes de moins de 3 500 hab.",
+                               Catégorie == "Une commune" & `Population totale` >= 3500 & `Population totale` < 10000 ~ "Communes de 3 500 à 10 000 hab.",
+                               Catégorie == "Une commune" & `Population totale` >= 10000 & `Population totale` < 100000 ~ "Communes de 10 000 à 100 000 hab.",
+                               Catégorie == "Une commune" & `Population totale` >= 100000 ~ "Communes de plus de 100 000 hab.",
+                               is.na(Catégorie) ~ "Autre",
+                               .default = Catégorie),
+           Catégorie = case_when(is.na(Catégorie) ~ "Autre", .default = Catégorie))
+
+# Données complètes
+data_clean <- data |> 
+    filter(!is.na(`Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?`))
+data_clean_unique <- data_clean |> 
+    mutate(nb_na = rowSums(is.na(data_clean))) |> 
+    mutate(n = n(), .by = nom) |> 
+    group_by(nom) |> slice(which.min(nb_na)) |> ungroup()
+# data_clean_unique |> 
+#     rename(structure = Catégorie, structure_pop = Catégorie2) |> 
+#     select(-c(2:10, SIREN, COG, nb_na, n)) |> 
+#     rio::export("../Data/process_data.csv")
+
+# Liste des régions
+library(tools)
+reg <- data_clean_unique |> filter(Catégorie == "Une région") |> 
+    mutate(nom = toTitleCase(tolower(nom))) |> distinct(nom) |> t()
+```
+
+## Les données
+
+Les données brutes sont composées de `r nrow(data)` réponses (complètes comme incomplètes) et `r ncol(data)` variables. Elles sont enrichies par le type de territoire et la population extraits des [données OFGL](https://data.ofgl.fr/explore/?exclude.theme=INTERNE&sort=title) en plusieurs étapes :
+
+-   retrait des accents, chiffres et caractères spéciaux des noms de structure et mise en majuscule ;
+-   jointure avec les données OFGL par le nom de structure (lui aussi sans caractères spéciaux etc.) ;
+-   complétion manuelle du type de structure et de la population pour les structures non enrichies par les données OFGL ;
+-   vérification des jointures multiples lorsque plusieurs CT ont un même nom, choix de la bonne collectivité via les informations renseignées dans le questionnaire.
+
+Les régions ayant répondu sont les suivantes : ***`r reg`***.
+
+Les ***réponses*** complètes, enrichies du type de structure, nettoyées des doublons et anonymisées sont consultables sur ce lien : <https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv>.
+
+## Redressement d'échantillon
+
+Comme dernière étape avant d'être analysées, les données de l'échantillon ont été ***redressées*** pour les rendre cohérentes aux proportions des collectivités territoriales à l'échelle nationale. Les étapes ci-dessous ont été suivies :
+
+-   récupération du nombre de collectivités par type de structure à partir des chiffres 2023 de la page [*'Collectivités-locales.gouv.fr'*](https://www.collectivites-locales.gouv.fr/collectivites-locales-chiffres-2023), calcul des proportions de chaque type de structure sur le nombre total de collectivités ;
+-   calcul des mêmes proportions sur notre échantillon ;
+-   calcul des poids à attribuer à chaque type de collectivité pour redresser l'échantillon, tels que poids = proportion nationale / proportion dans l'échantillon ;
+-   calcul de la somme des poids par réponse ;
+-   calcul d'une moyenne pondérée à partir des poids obtenus en étape précédente divisés par la somme totale des poids.
+
+Les statistiques de chaque question comporteront donc 2 lignes ***Total*** ;
+
+-   l'une avec le total de l'échantillon, indiquant entre parenthèses le nombre de réponses reçues pour cette question ;
+-   l'autre avec le total pondéré pour correspondre aux proportions nationales.
+
+## Résultats
+
+Les questions impliquant des **réponses textuelles** ne sont pas présentées dans l'analyse, il s'agit des questions suivantes :
+
+-   Quelles sont les grandes lignes de cette politique de souveraineté publique sur les données ?
+-   Si domaine autre, pouvez-vous préciser ?
+-   Avez-vous identifié d'autres priorités justifiant une utilisation plus importante de données ?
+-   Quelle forme prend cette participation d'acteurs tiers ?
+-   Pouvez-vous nous en dire davantage ?
+-   Quels sont les autres métiers impliqués ?
+-   Si autres, précisez :
+-   Pouvez-vous préciser ?
+-   Pouvez-vous nous décrire ces projets ou expérimentations ?
+-   Pouvez-vous nous en dire plus sur cette cyberattaque ?
+
+Toutes les questions appelant à **déposer des fichiers** ne sont pas non plus présentées dans l'analyse.
+
+Les **pourcentages** présentés dans les statistiques correspondent au pourcentage de répondants pour chaque question, par type de structure.
+
+```{r prepa graphes}
 # Import des données des stats rassemblés
-all_stat <- read_csv("../Data/All_statistics.csv")
+  # 2023
+all_stat_2023 <- read_csv("../Data/All_statistics_2023.csv") |> 
+  mutate(Edition = "2023")
+# rassemble EPCI (hors métropoles) et métropoles pour correspondre à édition 2022
+epci_met <- all_stat_2023 |> 
+  filter(Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole") |> 
+  pivot_wider(names_from = Structure, values_from = c(Occurrences, `Nombre de réponses`)) |> 
+  mutate(Occurrences = sum(`Occurrences_Un EPCI (hors métropole)`, `Occurrences_Une métropole`, na.rm = T), 
+         `Nombre de réponses` = sum(`Nombre de réponses_Un EPCI (hors métropole)`, `Nombre de réponses_Une métropole`, na.rm = T), 
+         .by = c(Question, Réponses)) |> 
+  distinct(Question, Réponses, Occurrences, `Nombre de réponses`, Edition) |> 
+  mutate(`Effectifs par structure` = 69+36, #EPCI (hors métropoles) + métropoles
+         `Structure` = "Un EPCI",
+         Pourcentage = round(Occurrences/105 *100, 0))
+all_stat_2023_comp <- rbind(all_stat_2023, epci_met) |> 
+  arrange(Question, Structure) |> 
+  filter(Structure != "Un EPCI (hors métropole)", Structure != "Une métropole")
+  # 2022
+all_stat_2022 <- read_csv("../Data/All_statistics_2022.csv") |> ungroup() |> 
+                    mutate(Structure = str_replace_all(Structure, c("Moins de 3 500 habitants" = "Communes de moins de 3 500 hab.",
+                                                                    "Entre 3 500 et 10 000 habitants" = "Communes de 3 500 à 10 000 hab.",
+                                                                    "Entre 10 000 et 100 000 habitants" = "Communes de 10 000 à 100 000 hab.",
+                                                                    "Plus de 100 000 habitants" = "Communes de plus de 100 000 hab.")),
+                           Question = str_extract(Question, "\\s+(.*)"), #remove first word ~ question id
+                           Question = substr(Question, 2, nchar(Question)), #remove white space before question
+                           Réponses = case_when(grepl("\\[", Réponses) == TRUE ~ str_extract(Réponses, "(?<=\\[).*"),
+                                                .default = Réponses)) 
+# Jointure des stats des 2 éditions
+all_stat <- rbind(all_stat_2022, all_stat_2023_comp) |> 
+  mutate(Question = str_replace_all(Question, " ", " ")) |> 
+  arrange(Question)
+
+
+# Données répartition des structures par type à échelle nationale
+prop_nationales <- data.frame(Structure = c("Une commune",
+                                            "Une région",
+                                            "Un département",
+                                            "Un EPCI (hors métropole)",
+                                            "Une métropole",
+                                            "Communes de 3 500 à 10 000 hab.",
+                                            "Communes de 10 000 à 100 000 hab.",
+                                            "Communes de plus de 100 000 hab."),
+                              Nombre_nat = c(34945,
+                                         18,
+                                         101,
+                                         1233,
+                                         21,
+                                         2160,
+                                         981,
+                                         42)) |> 
+    mutate(percent_nat = Nombre_nat / 36318 * 100)
+prop_echantillon <- data.frame(Structure = c("Une commune",
+                                            "Une région",
+                                            "Un département",
+                                            "Un EPCI (hors métropole)",
+                                            "Une métropole",
+                                            "Communes de 3 500 à 10 000 hab.",
+                                            "Communes de 10 000 à 100 000 hab.",
+                                            "Communes de plus de 100 000 hab."),
+                              Nombre_ech = c(data_clean_unique |> filter(Catégorie == "Une commune") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Une région") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Un département") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Un EPCI (hors métropole)") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Une métropole") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Communes de 3 500 à 10 000 hab.") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow(),
+                                         data_clean_unique |> filter(Catégorie2 == "Communes de plus de 100 000 hab.") |> nrow())) |> 
+    mutate(percent_ech = Nombre_ech / nrow(data_clean_unique) * 100)
+prop_all <- prop_nationales |> 
+    left_join(prop_echantillon, by = "Structure") |> 
+    mutate(poids = percent_nat / percent_ech)
+
 
 # Thème ggplot customisé
 font <- "Helvetica"
 custom_theme <- function (){
     font <- "Helvetica"
-    ggplot2::theme(plot.title = ggplot2::element_text(family = font,size = 15, face = "bold", color = "#222222"), 
-        plot.subtitle = ggplot2::element_text(family = font,size = 15, face = "italic", margin = ggplot2::margin(0, 0, 9, 0)), 
+    ggplot2::theme(plot.title = ggplot2::element_text(family = font,size = 25, face = "bold", color = "#222222"), 
+        plot.subtitle = ggplot2::element_text(family = font,size = 20, face = "italic", margin = ggplot2::margin(0, 0, 9, 0)), 
         plot.caption = ggplot2::element_text(family = font,size = 15, margin = ggplot2::margin(9, 0, 9, 0)), 
         legend.title = ggplot2::element_text(family = font, size = 15, color = "#222222"), 
         legend.position = "top", 
         legend.text.align = 0, 
         legend.background = ggplot2::element_blank(),
         legend.key = ggplot2::element_blank(),
-        legend.text = ggplot2::element_text(family = font, size = 15,color = "#222222"), 
-        axis.text = ggplot2::element_text(family = font, size = 15,color = "#222222"), 
+        legend.text = ggplot2::element_text(family = font, size = 20,color = "#222222"), 
+        axis.text = ggplot2::element_text(family = font, size = 20,color = "#222222"), 
         axis.text.x = ggplot2::element_text(margin = ggplot2::margin(5,b = 10)), 
-        axis.title = ggplot2::element_text(family = font, size = 15,color = "#222222"),
+        axis.title = ggplot2::element_text(family = font, size = 22,color = "#222222"),
         axis.ticks = ggplot2::element_blank(),
         axis.line = ggplot2::element_blank(), 
         panel.grid.minor = ggplot2::element_blank(),
@@ -43,46 +235,260 @@ custom_theme <- function (){
         strip.background = ggplot2::element_rect(fill = "white"),
         strip.text = ggplot2::element_text(size = 22, hjust = 0, face = "bold"))
 }
+# couleurs data publica
+    ## Vieille pres
+    # bleu foncé : 273768
+    # cyan fluo : 3de5fc
+    # jaune fluo : ffcd1c
+
+    ## Site Observatoire
+    # bleu foncé : 323465
+    # cyan plus foncé : 33bbc9
+    # jaune / orange : e1b44d
+
+# Librairies et fonction d'export des graphs
+library(cowplot)
+library(gridExtra)
+library(glue)
+saving_plot <- function(graph, name) {
+  ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph, width = 20, height = 15)
+  ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 20, height = 15)
+}
+saving_plot_comp <- function(graph, name) {
+  ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 : {name}.png"), plot = graph, width = 25, height = 15)
+  ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 : {name}.svg"), plot = graph, width = 25, height = 15)
+}
 ```
 
-## Droit des données publiques
+(in fine combiner avec documentation du tri croisé)
 
-### Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
+Une comparaison entre les éditions 2022 et 2023 sera présentée pour toutes les questions communes aux deux années. Avant cela, voilà la répartition des répondants par type de structure pour les deux années :
 
 ```{r}
-# Fonction graph ensemble
-dat <- all_stat |> 
-    filter(Question == "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?" & Structure == "Total")
-dat |> 
-    ggplot(aes(y=Occurrences, x=Réponses)) + 
-        geom_bar(position="dodge", stat="identity", width=.6, size = 1, fill = "#83b4d1") +
-        labs(x = "", y = "Nombre de réponses", 
-             title = stringr::str_wrap("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?", width = 45),
-             subtitle = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
-        geom_label(aes(x = Réponses, y = Occurrences+6, label = paste0(Pourcentage, "%")), 
-                   size = 5, fill = "white", label.size = NA, align = "left") +
-        coord_flip() +
-        theme_classic() +
-        custom_theme() +
-        theme(panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
-              panel.grid.major.y = ggplot2::element_blank())
-
-# Fonction type de collectivité
-dat <- all_stat |> 
-    filter(Question == "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?" & Structure != "Total" | Structure != "")
-dat |> 
-    ggplot(aes(y=Occurrences, x=Réponses)) + 
-        geom_bar(position="dodge", stat="identity", width=.6, size = 1, fill = "#83b4d1") +
-        labs(x = "", y = "Nombre de réponses", 
-             title = stringr::str_wrap("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?", width = 45),
-             subtitle = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
-        geom_label(aes(x = Réponses, y = Occurrences+6, label = paste0(Pourcentage, "%")), 
-                   size = 5, fill = "white", label.size = NA, align = "left") +
-        coord_flip() +
-        theme_classic() +
-        custom_theme() +
-        theme(panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
-              panel.grid.major.y = ggplot2::element_blank())
-
-
+repartition_structures <- all_stat |> distinct(Structure, `Effectifs par structure`, Edition) |> 
+  pivot_wider(names_from = Edition, values_from = `Effectifs par structure`) |> 
+  mutate(index = case_match(Structure, 
+                            "Une commune" ~ 2,
+                            "Communes de moins de 3 500 hab." ~ 3,
+                            "Communes de 3 500 à 10 000 hab." ~ 4,
+                            "Communes de 10 000 à 100 000 hab." ~ 5,
+                            "Communes de plus de 100 000 hab." ~ 6,
+                            "Un EPCI" ~ 8,
+                            "Un département" ~ 9,
+                            "Une région" ~ 10,
+                            "Autre" ~ 11, 
+                            "Total" ~ 12,
+                            "Total hors communes < 3500 habitants" ~ 13,
+                            "Total pondéré" ~ 14,
+                            .default = 1)) |> 
+  arrange(index) |> select(-index) |> ungroup() |> 
+  filter(Structure != "Total pondéré") |> 
+  select(Structure, `2022`, `2023`)
+library(gt)
+repartition_structures |> gt()
 ```
+
+# Droit des données publiques
+
+## Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
+
+-   **Statistiques**
+
+```{r qs1}
+# Stats individuelles
+stat_qs_simple <- function(n_col, nom_col){
+    # Structures détaillées
+   cat2 <- data_clean_unique |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> #na.omit() |>  
+        pivot_wider(names_from = 2, values_from = 3) |>
+        janitor::adorn_totals("row") |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n")
+   nb_na <- 191 - (cat2 |> filter(Catégorie2 == "Total" & cat != "NA") |> mutate(Total = sum(n)) |> distinct(Total))
+   cat2 <- cat2 |> 
+        mutate(Catégorie2 = case_when(Catégorie2 == "Total" ~ paste0("Total (", sum(n[Catégorie2 == "Total"]) - nb_na, " réponses)"), .default = Catégorie2)) |> 
+        mutate_all(replace_na, replace = 0) |>
+        mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie2) |> 
+        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+     # Structure 'commune' seulement
+    cat1 <- data_clean_unique |> 
+        select(n_col, Catégorie) |> 
+        filter(Catégorie == "Une commune") |> 
+        summarise(n = n(), .by = c(Catégorie, 1)) |> #na.omit() |>  
+        mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie) |> 
+        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+    nb_col <- ncol(cat2)
+     # Moyenne pondérée
+    moy_pond <- data_clean_unique |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> 
+        pivot_wider(names_from = 2, values_from = 3) |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate_all(replace_na, replace = 0) |>
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(`Total pondéré`= paste0(round(p/sum(p)*100, 0), "%")) |> 
+        select(-p) |> 
+        pivot_wider(names_from = 1, values_from = 2) |> 
+        mutate(Catégorie = "Total pondéré", .before = 1)
+     # Jointure, statistiques finales
+    stat_indiv <- list(cat1, cat2 |> rename(Catégorie = Catégorie2)) |> 
+        bind_rows() |> ungroup() |> 
+        rbind(moy_pond) |> 
+        mutate_all(replace_na, replace = "0%") |>  
+        mutate(index = case_match(Catégorie, 
+                                  "Total" ~ 1.5,
+                                  "Une commune" ~ 2,
+                                  "Communes de moins de 3 500 hab." ~ 3,
+                                  "Communes de 3 500 à 10 000 hab." ~ 4,
+                                  "Communes de 10 000 à 100 000 hab." ~ 5,
+                                  "Communes de plus de 100 000 hab." ~ 6,
+                                  "Une métropole" ~ 7,
+                                  "Un EPCI (hors métropole)" ~ 8,
+                                  "Un département" ~ 9,
+                                  "Une région" ~ 10,
+                                  "Autre" ~ 11, 
+                                  .default = 1)) |> 
+        arrange(index) |> select(-index) |> ungroup()
+    # Création colonne 'Sans réponse' si n'existe pas déjà
+    stat_indiv <- stat_indiv |> ungroup() |> 
+        select(1, order(colnames(stat_indiv))) |> 
+        rowwise() |> 
+        mutate(`NA` = ifelse("NA" %in% names(stat_indiv), `NA`, "0%")) |> 
+        mutate(`Sans réponse` = `NA`, .after = ncol(stat_indiv)) |> 
+        select(-`NA`) |> 
+        rename({{ nom_col }} := 1)
+    # On affiche la table finale
+    knitr::kable(stat_indiv, format = "html") |> 
+      kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
+}
+stat_qs_simple(13, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
+```
+
+-   **Visualisation**
+
+
+```{r }
+dataviz <- function(nom_col){
+    # Fonction graph ensemble
+    dat <- all_stat_2023 |> 
+        filter(Question == nom_col & Structure == "Total",
+               Réponses != "Sans réponse")
+    p0 <- dat |> 
+        ggplot(aes(y=Occurrences, x=Réponses, fill = Réponses)) + 
+            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Nombre de réponses", 
+                 title = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
+            geom_label(aes(x = Réponses, y = Occurrences+1, label = paste0(Pourcentage, "%")), 
+                       size = 8, fill = "white", label.size = NA, hjust = 0) +
+            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(dat$Occurrences)+14) +
+            coord_flip() +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "none",
+                  plot.title = element_text(hjust = 1),
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+    # Fonction graph total pondéré
+    dat <- all_stat_2023 |> 
+        filter(Question == nom_col & Structure == "Total pondéré",
+               Réponses != "Sans réponse")
+    p0_pond <- dat |> 
+        ggplot(aes(y=Pourcentage, x=Réponses, fill = Réponses)) + 
+            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Pourcentage de réponses", 
+                 title = "Total pondéré") +
+            geom_label(aes(x = Réponses, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
+                       size = 8, fill = "white", label.size = NA, hjust = 0) +
+            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(dat$Pourcentage)+14) +
+            coord_flip() +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())+
+            guides(fill = guide_legend(title = "Légende", ncol = 1))
+    # Fonction type de collectivité
+    dat <- all_stat_2023 |> 
+        filter(Question == nom_col & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre"),
+               Réponses != "Sans réponse") |> 
+        mutate(Pourcentage = as.numeric(Pourcentage)/100,
+               Structure = factor(Structure, levels = c("Autre","Une région","Un département","Une métropole","Un EPCI (hors métropole)","Une commune")))
+    p1 <- dat |> 
+        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+    # Fonction taille de commune
+    dat <- all_stat_2023 |> 
+        filter(Question == nom_col & grepl("Communes de", Structure) == TRUE,
+               Réponses != "Sans réponse") |> 
+        mutate(Pourcentage = as.numeric(Pourcentage)/100,
+               Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
+               Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab.")))
+    p2 <- dat |> 
+        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+        theme(legend.position = "none",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+    # Légende
+    p3 <- dat |> 
+        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune", fill = "légende") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
+        theme(legend.position = "right",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+     legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 10, 12)))
+    # All
+    # p1.2 <- plot_grid(p1, p2, align = 'v', nrow = 2)
+    # c2 <- plot_grid(p0_pond, legend, nrow = 1)
+    # c1 <- plot_grid(p0, p1.2, nrow = 1)
+    # graph <- plot_grid(c1, c2, ncol = 1)
+    left_part <- plot_grid(p0, p0_pond, ncol = 1)
+    right_part <- plot_grid(p1, p2, ncol = 1)
+    all_plots <- plot_grid(left_part, right_part, ncol = 2)
+    graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(.9, .1))
+    assign("graph", graph, envir = .GlobalEnv)
+    grid::grid.draw(graph)
+}
+#dataviz("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
+#saving_plot(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
+```
+
+[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)
+
+
+[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)
+

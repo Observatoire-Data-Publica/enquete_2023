@@ -250,7 +250,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Enquête Data Publica, édition 2023</h1>
 <h3 class="subtitle">Analyse des données de l’enquête</h3>
-<h4 class="date">Dernière modification le 29 octobre 2023</h4>
+<h4 class="date">Dernière modification le 06 novembre 2023</h4>
 
 </div>
 
@@ -259,17 +259,120 @@ div.tocify {
 <div id="informations-générales" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Informations
 générales</h1>
+<div id="les-données" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Les données</h2>
+<p>Les données brutes sont composées de 1058 réponses (complètes comme
+incomplètes) et 226 variables. Elles sont enrichies par le type de
+territoire et la population extraits des <a
+href="https://data.ofgl.fr/explore/?exclude.theme=INTERNE&amp;sort=title">données
+OFGL</a> en plusieurs étapes :</p>
+<ul>
+<li>retrait des accents, chiffres et caractères spéciaux des noms de
+structure et mise en majuscule ;</li>
+<li>jointure avec les données OFGL par le nom de structure (lui aussi
+sans caractères spéciaux etc.) ;</li>
+<li>complétion manuelle du type de structure et de la population pour
+les structures non enrichies par les données OFGL ;</li>
+<li>vérification des jointures multiples lorsque plusieurs CT ont un
+même nom, choix de la bonne collectivité via les informations
+renseignées dans le questionnaire.</li>
+</ul>
+<p>Sont considérées comme complètes toutes les réponses remplies jusqu’à
+la question <em>Votre structure a-t-elle engagé une réflexion sur les
+enjeux du numérique responsable ?</em>, soit 191 observations en
+retirant les doublons. Les <strong>types de structure</strong> ayant une
+réponse complète sont les suivants :</p>
+<ul>
+<li>10 régions ;</li>
+<li>25 départements ;</li>
+<li>30 communes ;
+<ul>
+<li>9 communes de moins de 3 500 habitants ;</li>
+<li>6 communes de 3 500 à 10 000 habitants ;</li>
+<li>10 communes de 10 000 à 100 000 habitants ;Afin de respecter le
+RGPD, avez-vous modifié des processus de gestion des données au sein de
+l’organisation ?</li>
+<li>5 communes de plus de 100 000 habitants ;</li>
+</ul></li>
+<li>33 EPCI (hors métropoles) ;</li>
+<li>18 métropoles ;</li>
+<li>75 structures ‘<em>Autre</em>’, c’est-à-dire n’entrant pas dans les
+catégories précédentes.</li>
+</ul>
+<p>Les régions ayant répondu sont les suivantes : <strong><em>Centre Val
+De Loire, Collectivite De Corse, d Ile De France, Paris Region, Region
+Bourgogne Franche Comte, Region Bretagne, Region Des Pays De La Loire,
+Region Grand Est, Region Reunion, Region Sud</em></strong>.</p>
+<p>Les <strong><em>réponses</em></strong> complètes, enrichies du type
+de structure, nettoyées des doublons et anonymisées sont consultables
+sur ce lien : <a
+href="https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv">https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv</a>.</p>
+</div>
+<div id="redressement-déchantillon" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Redressement
+d’échantillon</h2>
+<p>Comme dernière étape avant d’être analysées, les données de
+l’échantillon ont été <strong><em>redressées</em></strong> pour les
+rendre cohérentes aux proportions des collectivités territoriales à
+l’échelle nationale. Les étapes ci-dessous ont été suivies :</p>
+<ul>
+<li>récupération du nombre de collectivités par type de structure à
+partir des chiffres 2023 de la page <a
+href="https://www.collectivites-locales.gouv.fr/collectivites-locales-chiffres-2023"><em>‘Collectivités-locales.gouv.fr’</em></a>,
+calcul des proportions de chaque type de structure sur le nombre total
+de collectivités ;</li>
+<li>calcul des mêmes proportions sur notre échantillon ;</li>
+<li>calcul des poids à attribuer à chaque type de collectivité pour
+redresser l’échantillon, tels que poids = proportion nationale /
+proportion dans l’échantillon ;</li>
+<li>calcul de la somme des poids par réponse ;</li>
+<li>calcul d’une moyenne pondérée à partir des poids obtenus en étape
+précédente divisés par la somme totale des poids.</li>
+</ul>
+<p>Les statistiques de chaque question comporteront donc 2 lignes
+<strong><em>Total</em></strong> ;</p>
+<ul>
+<li>l’une avec le total de l’échantillon, indiquant entre parenthèses le
+nombre de réponses reçues pour cette question ;</li>
+<li>l’autre avec le total pondéré pour correspondre aux proportions
+nationales.</li>
+</ul>
+</div>
+<div id="résultats" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Résultats</h2>
+<p>Les questions impliquant des <strong>réponses textuelles</strong> ne
+sont pas présentées dans l’analyse, il s’agit des questions suivantes
+:</p>
+<ul>
+<li>Quelles sont les grandes lignes de cette politique de souveraineté
+publique sur les données ?</li>
+<li>Si domaine autre, pouvez-vous préciser ?</li>
+<li>Avez-vous identifié d’autres priorités justifiant une utilisation
+plus importante de données ?</li>
+<li>Quelle forme prend cette participation d’acteurs tiers ?</li>
+<li>Pouvez-vous nous en dire davantage ?</li>
+<li>Quels sont les autres métiers impliqués ?</li>
+<li>Si autres, précisez :</li>
+<li>Pouvez-vous préciser ?</li>
+<li>Pouvez-vous nous décrire ces projets ou expérimentations ?</li>
+<li>Pouvez-vous nous en dire plus sur cette cyberattaque ?</li>
+</ul>
+<p>Toutes les questions appelant à <strong>déposer des fichiers</strong>
+ne sont pas non plus présentées dans l’analyse.</p>
+<p>Les <strong>pourcentages</strong> présentés dans les statistiques
+correspondent au pourcentage de répondants pour chaque question, par
+type de structure.</p>
 <p>(in fine combiner avec documentation du tri croisé)</p>
 <p>Une comparaison entre les éditions 2022 et 2023 sera présentée pour
 toutes les questions communes aux deux années. Avant cela, voilà la
 répartition des répondants par type de structure pour les deux années
 :</p>
-<div id="pikzqgsbld" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="vlkcechrnz" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#pikzqgsbld .gt_table {
+#vlkcechrnz .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -294,7 +397,7 @@ répartition des répondants par type de structure pour les deux années
   border-left-color: #D3D3D3;
 }
 
-#pikzqgsbld .gt_heading {
+#vlkcechrnz .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -306,7 +409,7 @@ répartition des répondants par type de structure pour les deux années
   border-right-color: #D3D3D3;
 }
 
-#pikzqgsbld .gt_title {
+#vlkcechrnz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -318,7 +421,7 @@ répartition des répondants par type de structure pour les deux années
   border-bottom-width: 0;
 }
 
-#pikzqgsbld .gt_subtitle {
+#vlkcechrnz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -330,13 +433,13 @@ répartition des répondants par type de structure pour les deux années
   border-top-width: 0;
 }
 
-#pikzqgsbld .gt_bottom_border {
+#vlkcechrnz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#pikzqgsbld .gt_col_headings {
+#vlkcechrnz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -351,7 +454,7 @@ répartition des répondants par type de structure pour les deux années
   border-right-color: #D3D3D3;
 }
 
-#pikzqgsbld .gt_col_heading {
+#vlkcechrnz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -371,7 +474,7 @@ répartition des répondants par type de structure pour les deux années
   overflow-x: hidden;
 }
 
-#pikzqgsbld .gt_column_spanner_outer {
+#vlkcechrnz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -383,15 +486,15 @@ répartition des répondants par type de structure pour les deux années
   padding-right: 4px;
 }
 
-#pikzqgsbld .gt_column_spanner_outer:first-child {
+#vlkcechrnz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#pikzqgsbld .gt_column_spanner_outer:last-child {
+#vlkcechrnz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#pikzqgsbld .gt_column_spanner {
+#vlkcechrnz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -403,7 +506,7 @@ répartition des répondants par type de structure pour les deux années
   width: 100%;
 }
 
-#pikzqgsbld .gt_group_heading {
+#vlkcechrnz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -428,7 +531,7 @@ répartition des répondants par type de structure pour les deux années
   vertical-align: middle;
 }
 
-#pikzqgsbld .gt_empty_group_heading {
+#vlkcechrnz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -443,15 +546,15 @@ répartition des répondants par type de structure pour les deux années
   vertical-align: middle;
 }
 
-#pikzqgsbld .gt_from_md > :first-child {
+#vlkcechrnz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#pikzqgsbld .gt_from_md > :last-child {
+#vlkcechrnz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#pikzqgsbld .gt_row {
+#vlkcechrnz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -470,7 +573,7 @@ répartition des répondants par type de structure pour les deux années
   overflow-x: hidden;
 }
 
-#pikzqgsbld .gt_stub {
+#vlkcechrnz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -483,7 +586,7 @@ répartition des répondants par type de structure pour les deux années
   padding-right: 5px;
 }
 
-#pikzqgsbld .gt_stub_row_group {
+#vlkcechrnz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -497,11 +600,11 @@ répartition des répondants par type de structure pour les deux années
   vertical-align: top;
 }
 
-#pikzqgsbld .gt_row_group_first td {
+#vlkcechrnz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#pikzqgsbld .gt_summary_row {
+#vlkcechrnz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -511,16 +614,16 @@ répartition des répondants par type de structure pour les deux années
   padding-right: 5px;
 }
 
-#pikzqgsbld .gt_first_summary_row {
+#vlkcechrnz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#pikzqgsbld .gt_first_summary_row.thick {
+#vlkcechrnz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#pikzqgsbld .gt_last_summary_row {
+#vlkcechrnz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -530,7 +633,7 @@ répartition des répondants par type de structure pour les deux années
   border-bottom-color: #D3D3D3;
 }
 
-#pikzqgsbld .gt_grand_summary_row {
+#vlkcechrnz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -540,7 +643,7 @@ répartition des répondants par type de structure pour les deux années
   padding-right: 5px;
 }
 
-#pikzqgsbld .gt_first_grand_summary_row {
+#vlkcechrnz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -550,11 +653,11 @@ répartition des répondants par type de structure pour les deux années
   border-top-color: #D3D3D3;
 }
 
-#pikzqgsbld .gt_striped {
+#vlkcechrnz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#pikzqgsbld .gt_table_body {
+#vlkcechrnz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -563,7 +666,7 @@ répartition des répondants par type de structure pour les deux années
   border-bottom-color: #D3D3D3;
 }
 
-#pikzqgsbld .gt_footnotes {
+#vlkcechrnz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -577,7 +680,7 @@ répartition des répondants par type de structure pour les deux années
   border-right-color: #D3D3D3;
 }
 
-#pikzqgsbld .gt_footnote {
+#vlkcechrnz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -586,7 +689,7 @@ répartition des répondants par type de structure pour les deux années
   padding-right: 5px;
 }
 
-#pikzqgsbld .gt_sourcenotes {
+#vlkcechrnz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -600,7 +703,7 @@ répartition des répondants par type de structure pour les deux années
   border-right-color: #D3D3D3;
 }
 
-#pikzqgsbld .gt_sourcenote {
+#vlkcechrnz .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -608,36 +711,36 @@ répartition des répondants par type de structure pour les deux années
   padding-right: 5px;
 }
 
-#pikzqgsbld .gt_left {
+#vlkcechrnz .gt_left {
   text-align: left;
 }
 
-#pikzqgsbld .gt_center {
+#vlkcechrnz .gt_center {
   text-align: center;
 }
 
-#pikzqgsbld .gt_right {
+#vlkcechrnz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#pikzqgsbld .gt_font_normal {
+#vlkcechrnz .gt_font_normal {
   font-weight: normal;
 }
 
-#pikzqgsbld .gt_font_bold {
+#vlkcechrnz .gt_font_bold {
   font-weight: bold;
 }
 
-#pikzqgsbld .gt_font_italic {
+#vlkcechrnz .gt_font_italic {
   font-style: italic;
 }
 
-#pikzqgsbld .gt_super {
+#vlkcechrnz .gt_super {
   font-size: 65%;
 }
 
-#pikzqgsbld .gt_two_val_uncert {
+#vlkcechrnz .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -646,31 +749,31 @@ répartition des répondants par type de structure pour les deux années
   margin-left: 0.1em;
 }
 
-#pikzqgsbld .gt_footnote_marks {
+#vlkcechrnz .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#pikzqgsbld .gt_asterisk {
+#vlkcechrnz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#pikzqgsbld .gt_slash_mark {
+#vlkcechrnz .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#pikzqgsbld .gt_fraction_numerator {
+#vlkcechrnz .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#pikzqgsbld .gt_fraction_denominator {
+#vlkcechrnz .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -723,6 +826,7 @@ répartition des répondants par type de structure pour les deux années
   
   
 </table>
+</div>
 </div>
 </div>
 <div id="droit-des-données-publiques" class="section level1" number="2">

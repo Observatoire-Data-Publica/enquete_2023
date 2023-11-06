@@ -5,7 +5,7 @@ output:
       self_contained: false
       toc: true
       toc_float: true
-      toc_depth: 1
+      toc_depth: 2
       css: styles.css
       includes:
         in_header: header.html
@@ -17,49 +17,9 @@ output:
 
 <script>
   $(document).ready(function() {
-    $('#TOC').parent().prepend('<div id=\"nav_logo\"><img src=\"https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/preview"></div>');
+    $('#TOC').parent().prepend('<div id=\"nav_logo\"><img src=\"https://nextcloud.datactivist.coop/s/QBsAD4P7b9KNd5g/preview"></div>');
   });
 </script> 
-
-
-```{css, echo = FALSE}
-#nav_logo { /*paramètres logo Data Publica en haut à gauche*/
-  width: 60%;
-  margin-top: 0px;
-  margin-left: -15px;
-}
-#TOC ul>li {
-  color: white;
-  background-color: #323465;
-  font-weight: normal; /*gras*/
-  padding: 8px; /*espace avant*/
-  /*margin-top: 1px; /*espace avant*/
-}
-#TOC {
-  max-width: fit-content;
-  white-space: nowrap;
-  font-size: .7em; /*taille*/
-  margin-left: -1%;
-  z-index: 2; /*met la TOC au premier plan devant marginnote*/
-  font-family: "Nexa Bold"; /*police*/
-}
-.sidenote, .marginnote { 
-  float: left;
-  clear: left;
-  margin-left: -27%; 
-  margin-right: -40%;
-  margin-top: -70px; /*vertical alignement*/
-  position: relative;
-}
-.sidenote2, .marginnote2 { 
-  float: left;
-  clear: left;
-  margin-left: -43%; 
-  margin-right: -40%;
-  margin-top: 15px; /*vertical alignement*/
-  position: relative;
-}
-```
 
 
 ```{r logo et police, echo = FALSE, message = FALSE, warning=FALSE, error=FALSE}
@@ -79,6 +39,49 @@ font_add("Quicksand", regular = "fonts/Quicksand-Regular.ttf", bold = "fonts/Qui
 font_add("Open sans", regular = "fonts/Open-sans.ttf")
 showtext_auto()
 ```
+
+
+```{css, echo = FALSE}
+#nav_logo { /*paramètres logo Data Publica en haut à gauche*/
+  width: 80%;
+  margin-top: 20px;
+  margin-left: -15px;
+}
+#TOC ul>li {
+  color: white;
+  background-color: #323465;
+  font-weight: normal; /*gras*/
+  padding: 8px; /*espace avant*/
+  /*margin-top: 1px; /*espace avant*/
+}
+#TOC {
+  max-width: 250px;
+  white-space: nowrap;
+  font-size: .8em; /*taille*/
+  font-family: "Quicksand"; /*police*/
+  font-weight: bold; /*gras*/
+  margin-left: -1%;
+  z-index: 2; /*met la TOC au premier plan devant marginnote*/
+}
+.sidenote, .marginnote { 
+  float: left;
+  clear: left;
+  margin-left: -27%; 
+  margin-right: -40%;
+  margin-top: -70px; /*vertical alignement*/
+  position: relative;
+}
+.sidenote2, .marginnote2 { 
+  float: left;
+  clear: left;
+  margin-left: 0%; 
+  margin-right: -40%;
+  margin-top: 15px; /*vertical alignement*/
+  position: relative;
+}
+```
+
+
 
 ![](images/logos.png)
 
@@ -106,7 +109,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut condimentum sit amet
 ## ![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=45px} 3.1. Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d’utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?
 
 
-<div class="sidenote2">![](https://nextcloud.datactivist.coop/s/F334sriR8zT5cLt/preview){width=400px}</div>
+<div class="sidenote2">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 
 ### AMÉNAGEMENT DU TERRITOIRE
 
@@ -118,7 +121,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut condimentum sit amet
 #### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023
 
 
-<div class="sidenote2">![](https://nextcloud.datactivist.coop/s/F334sriR8zT5cLt/preview){width=400px}</div>
+<div class="sidenote2">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 
 ### MOBILITÉ
 

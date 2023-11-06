@@ -244,13 +244,14 @@ div.tocify {
 
 <script>
   $(document).ready(function() {
-    $('#TOC').parent().prepend('<div id=\"nav_logo\"><img src=\"https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/preview"></div>');
+    $('#TOC').parent().prepend('<div id=\"nav_logo\"><img src=\"https://nextcloud.datactivist.coop/s/QBsAD4P7b9KNd5g/preview"></div>');
   });
 </script>
+<img src="https://nextcloud.datactivist.coop/s/oEqjKtbKBnm5j22/preview" alt="logo" style="position:absolute; top:0; right:0; width:440px"/>
 <style type="text/css">
 #nav_logo { /*paramètres logo Data Publica en haut à gauche*/
-  width: 60%;
-  margin-top: 0px;
+  width: 80%;
+  margin-top: 20px;
   margin-left: -15px;
 }
 #TOC ul>li {
@@ -261,12 +262,13 @@ div.tocify {
   /*margin-top: 1px; /*espace avant*/
 }
 #TOC {
-  max-width: fit-content;
+  max-width: 250px;
   white-space: nowrap;
-  font-size: .7em; /*taille*/
+  font-size: .8em; /*taille*/
+  font-family: "Quicksand"; /*police*/
+  font-weight: bold; /*gras*/
   margin-left: -1%;
   z-index: 2; /*met la TOC au premier plan devant marginnote*/
-  font-family: "Nexa Bold"; /*police*/
 }
 .sidenote, .marginnote { 
   float: left;
@@ -279,13 +281,12 @@ div.tocify {
 .sidenote2, .marginnote2 { 
   float: left;
   clear: left;
-  margin-left: -43%; 
+  margin-left: 0%; 
   margin-right: -40%;
   margin-top: 15px; /*vertical alignement*/
   position: relative;
 }
 </style>
-<img src="https://nextcloud.datactivist.coop/s/oEqjKtbKBnm5j22/preview" alt="logo" style="position:absolute; top:0; right:0; width:440px"/>
 <p><img src="images/logos.png" /></p>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
 condimentum sit amet elit ut tincidunt. Morbi dignissim non risus eget
@@ -362,8 +363,8 @@ votre structure a engagé ces deux dernières années un ou plusieurs
 projets ou expérimentations en matière d’utilisation des données, ou
 prévoit d’en engager au cours des douze prochains mois ?</h2>
 <div class="sidenote2">
-<img src="https://nextcloud.datactivist.coop/s/F334sriR8zT5cLt/preview"
-width="400" />
+<img src="https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview"
+width="30" />
 </div>
 <div id="aménagement-du-territoire" class="section level3">
 <h3>AMÉNAGEMENT DU TERRITOIRE</h3>
@@ -382,8 +383,8 @@ width="38" /> Visualisation</h4>
 src="https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview"
 width="38" /> Comparaison 2022/2023</h4>
 <div class="sidenote2">
-<img src="https://nextcloud.datactivist.coop/s/F334sriR8zT5cLt/preview"
-width="400" />
+<img src="https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview"
+width="30" />
 </div>
 </div>
 </div>
@@ -468,7 +469,7 @@ $(document).ready(function ()  {
 
     // establish options
     var options = {
-      selectors: "h1",
+      selectors: "h1,h2",
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {

@@ -33,7 +33,7 @@ knitr::opts_chunk$set(
 	out.width = "100%",
 	results = "asis",
 	fig.height=15, #45
-	fig.width=20, #30
+	fig.width=20, 
 	cache=TRUE
 )
 ```
@@ -78,10 +78,10 @@ data_clean_unique <- data_clean |>
     mutate(nb_na = rowSums(is.na(data_clean))) |> 
     mutate(n = n(), .by = nom) |> 
     group_by(nom) |> slice(which.min(nb_na)) |> ungroup()
-data_clean_unique |> 
-    rename(structure = Catégorie, structure_pop = Catégorie2) |> 
-    select(-c(2:10, SIREN, COG, nb_na, n)) |> 
-    rio::export("../Data/process_data.csv")
+# data_clean_unique |> 
+#     rename(structure = Catégorie, structure_pop = Catégorie2) |> 
+#     select(-c(2:10, SIREN, COG, nb_na, n)) |> 
+#     rio::export("../Data/process_data.csv")
 
 # Liste des régions
 library(tools)
@@ -89,6 +89,68 @@ reg <- data_clean_unique |> filter(Catégorie == "Une région") |>
     mutate(nom = toTitleCase(tolower(nom))) |> distinct(nom) |> t()
 ```
 
+
+## Les données
+
+Les données brutes sont composées de `r nrow(data)` réponses (complètes comme incomplètes) et `r ncol(data)` variables. Elles sont enrichies par le type de territoire et la population extraits des [données OFGL](https://data.ofgl.fr/explore/?exclude.theme=INTERNE&sort=title) en plusieurs étapes :
+
+- retrait des accents, chiffres et caractères spéciaux des noms de structure et mise en majuscule ;
+- jointure avec les données OFGL par le nom de structure (lui aussi sans caractères spéciaux etc.) ;
+- complétion manuelle du type de structure et de la population pour les structures non enrichies par les données OFGL ; 
+- vérification des jointures multiples lorsque plusieurs CT ont un même nom, choix de la bonne collectivité via les informations renseignées dans le questionnaire.
+
+Sont considérées comme complètes toutes les réponses remplies jusqu'à la question *Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?*, soit `r nrow(data_clean_unique)` observations en retirant les doublons. Les **types de structure** ayant une réponse complète sont les suivants : 
+
+- `r data_clean_unique |> filter(Catégorie == "Une région") |> nrow()` régions ;
+- `r data_clean_unique |> filter(Catégorie == "Un département") |> nrow()` départements ;
+- `r data_clean_unique |> filter(Catégorie == "Une commune") |> nrow()` communes ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de moins de 3 500 hab.") |> nrow()` communes de moins de 3 500 habitants ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de 3 500 à 10 000 hab.") |> nrow()` communes de 3 500 à 10 000 habitants ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow()` communes de 10 000 à 100 000 habitants ;Afin de respecter le RGPD, avez-vous modifié des
+  processus de gestion des données au sein de l'organisation ?
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de plus de 100 000 hab.") |> nrow()` communes de plus de 100 000 habitants ;
+- `r data_clean_unique |> filter(Catégorie == "Un EPCI (hors métropole)") |> nrow()` EPCI (hors métropoles) ;
+- `r data_clean_unique |> filter(Catégorie == "Une métropole") |> nrow()` métropoles ;
+- `r data_clean_unique |> filter(Catégorie == "Autre") |> nrow()` structures '*Autre*', c'est-à-dire n'entrant pas dans les catégories précédentes.
+
+Les régions ayant répondu sont les suivantes : ***`r reg`***.
+
+Les ***réponses*** complètes, enrichies du type de structure, nettoyées des doublons et anonymisées sont consultables sur ce lien : [https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv](https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv).
+
+## Redressement d'échantillon
+
+Comme dernière étape avant d'être analysées, les données de l'échantillon ont été ***redressées*** pour les rendre cohérentes aux proportions des collectivités territoriales à l'échelle nationale. Les étapes ci-dessous ont été suivies : 
+
+- récupération du nombre de collectivités par type de structure à partir des chiffres 2023 de la page [*'Collectivités-locales.gouv.fr'*](https://www.collectivites-locales.gouv.fr/collectivites-locales-chiffres-2023), calcul des proportions de chaque type de structure sur le nombre total de collectivités  ;
+- calcul des mêmes proportions sur notre échantillon ; 
+- calcul des poids à attribuer à chaque type de collectivité pour redresser l'échantillon, tels que poids = proportion nationale / proportion dans l'échantillon ; 
+- calcul de la somme des poids par réponse ;
+- calcul d'une moyenne pondérée à partir des poids obtenus en étape précédente divisés par la somme totale des poids.
+
+Les statistiques de chaque question comporteront donc 2 lignes ***Total*** ; 
+
+- l'une avec le total de l'échantillon, indiquant entre parenthèses le nombre de réponses reçues pour cette question ; 
+- l'autre avec le total pondéré pour correspondre aux proportions nationales.
+
+
+## Résultats
+
+Les questions impliquant des **réponses textuelles** ne sont pas présentées dans l'analyse, il s'agit des questions suivantes : 
+
+- Quelles sont les grandes lignes de cette politique de souveraineté publique sur les données ?
+- Si domaine autre, pouvez-vous préciser ?
+- Avez-vous identifié d’autres priorités justifiant une utilisation plus importante de données ?
+- Quelle forme prend cette participation d’acteurs tiers ?
+- Pouvez-vous nous en dire davantage ?
+- Quels sont les autres métiers impliqués ?
+- Si autres, précisez :
+- Pouvez-vous préciser ?
+- Pouvez-vous nous décrire ces projets ou expérimentations ?
+- Pouvez-vous nous en dire plus sur cette cyberattaque ?
+
+Toutes les questions appelant à **déposer des fichiers** ne sont pas non plus présentées dans l'analyse. 
+
+Les **pourcentages** présentés dans les statistiques correspondent au pourcentage de répondants pour chaque question, par type de structure.
 
 ```{r prepa graphes}
 # Import des données des stats rassemblés
@@ -445,6 +507,8 @@ dataviz("Commençons par la protection de la vie privée. Considérez-vous que v
 saving_plot(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
 
+[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)
+
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
@@ -486,7 +550,7 @@ dataviz_comp <- function(all_stat, nom_col22, nom_col23){
             panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
             panel.grid.major.y = ggplot2::element_blank(),
             plot.subtitle = element_markdown()) +
-      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, paste0(ecart, "% par rapport \nà 2022"))), 
+      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, paste0(ecart, " points de \npourcentage"))), 
                 color = "#333333", size = 5, fill = "white", label.size = NA, 
                 hjust = 0)
   #girafe(print(graph_total), width_svg = 11, height_svg = 7)
@@ -515,7 +579,7 @@ dataviz_comp <- function(all_stat, nom_col22, nom_col23){
             panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
             panel.grid.major.y = ggplot2::element_blank(),
             plot.subtitle = element_markdown()) +
-      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, paste0(ecart, "% par rapport \nà 2022"))), 
+      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, paste0(ecart, " points de \npourcentage"))), 
                 color = "#333333", size = 5, fill = "white", label.size = NA, 
                 hjust = 0)
   #girafe(print(graph_total), width_svg = 11, height_svg = 7)
@@ -607,7 +671,12 @@ saving_plot_comp(graph, "Commençons par la protection de la vie privée. Consid
 
 
 
+[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)
+
+
+
 ## Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?
+
 
 + **Statistiques**
 
@@ -2812,7 +2881,7 @@ saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risqu
 + **Comparaison 2022 / 2023**
 
 ```{r fig.height=14, fig.width=20}
-all_stat |> 
+all_stat |>  
   dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]",
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]")
 #saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information ou avec un cyber campus régional]")

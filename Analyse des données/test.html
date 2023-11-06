@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Enquête Data Publica, édition 2023</title>
+
+<script src="test_files/header-attrs-2.23/header-attrs.js"></script>
+<script src="test_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="test_files/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
+<script src="test_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="test_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="test_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="test_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="test_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="test_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="test_files/navigation-1.1/tabsets.js"></script>
+<link href="test_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="test_files/highlightjs-9.12.0/highlight.js"></script>
+<script src="test_files/kePrint-0.0.1/kePrint.js"></script>
+<link href="test_files/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<html>
+
+<head>
+
+<link rel="shortcut icon" href="https://nextcloud.datactivist.coop/s/tBJGcP63dGANz6N/preview"/>
+
+</head>
+
+</html>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Enquête Data Publica, édition 2023</h1>
+<h3 class="subtitle">Analyse des données de l’enquête</h3>
+<h4 class="date">Dernière modification le 06 novembre 2023</h4>
+
+</div>
+
+
+<img src="https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/preview" alt="logo" style="position:absolute; top:0; left:-0.5; padding-top:-2px; width:350px;"/>
+<div id="informations-générales" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Informations
+générales</h1>
+<div id="les-données" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Les données</h2>
+<p>Les données brutes sont composées de 1058 réponses (complètes comme
+incomplètes) et 226 variables. Elles sont enrichies par le type de
+territoire et la population extraits des <a
+href="https://data.ofgl.fr/explore/?exclude.theme=INTERNE&amp;sort=title">données
+OFGL</a> en plusieurs étapes :</p>
+<ul>
+<li>retrait des accents, chiffres et caractères spéciaux des noms de
+structure et mise en majuscule ;</li>
+<li>jointure avec les données OFGL par le nom de structure (lui aussi
+sans caractères spéciaux etc.) ;</li>
+<li>complétion manuelle du type de structure et de la population pour
+les structures non enrichies par les données OFGL ;</li>
+<li>vérification des jointures multiples lorsque plusieurs CT ont un
+même nom, choix de la bonne collectivité via les informations
+renseignées dans le questionnaire.</li>
+</ul>
+<p>Les régions ayant répondu sont les suivantes : <strong><em>Centre Val
+De Loire, Collectivite De Corse, d Ile De France, Paris Region, Region
+Bourgogne Franche Comte, Region Bretagne, Region Des Pays De La Loire,
+Region Grand Est, Region Reunion, Region Sud</em></strong>.</p>
+<p>Les <strong><em>réponses</em></strong> complètes, enrichies du type
+de structure, nettoyées des doublons et anonymisées sont consultables
+sur ce lien : <a
+href="https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv"
+class="uri">https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv</a>.</p>
+</div>
+<div id="redressement-déchantillon" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Redressement
+d’échantillon</h2>
+<p>Comme dernière étape avant d’être analysées, les données de
+l’échantillon ont été <strong><em>redressées</em></strong> pour les
+rendre cohérentes aux proportions des collectivités territoriales à
+l’échelle nationale. Les étapes ci-dessous ont été suivies :</p>
+<ul>
+<li>récupération du nombre de collectivités par type de structure à
+partir des chiffres 2023 de la page <a
+href="https://www.collectivites-locales.gouv.fr/collectivites-locales-chiffres-2023"><em>‘Collectivités-locales.gouv.fr’</em></a>,
+calcul des proportions de chaque type de structure sur le nombre total
+de collectivités ;</li>
+<li>calcul des mêmes proportions sur notre échantillon ;</li>
+<li>calcul des poids à attribuer à chaque type de collectivité pour
+redresser l’échantillon, tels que poids = proportion nationale /
+proportion dans l’échantillon ;</li>
+<li>calcul de la somme des poids par réponse ;</li>
+<li>calcul d’une moyenne pondérée à partir des poids obtenus en étape
+précédente divisés par la somme totale des poids.</li>
+</ul>
+<p>Les statistiques de chaque question comporteront donc 2 lignes
+<strong><em>Total</em></strong> ;</p>
+<ul>
+<li>l’une avec le total de l’échantillon, indiquant entre parenthèses le
+nombre de réponses reçues pour cette question ;</li>
+<li>l’autre avec le total pondéré pour correspondre aux proportions
+nationales.</li>
+</ul>
+</div>
+<div id="résultats" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Résultats</h2>
+<p>Les questions impliquant des <strong>réponses textuelles</strong> ne
+sont pas présentées dans l’analyse, il s’agit des questions suivantes
+:</p>
+<ul>
+<li>Quelles sont les grandes lignes de cette politique de souveraineté
+publique sur les données ?</li>
+<li>Si domaine autre, pouvez-vous préciser ?</li>
+<li>Avez-vous identifié d’autres priorités justifiant une utilisation
+plus importante de données ?</li>
+<li>Quelle forme prend cette participation d’acteurs tiers ?</li>
+<li>Pouvez-vous nous en dire davantage ?</li>
+<li>Quels sont les autres métiers impliqués ?</li>
+<li>Si autres, précisez :</li>
+<li>Pouvez-vous préciser ?</li>
+<li>Pouvez-vous nous décrire ces projets ou expérimentations ?</li>
+<li>Pouvez-vous nous en dire plus sur cette cyberattaque ?</li>
+</ul>
+<p>Toutes les questions appelant à <strong>déposer des fichiers</strong>
+ne sont pas non plus présentées dans l’analyse.</p>
+<p>Les <strong>pourcentages</strong> présentés dans les statistiques
+correspondent au pourcentage de répondants pour chaque question, par
+type de structure.</p>
+<p>(in fine combiner avec documentation du tri croisé)</p>
+<p>Une comparaison entre les éditions 2022 et 2023 sera présentée pour
+toutes les questions communes aux deux années. Avant cela, voilà la
+répartition des répondants par type de structure pour les deux années
+:</p>
+<div id="nyjjahkpyn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#nyjjahkpyn .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#nyjjahkpyn .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#nyjjahkpyn .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#nyjjahkpyn .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#nyjjahkpyn .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nyjjahkpyn .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#nyjjahkpyn .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#nyjjahkpyn .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#nyjjahkpyn .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#nyjjahkpyn .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#nyjjahkpyn .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#nyjjahkpyn .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#nyjjahkpyn .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#nyjjahkpyn .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#nyjjahkpyn .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#nyjjahkpyn .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#nyjjahkpyn .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nyjjahkpyn .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#nyjjahkpyn .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#nyjjahkpyn .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nyjjahkpyn .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#nyjjahkpyn .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#nyjjahkpyn .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nyjjahkpyn .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nyjjahkpyn .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#nyjjahkpyn .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#nyjjahkpyn .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nyjjahkpyn .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#nyjjahkpyn .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nyjjahkpyn .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#nyjjahkpyn .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nyjjahkpyn .gt_left {
+  text-align: left;
+}
+
+#nyjjahkpyn .gt_center {
+  text-align: center;
+}
+
+#nyjjahkpyn .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#nyjjahkpyn .gt_font_normal {
+  font-weight: normal;
+}
+
+#nyjjahkpyn .gt_font_bold {
+  font-weight: bold;
+}
+
+#nyjjahkpyn .gt_font_italic {
+  font-style: italic;
+}
+
+#nyjjahkpyn .gt_super {
+  font-size: 65%;
+}
+
+#nyjjahkpyn .gt_two_val_uncert {
+  display: inline-block;
+  line-height: 1em;
+  text-align: right;
+  font-size: 60%;
+  vertical-align: -0.25em;
+  margin-left: 0.1em;
+}
+
+#nyjjahkpyn .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#nyjjahkpyn .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#nyjjahkpyn .gt_slash_mark {
+  font-size: 0.7em;
+  line-height: 0.7em;
+  vertical-align: 0.15em;
+}
+
+#nyjjahkpyn .gt_fraction_numerator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: 0.45em;
+}
+
+#nyjjahkpyn .gt_fraction_denominator {
+  font-size: 0.6em;
+  line-height: 0.6em;
+  vertical-align: -0.05em;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">Structure</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">2022</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">2023</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">Une commune</td>
+<td class="gt_row gt_right">140</td>
+<td class="gt_row gt_right">30</td></tr>
+    <tr><td class="gt_row gt_left">Communes de moins de 3 500 hab.</td>
+<td class="gt_row gt_right">81</td>
+<td class="gt_row gt_right">9</td></tr>
+    <tr><td class="gt_row gt_left">Communes de 3 500 à 10 000 hab.</td>
+<td class="gt_row gt_right">17</td>
+<td class="gt_row gt_right">6</td></tr>
+    <tr><td class="gt_row gt_left">Communes de 10 000 à 100 000 hab.</td>
+<td class="gt_row gt_right">35</td>
+<td class="gt_row gt_right">10</td></tr>
+    <tr><td class="gt_row gt_left">Communes de plus de 100 000 hab.</td>
+<td class="gt_row gt_right">7</td>
+<td class="gt_row gt_right">5</td></tr>
+    <tr><td class="gt_row gt_left">Un EPCI</td>
+<td class="gt_row gt_right">83</td>
+<td class="gt_row gt_right">105</td></tr>
+    <tr><td class="gt_row gt_left">Un département</td>
+<td class="gt_row gt_right">29</td>
+<td class="gt_row gt_right">25</td></tr>
+    <tr><td class="gt_row gt_left">Une région</td>
+<td class="gt_row gt_right">14</td>
+<td class="gt_row gt_right">10</td></tr>
+    <tr><td class="gt_row gt_left">Autre</td>
+<td class="gt_row gt_right">31</td>
+<td class="gt_row gt_right">75</td></tr>
+    <tr><td class="gt_row gt_left">Total</td>
+<td class="gt_row gt_right">297</td>
+<td class="gt_row gt_right">191</td></tr>
+    <tr><td class="gt_row gt_left">Total hors communes &lt; 3500 habitants</td>
+<td class="gt_row gt_right">216</td>
+<td class="gt_row gt_right">182</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+<div id="droit-des-données-publiques" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Droit des données
+publiques</h1>
+<div
+id="commençons-par-la-protection-de-la-vie-privée.-considérez-vous-que-votre-structure-est-en-conformité-avec-le-rgpd"
+class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Commençons par la
+protection de la vie privée. Considérez-vous que votre structure est en
+conformité avec le RGPD ?</h2>
+<ul>
+<li><strong>Statistiques</strong></li>
+</ul>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Commençons par la protection de la vie privée. Considérez-vous que votre
+structure est en conformité avec le RGPD ?
+</th>
+<th style="text-align:left;">
+Je ne sais pas
+</th>
+<th style="text-align:left;">
+Non, pas complètement
+</th>
+<th style="text-align:left;">
+Non, pas encore
+</th>
+<th style="text-align:left;">
+Oui, partiellement
+</th>
+<th style="text-align:left;">
+Oui, tout à fait
+</th>
+<th style="text-align:left;">
+Sans réponse
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Total (189 réponses)
+</td>
+<td style="text-align:left;">
+4%
+</td>
+<td style="text-align:left;">
+10%
+</td>
+<td style="text-align:left;">
+4%
+</td>
+<td style="text-align:left;">
+44%
+</td>
+<td style="text-align:left;">
+37%
+</td>
+<td style="text-align:left;">
+1%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total pondéré
+</td>
+<td style="text-align:left;">
+2%
+</td>
+<td style="text-align:left;">
+27%
+</td>
+<td style="text-align:left;">
+17%
+</td>
+<td style="text-align:left;">
+35%
+</td>
+<td style="text-align:left;">
+19%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Une commune
+</td>
+<td style="text-align:left;">
+7%
+</td>
+<td style="text-align:left;">
+17%
+</td>
+<td style="text-align:left;">
+10%
+</td>
+<td style="text-align:left;">
+40%
+</td>
+<td style="text-align:left;">
+27%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Communes de moins de 3 500 hab.
+</td>
+<td style="text-align:left;">
+11%
+</td>
+<td style="text-align:left;">
+11%
+</td>
+<td style="text-align:left;">
+11%
+</td>
+<td style="text-align:left;">
+56%
+</td>
+<td style="text-align:left;">
+11%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Communes de 3 500 à 10 000 hab.
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+50%
+</td>
+<td style="text-align:left;">
+33%
+</td>
+<td style="text-align:left;">
+17%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Communes de 10 000 à 100 000 hab.
+</td>
+<td style="text-align:left;">
+10%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+50%
+</td>
+<td style="text-align:left;">
+40%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Communes de plus de 100 000 hab.
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+20%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+20%
+</td>
+<td style="text-align:left;">
+60%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Une métropole
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+56%
+</td>
+<td style="text-align:left;">
+44%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Un EPCI (hors métropole)
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+12%
+</td>
+<td style="text-align:left;">
+3%
+</td>
+<td style="text-align:left;">
+55%
+</td>
+<td style="text-align:left;">
+30%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Un département
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+4%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+60%
+</td>
+<td style="text-align:left;">
+36%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Une région
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+10%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+<td style="text-align:left;">
+50%
+</td>
+<td style="text-align:left;">
+40%
+</td>
+<td style="text-align:left;">
+0%
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Autre
+</td>
+<td style="text-align:left;">
+8%
+</td>
+<td style="text-align:left;">
+11%
+</td>
+<td style="text-align:left;">
+5%
+</td>
+<td style="text-align:left;">
+32%
+</td>
+<td style="text-align:left;">
+41%
+</td>
+<td style="text-align:left;">
+3%
+</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Visualisation</strong></li>
+</ul>
+<p><a
+href="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png"><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png" /></a></p>
+<p><a
+href="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png"><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png" /></a></p>
+</div>
+</div>
+
+&nbsp;
+<hr />
+<p style="text-align: center;">Réalisé par <a href="https://datactivist.coop/fr/">Datactivist</a></p>
+<p style="text-align: center;"><span style="color: #808080;"><em>hello@datactivist.coop</em></span></p>
+
+<!-- Add icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Add font awesome icons -->
+<p style="text-align: center;">
+    <a href="https://twitter.com/datactivi_st?lang=fr" class="fa fa-twitter"></a>
+    <a href="https://www.linkedin.com/company/datactivist/" class="fa fa-linkedin"></a>
+    <a href="https://github.com/datactivist" class="fa fa-github"></a>
+</p>
+
+&nbsp;
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4,h5",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
