@@ -50,7 +50,9 @@ showtext_auto()
   background-color: #323465;
   font-weight: normal; /*gras*/
   padding: 3px; /*espace avant*/
-  /*margin-top: 1px; /*espace avant*/
+  padding-left: 11px; /*espace avant*/
+  padding-right: 11px; /*espace avant*/
+  /*margin-top: 25px; /*espace avant*/
 }
 #TOC {
   max-width: 250px;
@@ -60,6 +62,18 @@ showtext_auto()
   font-weight: bold; /*gras*/
   margin-left: -1%;
   z-index: 2; /*met la TOC au premier plan devant marginnote*/
+}
+#TOC:before { /*marge avant premier titre de la TOC*/
+  content: "";
+  display: block;
+  padding-top: 5%;
+  background: #323465; /* background with same color */
+}
+#TOC:after { /*marge après dernier titre de la TOC*/
+  content: "";
+  display: block;
+  padding-top: 5%;
+  background: #323465; /* background with same color */
 }
 .sidenote, .marginnote { 
   float: left;

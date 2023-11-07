@@ -33,8 +33,7 @@ knitr::opts_chunk$set(
 	out.width = "100%",
 	results = "asis",
 	fig.height=15, #45
-	fig.width=20, 
-	cache=TRUE
+	fig.width=20
 )
 ```
 
@@ -46,6 +45,7 @@ htmltools::img(src = "https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/previ
 ```
 
 # Informations générales
+
 
 ```{r données}
 # Import de données
@@ -88,50 +88,66 @@ reg <- data_clean_unique |> filter(Catégorie == "Une région") |>
     mutate(nom = toTitleCase(tolower(nom))) |> distinct(nom) |> t()
 ```
 
+
 ## Les données
 
 Les données brutes sont composées de `r nrow(data)` réponses (complètes comme incomplètes) et `r ncol(data)` variables. Elles sont enrichies par le type de territoire et la population extraits des [données OFGL](https://data.ofgl.fr/explore/?exclude.theme=INTERNE&sort=title) en plusieurs étapes :
 
--   retrait des accents, chiffres et caractères spéciaux des noms de structure et mise en majuscule ;
--   jointure avec les données OFGL par le nom de structure (lui aussi sans caractères spéciaux etc.) ;
--   complétion manuelle du type de structure et de la population pour les structures non enrichies par les données OFGL ;
--   vérification des jointures multiples lorsque plusieurs CT ont un même nom, choix de la bonne collectivité via les informations renseignées dans le questionnaire.
+- retrait des accents, chiffres et caractères spéciaux des noms de structure et mise en majuscule ;
+- jointure avec les données OFGL par le nom de structure (lui aussi sans caractères spéciaux etc.) ;
+- complétion manuelle du type de structure et de la population pour les structures non enrichies par les données OFGL ; 
+- vérification des jointures multiples lorsque plusieurs CT ont un même nom, choix de la bonne collectivité via les informations renseignées dans le questionnaire.
+
+Sont considérées comme complètes toutes les réponses remplies jusqu'à la question *Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?*, soit `r nrow(data_clean_unique)` observations en retirant les doublons. Les **types de structure** ayant une réponse complète sont les suivants : 
+
+- `r data_clean_unique |> filter(Catégorie == "Une région") |> nrow()` régions ;
+- `r data_clean_unique |> filter(Catégorie == "Un département") |> nrow()` départements ;
+- `r data_clean_unique |> filter(Catégorie == "Une commune") |> nrow()` communes ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de moins de 3 500 hab.") |> nrow()` communes de moins de 3 500 habitants ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de 3 500 à 10 000 hab.") |> nrow()` communes de 3 500 à 10 000 habitants ;
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow()` communes de 10 000 à 100 000 habitants ;Afin de respecter le RGPD, avez-vous modifié des
+  processus de gestion des données au sein de l'organisation ?
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de plus de 100 000 hab.") |> nrow()` communes de plus de 100 000 habitants ;
+- `r data_clean_unique |> filter(Catégorie == "Un EPCI (hors métropole)") |> nrow()` EPCI (hors métropoles) ;
+- `r data_clean_unique |> filter(Catégorie == "Une métropole") |> nrow()` métropoles ;
+- `r data_clean_unique |> filter(Catégorie == "Autre") |> nrow()` structures '*Autre*', c'est-à-dire n'entrant pas dans les catégories précédentes.
 
 Les régions ayant répondu sont les suivantes : ***`r reg`***.
 
-Les ***réponses*** complètes, enrichies du type de structure, nettoyées des doublons et anonymisées sont consultables sur ce lien : <https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv>.
+Les ***réponses*** complètes, enrichies du type de structure, nettoyées des doublons et anonymisées sont consultables sur ce lien : [https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv](https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv).
 
 ## Redressement d'échantillon
 
-Comme dernière étape avant d'être analysées, les données de l'échantillon ont été ***redressées*** pour les rendre cohérentes aux proportions des collectivités territoriales à l'échelle nationale. Les étapes ci-dessous ont été suivies :
+Comme dernière étape avant d'être analysées, les données de l'échantillon ont été ***redressées*** pour les rendre cohérentes aux proportions des collectivités territoriales à l'échelle nationale. Les étapes ci-dessous ont été suivies : 
 
--   récupération du nombre de collectivités par type de structure à partir des chiffres 2023 de la page [*'Collectivités-locales.gouv.fr'*](https://www.collectivites-locales.gouv.fr/collectivites-locales-chiffres-2023), calcul des proportions de chaque type de structure sur le nombre total de collectivités ;
--   calcul des mêmes proportions sur notre échantillon ;
--   calcul des poids à attribuer à chaque type de collectivité pour redresser l'échantillon, tels que poids = proportion nationale / proportion dans l'échantillon ;
--   calcul de la somme des poids par réponse ;
--   calcul d'une moyenne pondérée à partir des poids obtenus en étape précédente divisés par la somme totale des poids.
+- récupération du nombre de collectivités par type de structure à partir des chiffres 2023 de la page [*'Collectivités-locales.gouv.fr'*](https://www.collectivites-locales.gouv.fr/collectivites-locales-chiffres-2023), calcul des proportions de chaque type de structure sur le nombre total de collectivités  ;
+- calcul des mêmes proportions sur notre échantillon ; 
+- calcul des poids à attribuer à chaque type de collectivité pour redresser l'échantillon, tels que poids = proportion nationale / proportion dans l'échantillon ; 
+- calcul de la somme des poids par réponse ;
+- calcul d'une moyenne pondérée à partir des poids obtenus en étape précédente divisés par la somme totale des poids.
 
-Les statistiques de chaque question comporteront donc 2 lignes ***Total*** ;
+Les statistiques de chaque question comporteront donc 2 lignes ***Total*** ; 
 
--   l'une avec le total de l'échantillon, indiquant entre parenthèses le nombre de réponses reçues pour cette question ;
--   l'autre avec le total pondéré pour correspondre aux proportions nationales.
+- l'une avec le total de l'échantillon, indiquant entre parenthèses le nombre de réponses reçues pour cette question ; 
+- l'autre avec le total pondéré pour correspondre aux proportions nationales.
+
 
 ## Résultats
 
-Les questions impliquant des **réponses textuelles** ne sont pas présentées dans l'analyse, il s'agit des questions suivantes :
+Les questions impliquant des **réponses textuelles** ne sont pas présentées dans l'analyse, il s'agit des questions suivantes : 
 
--   Quelles sont les grandes lignes de cette politique de souveraineté publique sur les données ?
--   Si domaine autre, pouvez-vous préciser ?
--   Avez-vous identifié d'autres priorités justifiant une utilisation plus importante de données ?
--   Quelle forme prend cette participation d'acteurs tiers ?
--   Pouvez-vous nous en dire davantage ?
--   Quels sont les autres métiers impliqués ?
--   Si autres, précisez :
--   Pouvez-vous préciser ?
--   Pouvez-vous nous décrire ces projets ou expérimentations ?
--   Pouvez-vous nous en dire plus sur cette cyberattaque ?
+- Quelles sont les grandes lignes de cette politique de souveraineté publique sur les données ?
+- Si domaine autre, pouvez-vous préciser ?
+- Avez-vous identifié d’autres priorités justifiant une utilisation plus importante de données ?
+- Quelle forme prend cette participation d’acteurs tiers ?
+- Pouvez-vous nous en dire davantage ?
+- Quels sont les autres métiers impliqués ?
+- Si autres, précisez :
+- Pouvez-vous préciser ?
+- Pouvez-vous nous décrire ces projets ou expérimentations ?
+- Pouvez-vous nous en dire plus sur cette cyberattaque ?
 
-Toutes les questions appelant à **déposer des fichiers** ne sont pas non plus présentées dans l'analyse.
+Toutes les questions appelant à **déposer des fichiers** ne sont pas non plus présentées dans l'analyse. 
 
 Les **pourcentages** présentés dans les statistiques correspondent au pourcentage de répondants pour chaque question, par type de structure.
 
@@ -260,9 +276,11 @@ saving_plot_comp <- function(graph, name) {
 }
 ```
 
+
+
 (in fine combiner avec documentation du tri croisé)
 
-Une comparaison entre les éditions 2022 et 2023 sera présentée pour toutes les questions communes aux deux années. Avant cela, voilà la répartition des répondants par type de structure pour les deux années :
+Une comparaison entre les éditions 2022 et 2023 sera présentée pour toutes les questions communes aux deux années. Avant cela, voilà la répartition des répondants par type de structure pour les deux années : 
 
 ```{r}
 repartition_structures <- all_stat |> distinct(Structure, `Effectifs par structure`, Edition) |> 
@@ -288,11 +306,13 @@ library(gt)
 repartition_structures |> gt()
 ```
 
+
+
 # Droit des données publiques
 
 ## Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
 
--   **Statistiques**
++ **Statistiques**
 
 ```{r qs1}
 # Stats individuelles
@@ -362,7 +382,7 @@ stat_qs_simple <- function(n_col, nom_col){
         mutate(`NA` = ifelse("NA" %in% names(stat_indiv), `NA`, "0%")) |> 
         mutate(`Sans réponse` = `NA`, .after = ncol(stat_indiv)) |> 
         select(-`NA`) |> 
-        rename({{ nom_col }} := 1)
+        rename(Structure = 1)
     # On affiche la table finale
     knitr::kable(stat_indiv, format = "html") |> 
       kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
@@ -370,8 +390,7 @@ stat_qs_simple <- function(n_col, nom_col){
 stat_qs_simple(13, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
 
--   **Visualisation**
-
++ **Visualisation**
 
 ```{r }
 dataviz <- function(nom_col){
@@ -481,14 +500,176 @@ dataviz <- function(nom_col){
     all_plots <- plot_grid(left_part, right_part, ncol = 2)
     graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(.9, .1))
     assign("graph", graph, envir = .GlobalEnv)
-    grid::grid.draw(graph)
+    #grid::grid.draw(graph)
 }
-#dataviz("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
-#saving_plot(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
+dataviz("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
+saving_plot(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)
 
++ **Comparaison 2022 / 2023**
 
-[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)
+```{r fig.height=14, fig.width=20}
+library(ggtext)
+library(plotly)
+library(ggiraph)
+
+dataviz_comp <- function(all_stat, nom_col22, nom_col23){
+  # Stats pour graphique
+  table_all <- all_stat |> 
+    filter((Question == nom_col22 | Question == nom_col23) & Réponses != "Sans réponse") |> 
+    arrange(Structure, Réponses, Edition) |> 
+    group_by(Structure, Réponses) |> 
+    mutate(ecart = Pourcentage - lag(Pourcentage),
+           Pourcentage = Pourcentage /100) |> 
+    mutate(pos_ecart = case_when(!is.na(ecart) ~ max(Pourcentage) + .02, .default = NA_real_)) |> 
+    mutate(ecart = case_when(ecart >= 0 ~ paste0("+", ecart), .default = as.character(ecart)))
+    
+  
+  # Graphique Total
+    # data
+  table_total <- table_all |> 
+    filter(Structure == "Total")
+    # viz
+  graph_total <- table_total |> 
+    ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition,
+               tooltip = paste0(Pourcentage*100, "% en ", Edition))) +
+      geom_bar_interactive(stat="identity", width=.6, size = 2, alpha = .9, position = position_dodge2(preserve = "single", padding = 0)) +
+      coord_flip() +
+      labs(x = "", y = "Pourcentage des répondants", 
+           subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+           title = "Toutes les collectivités") +
+      scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+      scale_y_continuous(labels = scales::percent, limits = c(0, max(table_total$Pourcentage)+.5*max(table_total$Pourcentage))) + # pourcentages
+      scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+      theme_classic() +
+      custom_theme() +
+      theme(legend.position = "none",
+            panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+            panel.grid.major.y = ggplot2::element_blank(),
+            plot.subtitle = element_markdown()) +
+      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, ifelse((ecart == "+1" | ecart == "-1" | ecart == "+0"), 
+                                                                                         paste0(ecart, " point de \npourcentage"), 
+                                                                                         paste0(ecart, " points de \npourcentage")))), 
+                color = "#333333", size = 5, fill = "white", label.size = NA, 
+                hjust = 0)
+  #girafe(print(graph_total), width_svg = 11, height_svg = 7)
+  graph_total
+  
+  
+  # Graphique Total hors communes < 3500 hab.
+    # data
+  table_total_plus3500 <- table_all |> 
+    filter(Structure == "Total hors communes < 3500 habitants")
+    # viz
+  graph_total_plus3500 <- table_total_plus3500 |> 
+    ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition,
+               tooltip = paste0(Pourcentage*100, "% en ", Edition))) +
+      geom_bar_interactive(stat="identity", width=.6, size = 2, alpha = .9, position = position_dodge2(preserve = "single", padding = 0)) +
+      coord_flip() +
+      labs(x = "", y = "Pourcentage des répondants", 
+           subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+           title = "Total hors communes de moins \nde 3500 habitants") +
+      scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+      scale_y_continuous(labels = scales::percent, limits = c(0, max(table_total$Pourcentage)+.5*max(table_total$Pourcentage))) + # pourcentages
+      scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+      theme_classic() +
+      custom_theme() +
+      theme(legend.position = "none",
+            panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+            panel.grid.major.y = ggplot2::element_blank(),
+            plot.subtitle = element_markdown()) +
+      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, ifelse((ecart == "+1" | ecart == "-1" | ecart == "+0"), 
+                                                                                         paste0(ecart, " point de \npourcentage"), 
+                                                                                         paste0(ecart, " points de \npourcentage")))), 
+                color = "#333333", size = 5, fill = "white", label.size = NA, 
+                hjust = 0)
+  #girafe(print(graph_total), width_svg = 11, height_svg = 7)
+  graph_total_plus3500
+
+  # Graphique Collectivités
+  graph_coll <- table_all |> 
+    filter(Structure == "Une commune" | Structure == "Un EPCI" | Structure == "Un département" | 
+             Structure == "Une région" | Structure == "Autre") |> 
+    mutate(Structure = factor(Structure, levels = c("Autre","Une région","Un département","Un EPCI","Une commune"))) |> 
+      ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+                 text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+        geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        facet_wrap(~Edition) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = F)) +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+  #ggplotly(graph_coll, tooltip = "text")
+  graph_coll
+    
+    # Graphique communes
+  graph_comm <- table_all |> 
+    filter(grepl("Communes de", Structure) == TRUE) |> 
+    mutate(Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
+           Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab."))) |> 
+      ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+                 text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+        geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        facet_wrap(~Edition) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = F)) +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank(),
+                  axis.text.x = ggplot2::element_text(size = 18))
+  #ggplotly(graph_comm, tooltip = "text")
+  graph_comm
+
+  # Légende
+  graph_leg <- table_all |> 
+  filter(Structure == "Une commune" | Structure == "Un EPCI" | Structure == "Un département" | 
+           Structure == "Une région" | Structure == "Autre") |> 
+  mutate(Structure = factor(Structure, levels = c("Autre","Une région","Un département","Un EPCI","Une commune"))) |> 
+    ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+               text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+      geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
+      labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+      scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+      scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+      facet_wrap(~Edition) +
+      coord_flip() +
+      theme_classic() +
+      custom_theme() +
+      guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
+      theme(legend.position = "top",
+                panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                panel.grid.major.y = ggplot2::element_blank())
+   legend <- get_legend(graph_leg + theme(legend.box.margin = margin(0, 0, 10, 12)))
+
+     
+    # Tous ensemble
+  left_part <- plot_grid(graph_total, graph_total_plus3500, ncol = 2)
+  right_part <- plot_grid(graph_coll, graph_comm, ncol = 2)
+  all <- plot_grid(left_part, right_part, ncol = 1)
+  graph <- plot_grid(all, legend, nrow = 2, rel_heights = c(.9, .1))
+  #grid::grid.draw(graph)
+  
+  #girafe(print(graph_total))
+  #right_part <- subplot(G1, G2, nrows = 2)
+  #right_part
+    # Save graphe
+  assign("graph", graph, envir = .GlobalEnv)
+}
+dataviz_comp(all_stat,"Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?",
+             "Commençons par la protection de la vie privée. Considérez-vous que votre collectivité est en conformité avec le RGPD ?")
+saving_plot_comp(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
+```
 

@@ -149,7 +149,7 @@ pre code {
 <style type="text/css">
 
 #TOC {
-  margin: 250px 0px 20px 0px;
+  margin: 115px 0px 20px 0px;   /*position TOC dans la marge de la page*/
 }
 @media (max-width: 768px) {
 #TOC {
@@ -259,7 +259,9 @@ div.tocify {
   background-color: #323465;
   font-weight: normal; /*gras*/
   padding: 3px; /*espace avant*/
-  /*margin-top: 1px; /*espace avant*/
+  padding-left: 11px; /*espace avant*/
+  padding-right: 11px; /*espace avant*/
+  /*margin-top: 25px; /*espace avant*/
 }
 #TOC {
   max-width: 250px;
@@ -269,6 +271,18 @@ div.tocify {
   font-weight: bold; /*gras*/
   margin-left: -1%;
   z-index: 2; /*met la TOC au premier plan devant marginnote*/
+}
+#TOC:before {
+  content: "";
+  display: block;
+  padding-top: 5%;
+  background: #323465; /* background with same color */
+}
+#TOC:after {
+  content: "";
+  display: block;
+  padding-top: 5%;
+  background: #323465; /* background with same color */
 }
 .sidenote, .marginnote { 
   float: left;
