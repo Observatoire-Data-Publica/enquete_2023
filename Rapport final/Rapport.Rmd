@@ -52,6 +52,7 @@ showtext_auto()
   padding: 3px; /*espace avant*/
   padding-left: 11px; /*espace avant*/
   padding-right: 11px; /*espace avant*/
+  border: #323465;
   /*margin-top: 25px; /*espace avant*/
 }
 #TOC {
@@ -61,6 +62,7 @@ showtext_auto()
   font-family: "Quicksand"; /*police*/
   font-weight: bold; /*gras*/
   margin-left: -1%;
+  border: #323465;
   z-index: 2; /*met la TOC au premier plan devant marginnote*/
 }
 #TOC:before { /*marge avant premier titre de la TOC*/
