@@ -68,12 +68,14 @@ showtext_auto()
   display: block;
   padding-top: 5%;
   background: #323465; /* background with same color */
+  border: #323465;
 }
 #TOC:after { /*marge après dernier titre de la TOC*/
   content: "";
   display: block;
   padding-top: 5%;
   background: #323465; /* background with same color */
+  border: #323465;
 }
 .sidenote, .marginnote { 
   float: left;
