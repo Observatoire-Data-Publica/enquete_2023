@@ -43,6 +43,7 @@ h2 { /*titre de niveau #2*/
   font-weight: bold; /*gras*/
   padding: 0px; /*alinéa*/
   padding-top: 30px; /*espace avant titre*/
+  padding-left: 70px; /*espace avant titre*/
 }
 h3 { /*titre de niveau #3*/
   color: #323465; /*couleur titre*/
@@ -51,14 +52,14 @@ h3 { /*titre de niveau #3*/
   font-weight: bold; /*gras*/
   padding: 10px; /*alinéa*/
   padding-top: 30px; /*alinéa*/
-  padding-left: 70px; /*alinéa*/
+  padding-left: 90px; /*alinéa*/
 }
 h4 { /*titre de niveau #4*/
   color: #bf0001; /*couleur titre*/
   font-size: 1.5em; /*taille*/
   font-family: "Quicksand regular"; /*police*/
   padding: 10px; /*alinéa*/
-  padding-left: 40px; /*alinéa*/
+  padding-left: 45px; /*alinéa*/
 }
 h5 { /*titre de niveau #5*/
   color: #e73458; /*couleur titre*/
