@@ -1,22 +1,20 @@
 ---
-title: "Enquête Data Publica, édition 2023"
-subtitle: "Analyse des données de l’enquête"
-date: "Dernière modification le `r format(Sys.time(), '%d %B %Y')`"
+title: "Analyse des <br>données de l’enquête <br>Data Publica, édition 2023"
 output:
     rmarkdown::html_document:
-      #number_sections: true
-      theme: paper
       toc: true
       toc_float: true
-      toc_depth: 5
+      toc_depth: 2
       number_sections: true
-      collapsed: true
       smooth_scroll: true
-      css: styles.css
       self_contained: false
+      css: styles.css
       includes:
         in_header: header.html
         after_body: footer.html
+      template: middle_toc.html
+      pandoc_args:
+        - --lua-filter=links.lua
 ---
 
 ```{r setup, include=FALSE}
@@ -37,14 +35,111 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r logo}
-# Logo Datactivist haut de page
-htmltools::img(src = "https://nextcloud.datactivist.coop/s/ReT2njwQenxiFtX/preview", 
+<script>
+  $(document).ready(function() {
+    $('#TOC').parent().prepend('<div id=\"nav_logo\"><img src=\"https://nextcloud.datactivist.coop/s/QBsAD4P7b9KNd5g/preview"></div>');
+  });
+</script> 
+
+
+```{r logo et police, echo = FALSE, message = FALSE, warning=FALSE, error=FALSE}
+# Graphisme haut droit de page
+htmltools::img(src = "https://nextcloud.datactivist.coop/s/oEqjKtbKBnm5j22/preview", 
                alt = 'logo', 
-               style = 'position:absolute; top:0; left:-0.5; padding-top:-2px; width:350px;') #padding=taille des espaces autour
+               style = 'position:absolute; top:0; right:0; width:400px')
+
+# Polices
+library(showtext)
+font_add("Quicksand", regular = "fonts/Quicksand-Regular.ttf", 
+         bold = "fonts/Quicksand-Bold.ttf")
+font_add("Open sans", regular = "fonts/Open-sans.ttf")
+showtext_auto()
+
+# {-} après les headers 3 et 4 pour enlever le numérotage automatique
 ```
 
-# Informations générales
+
+```{css, echo = FALSE}
+#nav_logo { /*paramètres logo Data Publica en haut à gauche*/
+  width: 80%;
+  margin-top: 20px;
+  margin-left: -15px;
+}
+#TOC ul>li {
+  color: white;
+  background-color: #323465;
+  font-weight: normal; /*gras*/
+  padding: 3px; /*espace avant*/
+  padding-left: 11px; /*espace avant*/
+  padding-right: 11px; /*espace avant*/
+  border: #323465;
+  /*margin-top: 25px; /*espace avant*/
+}
+#TOC {
+  max-width: 250px;
+  /*white-space: nowrap;*/  /*quand c'est activé, empêche line break longs titres*/
+  font-size: .8em; /*taille*/
+  font-family: "Quicksand"; /*police*/
+  font-weight: bold; /*gras*/
+  margin-left: -1%;
+  border: #323465;
+  z-index: 2; /*met la TOC au premier plan devant marginnote*/
+}
+#TOC:before { /*marge avant premier titre de la TOC*/
+  content: "";
+  display: block;
+  padding-top: 5%;
+  background: #323465; /* background with same color */
+  border: #323465;
+}
+#TOC:after { /*marge après dernier titre de la TOC*/
+  content: "";
+  display: block;
+  padding-top: 5%;
+  background: #323465; /* background with same color */
+  border: #323465;
+}
+.sidenote, .marginnote { 
+  float: left;
+  clear: left;
+  margin-left: -27%; 
+  margin-right: -40%;
+  margin-top: -70px; /*vertical alignement*/
+  position: relative;
+}
+.sidenote2, .marginnote2 { 
+  float: left;
+  clear: left;
+  width: 7%;
+  margin-left: 0%; 
+  margin-right: -40%;
+  margin-top: 38px; /*vertical alignement*/
+  position: relative;
+}
+.sidenote3, .marginnote3 { 
+  float: left;
+  clear: left;
+  margin-left: 5%; 
+  margin-right: -40%;
+  margin-top: 38px; /*vertical alignement*/
+  position: relative;
+}
+```
+
+<font color='grey'>
+
+<p style="font-size:17.4pt; font-style:bold">
+    Dernière modification le `r format(Sys.time(), '%d %B %Y')`
+</p>
+
+</font>
+
+<br>
+
+![](../Rapport final/images/logos.png)
+
+<div class="sidenote">![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width=200px}</div>
+# INFORMATIONS GÉNÉRALES
 
 
 ```{r données}
@@ -89,6 +184,7 @@ reg <- data_clean_unique |> filter(Catégorie == "Une région") |>
 ```
 
 
+<div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Les données
 
 Les données brutes sont composées de `r nrow(data)` réponses (complètes comme incomplètes) et `r ncol(data)` variables. Elles sont enrichies par le type de territoire et la population extraits des [données OFGL](https://data.ofgl.fr/explore/?exclude.theme=INTERNE&sort=title) en plusieurs étapes :
@@ -116,9 +212,10 @@ Les régions ayant répondu sont les suivantes : ***`r reg`***.
 
 Les ***réponses*** complètes, enrichies du type de structure, nettoyées des doublons et anonymisées sont consultables sur ce lien : [https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv](https://github.com/datactivist/enquete_data_publica/blob/main/Data/process_data.csv).
 
+<div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Redressement d'échantillon
 
-Comme dernière étape avant d'être analysées, les données de l'échantillon ont été ***redressées*** pour les rendre cohérentes aux proportions des collectivités territoriales à l'échelle nationale. Les étapes ci-dessous ont été suivies : 
+Comme dernière étape avant d'être analysées, les données de l'échantillon ont été ***redressées*** pour les rendre cohérentes aux proportions des collectivités territoriales à l'échelle nationale. Les étapes ci-dessous ont été suivies: 
 
 - récupération du nombre de collectivités par type de structure à partir des chiffres 2023 de la page [*'Collectivités-locales.gouv.fr'*](https://www.collectivites-locales.gouv.fr/collectivites-locales-chiffres-2023), calcul des proportions de chaque type de structure sur le nombre total de collectivités  ;
 - calcul des mêmes proportions sur notre échantillon ; 
@@ -132,6 +229,7 @@ Les statistiques de chaque question comporteront donc 2 lignes ***Total*** ;
 - l'autre avec le total pondéré pour correspondre aux proportions nationales.
 
 
+<div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Résultats
 
 Les questions impliquant des **réponses textuelles** ne sont pas présentées dans l'analyse, il s'agit des questions suivantes : 
@@ -276,9 +374,7 @@ saving_plot_comp <- function(graph, name) {
 }
 ```
 
-
-
-(in fine combiner avec documentation du tri croisé)
+<br>
 
 Une comparaison entre les éditions 2022 et 2023 sera présentée pour toutes les questions communes aux deux années. Avant cela, voilà la répartition des répondants par type de structure pour les deux années : 
 
@@ -303,16 +399,24 @@ repartition_structures <- all_stat |> distinct(Structure, `Effectifs par structu
   filter(Structure != "Total pondéré") |> 
   select(Structure, `2022`, `2023`)
 library(gt)
-repartition_structures |> gt()
+repartition_structures |> 
+  gt() |> 
+  tab_source_note(source_note = md("*Répartition des types de structures répondantes en 2022 et 2023*")) |> 
+  tab_style(style = cell_text(weight = "bold"), locations = cells_column_labels()) |>
+  tab_spanner(label = "Édition", columns = c(`2022`, `2023`)) |> 
+  tab_spanner(label = "Type de structure", columns = c(`Structure`)) |> 
+  tab_style(style = cell_borders(sides = c("left"), weight = px(2), color = "#CCCCCC"), 
+            locations = cells_body(columns = c(`2022`))) |> 
+  cols_align(align = "center", columns = c(`2022`, `2023`))
 ```
 
 
 
-# Droit des données publiques
+# DROIT DES DONNÉES PUBLIQUES
 
 ## Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?
 
-+ **Statistiques**
+#### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r qs1}
 # Stats individuelles
@@ -390,7 +494,7 @@ stat_qs_simple <- function(n_col, nom_col){
 stat_qs_simple(13, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
 
-+ **Visualisation**
+#### Visualisation {-}
 
 ```{r }
 dataviz <- function(nom_col){
@@ -486,15 +590,11 @@ dataviz <- function(nom_col){
         theme_classic() +
         custom_theme() +
         guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
-        theme(legend.position = "right",
+        theme(legend.position = "top",
               panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
               panel.grid.major.y = ggplot2::element_blank())
      legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 10, 12)))
     # All
-    # p1.2 <- plot_grid(p1, p2, align = 'v', nrow = 2)
-    # c2 <- plot_grid(p0_pond, legend, nrow = 1)
-    # c1 <- plot_grid(p0, p1.2, nrow = 1)
-    # graph <- plot_grid(c1, c2, ncol = 1)
     left_part <- plot_grid(p0, p0_pond, ncol = 1)
     right_part <- plot_grid(p1, p2, ncol = 1)
     all_plots <- plot_grid(left_part, right_part, ncol = 2)
@@ -508,7 +608,7 @@ saving_plot(graph, "Commençons par la protection de la vie privée. Considérez
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)
 
-+ **Comparaison 2022 / 2023**
+#### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023 {-}
 
 ```{r fig.height=14, fig.width=20}
 library(ggtext)
@@ -673,3 +773,40 @@ dataviz_comp(all_stat,"Commençons par la protection de la vie privée. Considé
 saving_plot_comp(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
 
+
+
+[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Commen%C3%A7ons%20par%20la%20protection%20de%20la%20vie%20priv%C3%A9e.%20Consid%C3%A9rez-vous%20que%20votre%20structure%20est%20en%20conformit%C3%A9%20avec%20le%20RGPD%C2%A0%3F.png)
+
+
+
+
+<div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
+## Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?
+
+
+#### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
+
+```{r}
+stat_qs_simple(14, "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+```
+
+test
+
+#### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
+
+```{r}
+dataviz("Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+saving_plot(graph, "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+```
+
+[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Avez-vous%20nomm%C3%A9%20un(e)%20D%C3%A9l%C3%A9gu%C3%A9(e)%20%C3%A0%20la%20Protection%20des%20Donn%C3%A9es%20(DPO)%20%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Avez-vous%20nomm%C3%A9%20un(e)%20D%C3%A9l%C3%A9gu%C3%A9(e)%20%C3%A0%20la%20Protection%20des%20Donn%C3%A9es%20(DPO)%20%3F.png)
+
+#### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023 {-}
+
+```{r fig.height=14, fig.width=20}
+dataviz_comp(all_stat,"Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?",
+             "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+saving_plot_comp(graph, "Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?")
+```
+
+[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Avez-vous%20nomm%C3%A9%20un(e)%20D%C3%A9l%C3%A9gu%C3%A9(e)%20%C3%A0%20la%20Protection%20des%20Donn%C3%A9es%20(DPO)%20%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Avez-vous%20nomm%C3%A9%20un(e)%20D%C3%A9l%C3%A9gu%C3%A9(e)%20%C3%A0%20la%20Protection%20des%20Donn%C3%A9es%20(DPO)%20%3F.png)
