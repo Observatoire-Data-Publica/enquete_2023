@@ -434,7 +434,13 @@ sollicitées. 47% des répondants déclarent ainsi collaborer avec une
 davantage les grandes collectivités (régions, départements et métropoles
 en particulier), 7% des communes déclarent leur intention d'y avoir
 recours dans l'année à venir - 17% des communes de 3.500 à 10.000
-habitants.
+habitants. Notons également que l**es PRIG sont *de facto* les acteurs
+principaux de la mutualisation dans le monde de la donnée territoriale**
+aujourd'hui : 38% des répondants déclarent avoir mis en place des
+technologies mutualisées avec leur PRIG, et 9% prévoient de le faire
+dans les douze prochains mois. Notons que toutes les strates de
+collectivités sont concernées, même les petites communes, même si c'est
+dans une mesure moindre que les grandes collectivités.
 
 ![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUne%20plateforme%20r%C3%A9gionale%20d%E2%80%99information%20g%C3%A9ographique%5D.png)
 *Avec lesquels de ces partenaires potentiels collaborez-vous, ou
@@ -447,7 +453,11 @@ paradoxalement, elle l'est... surtout chez les grandes collectivités,
 qui collaborent donc entre elles ! Ainsi, peu de communes de moins de
 10.000 habitants déclarent collaborer avec des collectivités plus
 grandes - mais 17% des communes de 3.500 à 10.000 habitants prévoient de
-le faire dans année.
+le faire dans année. **Ces collectivités sont également à l'origine de
+mutualisations technologiques** : 25% des collectivités déclarent avoir
+mis en place des technologies mutualisées avec ces collectivités. Il
+peut souvent s'agit de portails open data, ou de services de DPO
+mutualisés, par exemple.
 
 Les collaborations avec des **associations de collectivités**, telles
 qu'OpenDataFrance ou la FNCCR, sont également fréquentes (38%), mais
@@ -455,7 +465,10 @@ répondent au même schéma : elles sont plus fréquentes chez les grandes
 collectivités que dans les petites, qui pourraient pourtant
 potentiellement en avoir davantage besoin. En revanche, les intentions
 affichées sont plus faibles : seules 5% des répondants prévoient de
-collaborer avec une association de collectivités dans l'année.
+collaborer avec une association de collectivités dans l'année. **Les
+actions de mutualisation de ces associations sont relativement
+significatives (17%)**, mais peu d'intentions futures sont déclarées
+(3%).
 
 La collaboration avec les **services de l'État** (ANCT, SGAR, Dinum...)
 atteint un niveau comparable aux collectivités plus grandes et aux
@@ -472,7 +485,9 @@ data. Seuls 10% des répondants indiquent ainsi avoir collaboré avec un
 OPSN. Et seuls 3% prévoient de le faire dans les 12 prochains mois.
 Ainsi, au-delà de quelques OPSN pionniers et visibles dans l'écosystème,
 les OPSN n'apparaissent pas aujourd'hui comme des partenaires majeurs
-dans le domaine.
+dans le domaine, ni comme des moyens majeurs de mutualisation en matière
+de données (9% seulement), alors qu'ils ont pu l'être dans d'autres
+domaines.
 
 ::: sidenote3
 ![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width="30px"}
