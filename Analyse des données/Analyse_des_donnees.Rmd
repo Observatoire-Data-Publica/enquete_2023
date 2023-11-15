@@ -1299,7 +1299,7 @@ new_dataviz_comp_sansSR <- function(all_stat, nom_col22, nom_col23){
     filter((Question == nom_col22 | Question == nom_col23) & Réponses != "Sans réponse",
            Structure != "Total" & Structure != "Total pondéré"  & Structure != "Total hors communes < 3500 habitants" & Structure != "Une commune" & Structure != "Communes de moins de 3 500 hab." & Structure != "Autre") |> 
     mutate(occu_rep_quest = sum(Occurrences, na.rm = TRUE),
-           Pourcentage = occu_rep_quest / sum(`Nombre de réponses`), .by = c(Réponses, Edition)) |> 
+           Pourcentage = occu_rep_quest / sum(`Nombre de réponses`, na.rm=T), .by = c(Réponses, Edition)) |> 
     distinct(Réponses, Edition, Pourcentage) |> 
     arrange(Réponses, Edition) |> 
     group_by(Réponses) |> 
