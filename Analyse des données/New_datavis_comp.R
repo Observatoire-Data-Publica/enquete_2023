@@ -173,9 +173,9 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]")
 ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’ANSSI ou avec un cyber campus régional].png"), plot = graph, width = 25, height = 15)
 
-new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]",
+#new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]",
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
-saving_newplot(graph, "armi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
+#ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques].png"), plot = graph, width = 13, height = 7)
 
 new_dataviz_comp(all_stat, "Votre collectivité a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?",
                "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
