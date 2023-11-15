@@ -201,8 +201,7 @@ Sont considérées comme complètes toutes les réponses remplies jusqu'à la qu
 - `r data_clean_unique |> filter(Catégorie == "Une commune") |> nrow()` communes ;
     - `r data_clean_unique |> filter(Catégorie2 == "Communes de moins de 3 500 hab.") |> nrow()` communes de moins de 3 500 habitants ;
     - `r data_clean_unique |> filter(Catégorie2 == "Communes de 3 500 à 10 000 hab.") |> nrow()` communes de 3 500 à 10 000 habitants ;
-    - `r data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow()` communes de 10 000 à 100 000 habitants ;Afin de respecter le RGPD, avez-vous modifié des
-  processus de gestion des données au sein de l'organisation ?
+    - `r data_clean_unique |> filter(Catégorie2 == "Communes de 10 000 à 100 000 hab.") |> nrow()` communes de 10 000 à 100 000 habitants ;
     - `r data_clean_unique |> filter(Catégorie2 == "Communes de plus de 100 000 hab.") |> nrow()` communes de plus de 100 000 habitants ;
 - `r data_clean_unique |> filter(Catégorie == "Un EPCI (hors métropole)") |> nrow()` EPCI (hors métropoles) ;
 - `r data_clean_unique |> filter(Catégorie == "Une métropole") |> nrow()` métropoles ;
@@ -232,7 +231,7 @@ Les statistiques de chaque question comporteront donc 2 lignes ***Total*** ;
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Résultats
 
-Les questions impliquant des **réponses textuelles** ne sont pas présentées dans l'analyse, il s'agit des questions suivantes : 
+Les questions impliquant des **réponses textuelles** ne sont pas présentées dans la présente analyse, il s'agit des questions suivantes : 
 
 - Quelles sont les grandes lignes de cette politique de souveraineté publique sur les données ?
 - Si domaine autre, pouvez-vous préciser ?
