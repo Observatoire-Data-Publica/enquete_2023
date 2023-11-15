@@ -123,6 +123,8 @@ Cette deuxième édition de notre enquête permet de l'ancrer dans une
 logique barométrique que nous espérons poursuivre le plus longtemps
 possible, en complémentarité avec les autres acteurs de l'écosystème.
 
+La notice technique est disponible [à la fin de ce document](#notice-technique).
+
 ::: sidenote
 ![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width="200px"}
 :::
@@ -1013,6 +1015,26 @@ Tout comme l'an dernier, les obstacles rencontrés par les collectivités sont, 
 **Les collectivités ont bien connaissance de l'arsenal des mesures de prévention qui s'offrent à elles, et elles le déploient en fonction de leurs moyens**. Le déploiement d'une stratégie de sécurité informatique reste la mesure la plus répandue (62% des cas, plus 14% de répondants envisageant de le faire dans les 12 prochains mois), avec le déploiement d'outils techniques de sécurisation des réseaux informatiques (54% + 8%). À l'autre extrémité, la certification ISO 27001, qui nécessite un investissement important, n'est mise en œuvre que par 5% des répondants (de différentes strates de collectivités néanmoins), mais les répondants sont aussi nombreux à déclarer vouloir la mettre en œuvre dans les douze prochains mois.
 
 [Voir toutes les données pour cette quesion.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#95_Parmi_les_mesures_suivantes,_qui_visent_%C3%A0_r%C3%A9duire_le_risque_de_cybers%C3%A9curit%C3%A9,_est-ce_que_votre_structure_a_mis_en_place)
+
+::: sidenote
+![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width="200px"}
+:::
+# Notice technique{#notice-technique}
+
+L'enquête de l'Observatoire Data Publica, soutenue par la Banque des Territoires, le groupe La Poste, Orange, l'ANCT et la Gazette des Communes, a été diffusée sur une durée totale de 10 semaines entre le 21 juin et le 31 août 2023, auprès de collectivités et d'organismes publics locaux de France métropolitaine et des outremers. L'échantillon final représente 191 organisations territoriales dont 30 communes, 51 EPCI (dont 18 métropoles), 25 départements, 10 régions et 75 structures autres (syndicats mixtes numériques regroupant des communes notamment). Les communes de toutes les tailles sont représentées conférant à cet échantillon un caractère représentatif inédit pour une enquête sur des enjeux numériques. L'enquête comportait 67 questions posées via un questionnaire en ligne sur un outil open source, Lime Survey. Les répondants sont indifféremment des élus ou des responsables administratifs. De nombreuses réponses ont été préparées, au sein des collectivités, dans un cadre collectif. 
+
+Pour tenir compte des caractéristiques de l'échantillon, et le cas échéant le rendre comparable à celui de l'édition 2022, ou représentatif de l'ensemble des collectivités françaises, des pondérations ont pu être effectuées (mention "Total pondéré"), ou des dénominateurs différents utilisés pour le calcul des pourcentages (avec ou sans prise en compte des non réponses, des réponses "je ne sais pas" en particulier), ou encore des filtres effectuées (par exemple, pour pouvoir comparer les chiffres 2022 et 2023 avec des structures d'échantillon comparables, on a restreint les données utilisées aux collectivités et EPCI, hors communes de moins de 3.500 habitants). Cela explique que des chiffres apparemment différents puissent apparaître. Ces traitements sont explicités de manière détaillée dans [l'analyse complète](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html). 
+
+L'ensemble des tableaux croisés portant sur l'ensemble des questions de l'enquête sont disponibles [ici](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html).
+
+Les données brutes de l'enquête, anonymisées, sont disponibles [ici](https://github.com/datactivist/enquete_data_publica/blob/main/Data/results-survey396597.csv). 
+
+Le code source ayant permis la génération de l'ensemble des graphiques et tableaux de l'enquête est disponible [ici](https://github.com/datactivist/enquete_data_publica/). 
+
+Le présent rapport, produit par l'Observatoire Data Publica, est mis à disposition sous licence Creative Commons CC BY SA 4.0. 
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/CC_BY-SA_icon.svg/88px-CC_BY-SA_icon.svg.png)
+
 
 ::: {.tocify-extend-page data-unique="tocify-extend-page" style="height: 0;"}
 :::
