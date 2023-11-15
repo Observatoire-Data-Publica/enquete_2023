@@ -1242,6 +1242,78 @@ ggsave(file = glue("../Graphiques/SVG/Graphique général n°4 (comparaison 2022
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B04%20(comparaison%202022-2023)%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B04%20(comparaison%202022-2023)%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)
 
+```{r}
+dat22 <- data_2022 |> 
+    filter(`G1Q00004. Quel est le nombre d’habitants de votre commune ?` != "Moins de 3 500 habitants" | is.na(`G1Q00004. Quel est le nombre d’habitants de votre commune ?`),
+           `Vousconnaitre1. Votre collectivité est :` != "Autre") |> 
+    select(33:44) |> 
+    summarise_all(funs(sum(. == "Oui"))) |> 
+    pivot_longer(cols = everything(), names_to = "cat", values_to = "n") |> 
+    mutate(cat = str_extract(cat, "(?<=\\[).*"),
+           cat = str_extract(cat, "(?<=\\[).*"),
+           cat = str_replace_all(cat, "\\]", ""),
+           Pourcentage = round(n / 185 *100, 0),
+           type = "2022") |> 
+    select(-n)
+dat23 <- all_stat |> 
+    filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure != "Communes de moins de 3 500 hab." & Structure != "Total" & Structure != "Total pondéré"  & Structure != "Total hors communes < 3500 habitants" & Structure != "Une commune" & (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
+    filter(Question != "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]") |> #retrait dans la catégorie 'Autre' car non présente en 2022
+    ungroup() |> 
+    mutate(cat = str_extract(Question, "(?<=\\[).*"),
+           cat = substr(cat, 1, nchar(cat)-1),
+           cat = fct_reorder(cat, Pourcentage)) |> 
+    mutate(occu_rep_quest = sum(Occurrences, na.rm = TRUE), .by = c(Réponses, cat)) |> 
+    mutate(Pourcentage = round(occu_rep_quest / 107 * 100, 0),
+           type = "2023") |> 
+    distinct(cat, Réponses, Pourcentage, type) 
+comp_editions <- rbind(dat22 |> mutate(Réponses = "Oui"), dat23) |> ungroup() |> 
+    mutate(cat = fct_reorder(cat, Pourcentage), .by = type) |> 
+    mutate(p_oui = Pourcentage[Réponses == "Oui, au cours des deux dernières années"],
+           p_non = Pourcentage[Réponses == "Non, mais c’est prévu dans les 12 prochains mois"],
+           labelpos = ifelse(Réponses == "Oui, au cours des deux dernières années", 
+                             Pourcentage/2, 
+                             p_oui + p_non /3 - 2),
+           .by = cat) |> select(-c(p_oui, p_non)) |> 
+    mutate(Pourcentage = Pourcentage / 100,
+           labelpos = labelpos / 100)
+
+# Graphique
+graph <- comp_editions |> 
+    ggplot(aes(y=Pourcentage, x=cat, fill = Réponses, group = Réponses)) + 
+            geom_bar(position="stack", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Pourcentage de réponses", 
+                 title = stringr::str_wrap("Domaines dans lesquels une expérimentation en matière d'utilisation des données a été engagée au cours des deux dernières années ou va l'être dans les 12 prochains mois", width = 55),
+                 subtitle = "Collectivités et EPCI sauf communes de moins de 3.500 habitants") +
+            scale_fill_manual(values = c("Non, mais c’est prévu dans les 12 prochains mois" = "#e1b44d", 
+                                         "Oui, au cours des deux dernières années" = "#323465", 
+                                         "Oui" = "#33bbc9"),
+                              labels = c("Non, mais c’est prévu dans les 12 prochains mois" = "Prévue dans les 12 prochains mois", 
+                                         "Oui, au cours des deux dernières années" = "Engagée au cours des deux dernières années", 
+                                         "Oui" = "Engagée"),
+                              breaks = c("Oui", "Oui, au cours des deux dernières années", "Non, mais c’est prévu dans les 12 prochains mois")) +
+            geom_text(aes(x = cat, y = Pourcentage/2, label = ifelse(type == "2022", paste0(Pourcentage*100, "%"), NA)), 
+                       size = 6, hjust = 0, color = "white") +
+            geom_text(aes(x = cat, y = labelpos, label = ifelse(type == "2023",paste0(Pourcentage*100, "%"), NA)), 
+                       size = 6, hjust = 0, color = "white") + 
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            scale_y_continuous(labels = scales::percent) +
+            coord_flip() +
+            facet_wrap(~type) +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "top",
+                  legend.title = element_text(family = font, size = 20, color = "#222222"),
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank()) +
+            guides(fill = guide_legend(ncol = 1, title = "Expérimentation"))
+#graph
+ggsave(file = glue("../Graphiques/PNG/Graphique général n°5 (comparaison 2022-2023) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée pour CT et EPCI hors communes de moins de 3500 hab.png"), plot = graph, width = 15, height = 10)
+#ggsave(file = glue("../Graphiques/SVG/Graphique général n°5 (comparaison 2022-2023) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée pour CT et EPCI hors communes de moins de 3500 hab.svg"), plot = graph, width = 14, height = 10)
+```
+
+
+[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B05%20(comparaison%202022-2023)%20:%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e%20pour%20CT%20et%20EPCI%20hors%20communes%20de%20moins%20de%203500%20hab.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B05%20(comparaison%202022-2023)%20:%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e%20pour%20CT%20et%20EPCI%20hors%20communes%20de%20moins%20de%203500%20hab.png)
+
 
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### AMÉNAGEMENT DU TERRITOIRE {-}
