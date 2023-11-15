@@ -920,33 +920,426 @@ saving_newplot(graph, "Afin de respecter le RGPD, avez-vous modifié des process
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(18, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
+stat_qs_simple_sansRS <- function(n_col, nom_col){
+    # Structures détaillées
+   cat2 <- data_clean_unique |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> #na.omit() |>  
+        pivot_wider(names_from = 2, values_from = 3) |>
+        janitor::adorn_totals("row") |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n")
+   nb_na <- 191 - (cat2 |> filter(Catégorie2 == "Total" & cat != "NA") |> mutate(Total = sum(n)) |> distinct(Total))
+   cat2 <- cat2 |> 
+        mutate(Catégorie2 = case_when(Catégorie2 == "Total" ~ paste0("Total (", sum(n[Catégorie2 == "Total"]) - nb_na, " réponses)"), .default = Catégorie2)) |> 
+        mutate_all(replace_na, replace = 0) |>
+        filter(cat != "NA") |> 
+        mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie2) |> 
+        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+     # Structure 'commune' seulement
+    cat1 <- data_clean_unique |> 
+        select(n_col, Catégorie) |> 
+        filter(Catégorie == "Une commune") |> 
+        summarise(n = n(), .by = c(Catégorie, 1)) |> #na.omit() |>  
+        na.omit() |> 
+        mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie) |> 
+        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+    nb_col <- ncol(cat2)
+     # Moyenne pondérée
+    moy_pond <- data_clean_unique |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> 
+        pivot_wider(names_from = 2, values_from = 3) |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate_all(replace_na, replace = 0) |>
+        filter(cat != "NA") |> 
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(`Total pondéré`= paste0(round(p/sum(p)*100, 0), "%")) |> 
+        select(-p) |> 
+        pivot_wider(names_from = 1, values_from = 2) |> 
+        mutate(Catégorie = "Total pondéré", .before = 1)
+     # Jointure, statistiques finales
+    stat_indiv <- list(cat1, cat2 |> rename(Catégorie = Catégorie2)) |> 
+        bind_rows() |> ungroup() |> 
+        rbind(moy_pond) |> 
+        mutate_all(replace_na, replace = "0%") |>  
+        mutate(index = case_match(Catégorie, 
+                                  "Total" ~ 1.5,
+                                  "Une commune" ~ 2,
+                                  "Communes de moins de 3 500 hab." ~ 3,
+                                  "Communes de 3 500 à 10 000 hab." ~ 4,
+                                  "Communes de 10 000 à 100 000 hab." ~ 5,
+                                  "Communes de plus de 100 000 hab." ~ 6,
+                                  "Une métropole" ~ 7,
+                                  "Un EPCI (hors métropole)" ~ 8,
+                                  "Un département" ~ 9,
+                                  "Une région" ~ 10,
+                                  "Autre" ~ 11, 
+                                  .default = 1)) |> 
+        arrange(index) |> select(-index) |> ungroup() |> 
+        select(1, order(colnames(stat_indiv))) |> 
+        rename(Structure = 1)
+    # On affiche la table finale
+    knitr::kable(stat_indiv, format = "html") |> 
+      kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
+}
+stat_qs_simple_sansRS(18, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
+
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
+dataviz_sansSR <- function(nom_col){
+    # Fonction graph ensemble
+    dat <- all_stat_2023 |> 
+        filter(Question == nom_col & Structure == "Total",
+               Réponses != "Sans réponse") |> 
+      mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0))
+    p0 <- dat |> 
+        ggplot(aes(y=Occurrences, x=Réponses, fill = Réponses)) + 
+            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Nombre de réponses", 
+                 title = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
+            geom_label(aes(x = Réponses, y = Occurrences+1, label = paste0(Pourcentage, "%")), 
+                       size = 8, fill = "white", label.size = NA, hjust = 0) +
+            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(dat$Occurrences)+14) +
+            coord_flip() +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "none",
+                  plot.title = element_text(hjust = 1),
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+    # Fonction graph total pondéré
+    dat <- data_clean_unique |> 
+        select(nom_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> 
+        pivot_wider(names_from = 2, values_from = 3) |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate_all(replace_na, replace = 0) |>
+        filter(cat != "NA") |> 
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(`Total pondéré`= round(p/sum(p)*100, 0)) |> 
+        select(-p) |> 
+        pivot_wider(names_from = 1, values_from = 2) |> 
+        mutate(Catégorie = "Total pondéré", .before = 1) |> 
+        pivot_longer(cols = -Catégorie, names_to = "Réponses", values_to = "Pourcentage")
+    p0_pond <- dat |> 
+        ggplot(aes(y=Pourcentage, x=Réponses, fill = Réponses)) + 
+            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Pourcentage de réponses", 
+                 title = "Total pondéré") +
+            geom_label(aes(x = Réponses, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
+                       size = 8, fill = "white", label.size = NA, hjust = 0) +
+            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(dat$Pourcentage)+14) +
+            coord_flip() +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())+
+            guides(fill = guide_legend(title = "Légende", ncol = 1))
+    # Fonction type de collectivité
+    dat <- all_stat_2023 |> 
+        filter(Question == nom_col & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre"),
+               Réponses != "Sans réponse") |> 
+        mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0)) |> 
+        mutate(Pourcentage = as.numeric(Pourcentage)/100,
+               Structure = factor(Structure, levels = c("Autre","Une région","Un département","Une métropole","Un EPCI (hors métropole)","Une commune")))
+    p1 <- dat |> 
+        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+    # Fonction taille de commune
+    dat <- all_stat_2023 |> 
+        filter(Question == nom_col & grepl("Communes de", Structure) == TRUE,
+               Réponses != "Sans réponse") |> 
+        mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0)) |> 
+        mutate(Pourcentage = as.numeric(Pourcentage)/100,
+               Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
+               Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab.")))
+    p2 <- dat |> 
+        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+        theme(legend.position = "none",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+    # Légende
+    p3 <- dat |> 
+        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune", fill = "légende") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
+        theme(legend.position = "top",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+     legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 10, 12)))
+    # All
+    left_part <- plot_grid(p0, p0_pond, ncol = 1)
+    right_part <- plot_grid(p1, p2, ncol = 1)
+    all_plots <- plot_grid(left_part, right_part, ncol = 2)
+    graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(.9, .1))
+    assign("graph", graph, envir = .GlobalEnv)
+    #grid::grid.draw(graph)
+}
+dataviz_sansSR("De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 saving_plot(graph, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
+
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/De%20mani%C3%A8re%20g%C3%A9n%C3%A9rale%2C%20avez-vous%20mis%20en%20place%20des%20clauses%20juridiques%20sur%20la%20gestion%20des%20donn%C3%A9es%20dans%20les%20contrats%20de%20d%C3%A9l%C3%A9gation%20et%20dans%20les%20march%C3%A9s%20publics%20%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/De%20mani%C3%A8re%20g%C3%A9n%C3%A9rale%2C%20avez-vous%20mis%20en%20place%20des%20clauses%20juridiques%20sur%20la%20gestion%20des%20donn%C3%A9es%20dans%20les%20contrats%20de%20d%C3%A9l%C3%A9gation%20et%20dans%20les%20march%C3%A9s%20publics%20%3F.png)
 
 #### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023 {-}
 
-```{r fig.height=14, fig.width=20}
-dataviz_comp(all_stat,"De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?",
+
+```{r}
+dataviz_comp_sansSR <- function(all_stat, nom_col22, nom_col23){
+  # Stats pour graphique
+  table_all <- all_stat |> 
+    filter((Question == nom_col22 | Question == nom_col23) & Réponses != "Sans réponse") |> 
+    arrange(Structure, Réponses, Edition) |> 
+    group_by(Structure, Réponses) |> 
+    mutate(Pourcentage = Occurrences / `Nombre de réponses` * 100,
+           ecart = round(Pourcentage - lag(Pourcentage),0),
+           Pourcentage = round(Pourcentage /100, 2)) |> 
+    mutate(pos_ecart = case_when(!is.na(ecart) ~ max(Pourcentage) + .02, .default = NA_real_)) |> 
+    mutate(ecart = case_when(ecart >= 0 ~ paste0("+", ecart), .default = as.character(ecart)))
+    
+  
+  # Graphique Total
+    # data
+  table_total <- table_all |> 
+    filter(Structure == "Total")
+    # viz
+  graph_total <- table_total |> 
+    ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition,
+               tooltip = paste0(Pourcentage*100, "% en ", Edition))) +
+      geom_bar_interactive(stat="identity", width=.6, size = 2, alpha = .9, position = position_dodge2(preserve = "single", padding = 0)) +
+      coord_flip() +
+      labs(x = "", y = "Pourcentage des répondants", 
+           subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+           title = "Toutes les collectivités") +
+      scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+      scale_y_continuous(labels = scales::percent, limits = c(0, max(table_total$Pourcentage)+.5*max(table_total$Pourcentage))) + # pourcentages
+      scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+      theme_classic() +
+      custom_theme() +
+      theme(legend.position = "none",
+            panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+            panel.grid.major.y = ggplot2::element_blank(),
+            plot.subtitle = element_markdown()) +
+      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, ifelse((ecart == "+1" | ecart == "-1" | ecart == "+0"), 
+                                                                                         paste0(ecart, " point de \npourcentage"), 
+                                                                                         paste0(ecart, " points de \npourcentage")))), 
+                color = "#333333", size = 5, fill = "white", label.size = NA, 
+                hjust = 0)
+  #girafe(print(graph_total), width_svg = 11, height_svg = 7)
+  graph_total
+  
+  
+  # Graphique Total hors communes < 3500 hab.
+    # data
+  table_total_plus3500 <- table_all |> 
+    filter(Structure == "Total hors communes < 3500 habitants")
+    # viz
+  graph_total_plus3500 <- table_total_plus3500 |> 
+    ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition,
+               tooltip = paste0(Pourcentage*100, "% en ", Edition))) +
+      geom_bar_interactive(stat="identity", width=.6, size = 2, alpha = .9, position = position_dodge2(preserve = "single", padding = 0)) +
+      coord_flip() +
+      labs(x = "", y = "Pourcentage des répondants", 
+           subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+           title = "Total hors communes de moins \nde 3500 habitants") +
+      scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+      scale_y_continuous(labels = scales::percent, limits = c(0, max(table_total$Pourcentage)+.5*max(table_total$Pourcentage))) + # pourcentages
+      scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+      theme_classic() +
+      custom_theme() +
+      theme(legend.position = "none",
+            panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+            panel.grid.major.y = ggplot2::element_blank(),
+            plot.subtitle = element_markdown()) +
+      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, ifelse((ecart == "+1" | ecart == "-1" | ecart == "+0"), 
+                                                                                         paste0(ecart, " point de \npourcentage"), 
+                                                                                         paste0(ecart, " points de \npourcentage")))), 
+                color = "#333333", size = 5, fill = "white", label.size = NA, 
+                hjust = 0)
+  #girafe(print(graph_total), width_svg = 11, height_svg = 7)
+  graph_total_plus3500
+
+  # Graphique Collectivités
+  graph_coll <- table_all |> 
+    filter(Structure == "Une commune" | Structure == "Un EPCI" | Structure == "Un département" | 
+             Structure == "Une région" | Structure == "Autre") |> 
+    mutate(Structure = factor(Structure, levels = c("Autre","Une région","Un département","Un EPCI","Une commune"))) |> 
+      ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+                 text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+        geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        facet_wrap(~Edition) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = F)) +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+  #ggplotly(graph_coll, tooltip = "text")
+  graph_coll
+    
+    # Graphique communes
+  graph_comm <- table_all |> 
+    filter(grepl("Communes de", Structure) == TRUE) |> 
+    mutate(Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
+           Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab."))) |> 
+      ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+                 text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+        geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        facet_wrap(~Edition) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = F)) +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank(),
+                  axis.text.x = ggplot2::element_text(size = 18))
+  #ggplotly(graph_comm, tooltip = "text")
+  graph_comm
+
+  # Légende
+  graph_leg <- table_all |> 
+  filter(Structure == "Une commune" | Structure == "Un EPCI" | Structure == "Un département" | 
+           Structure == "Une région" | Structure == "Autre") |> 
+  mutate(Structure = factor(Structure, levels = c("Autre","Une région","Un département","Un EPCI","Une commune"))) |> 
+    ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+               text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+      geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
+      labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+      scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+      scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+      facet_wrap(~Edition) +
+      coord_flip() +
+      theme_classic() +
+      custom_theme() +
+      guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
+      theme(legend.position = "top",
+                panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                panel.grid.major.y = ggplot2::element_blank())
+   legend <- get_legend(graph_leg + theme(legend.box.margin = margin(0, 0, 10, 12)))
+
+     
+    # Tous ensemble
+  left_part <- plot_grid(graph_total, graph_total_plus3500, ncol = 2)
+  right_part <- plot_grid(graph_coll, graph_comm, ncol = 2)
+  all <- plot_grid(left_part, right_part, ncol = 1)
+  graph <- plot_grid(all, legend, nrow = 2, rel_heights = c(.9, .1))
+  #grid::grid.draw(graph)
+  
+  #girafe(print(graph_total))
+  #right_part <- subplot(G1, G2, nrows = 2)
+  #right_part
+    # Save graphe
+  assign("graph", graph, envir = .GlobalEnv)
+}
+dataviz_comp_sansSR(all_stat,"De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?",
              "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 saving_plot_comp(graph, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20De%20mani%C3%A8re%20g%C3%A9n%C3%A9rale%2C%20avez-vous%20mis%20en%20place%20des%20clauses%20juridiques%20sur%20la%20gestion%20des%20donn%C3%A9es%20dans%20les%20contrats%20de%20d%C3%A9l%C3%A9gation%20et%20dans%20les%20march%C3%A9s%20publics%20%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20De%20mani%C3%A8re%20g%C3%A9n%C3%A9rale%2C%20avez-vous%20mis%20en%20place%20des%20clauses%20juridiques%20sur%20la%20gestion%20des%20donn%C3%A9es%20dans%20les%20contrats%20de%20d%C3%A9l%C3%A9gation%20et%20dans%20les%20march%C3%A9s%20publics%20%3F.png)
 
+
 ```{r}
-new_dataviz_comp(all_stat, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?",
+new_dataviz_comp_sansSR <- function(all_stat, nom_col22, nom_col23){
+  # Stats pour graphique
+  table_all <- all_stat |> 
+    filter((Question == nom_col22 | Question == nom_col23) & Réponses != "Sans réponse",
+           Structure != "Total" & Structure != "Total pondéré"  & Structure != "Total hors communes < 3500 habitants" & Structure != "Une commune" & Structure != "Communes de moins de 3 500 hab." & Structure != "Autre") |> 
+    mutate(occu_rep_quest = sum(Occurrences, na.rm = TRUE),
+           Pourcentage = occu_rep_quest / sum(`Nombre de réponses`), .by = c(Réponses, Edition)) |> 
+    distinct(Réponses, Edition, Pourcentage) |> 
+    arrange(Réponses, Edition) |> 
+    group_by(Réponses) |> 
+    mutate(ecart = round((Pourcentage - lag(Pourcentage)) * 100, 0)) |> 
+    mutate(pos_ecart = case_when(!is.na(ecart) ~ max(Pourcentage) + .02, .default = NA_real_)) |> 
+    mutate(ecart = case_when(ecart >= 0 ~ paste0("+", ecart), .default = as.character(ecart)))
+
+  # Graphique CT et EPCI sauf communes < 3500 hab.
+  graph_hors3500 <- table_all |> 
+    ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition,
+               tooltip = paste0(Pourcentage*100, "% en ", Edition))) +
+      geom_bar_interactive(stat="identity", width=.6, size = 2, alpha = .9, position = position_dodge2(preserve = "single", padding = 0)) +
+      coord_flip() +
+      labs(x = "", y = "Pourcentage des répondants", 
+           subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+           title = "Collectivités et EPCI sauf communes de \nmoins de 3500 habitants") +
+      scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+      scale_y_continuous(labels = scales::percent, limits = c(0, max(table_all$Pourcentage)+.5*max(table_all$Pourcentage))) + # pourcentages
+      scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+      theme_classic() +
+      custom_theme() +
+      theme(legend.position = "none",
+            panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+            panel.grid.major.y = ggplot2::element_blank(),
+            plot.subtitle = element_markdown()) +
+      geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, ifelse((ecart == "+1" | ecart == "-1" | ecart == "+0"), 
+                                                                                         paste0(ecart, " point de \npourcentage"), 
+                                                                                         paste0(ecart, " points de \npourcentage")))), 
+                color = "#333333", size = 5, fill = "white", label.size = NA, 
+                hjust = 0) +
+      theme(plot.margin = margin(0, 1, 0, 0, "cm"))
+  #girafe(print(graph_total), width_svg = 11, height_svg = 7)
+  #graph_hors3500
+  assign("graph", graph_hors3500, envir = .GlobalEnv)
+}
+new_dataviz_comp_sansSR(all_stat, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?",
              "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 saving_newplot(graph, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
+
 
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20De%20mani%C3%A8re%20g%C3%A9n%C3%A9rale%2C%20avez-vous%20mis%20en%20place%20des%20clauses%20juridiques%20sur%20la%20gestion%20des%20donn%C3%A9es%20dans%20les%20contrats%20de%20d%C3%A9l%C3%A9gation%20et%20dans%20les%20march%C3%A9s%20publics%20%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20De%20mani%C3%A8re%20g%C3%A9n%C3%A9rale%2C%20avez-vous%20mis%20en%20place%20des%20clauses%20juridiques%20sur%20la%20gestion%20des%20donn%C3%A9es%20dans%20les%20contrats%20de%20d%C3%A9l%C3%A9gation%20et%20dans%20les%20march%C3%A9s%20publics%20%3F.png)
@@ -1058,13 +1451,229 @@ stat_qs_multiple <- function(min_col, max_col, nom_col){
     knitr::kable(stat_indiv, format = "html") |> 
       kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
 }
-stat_qs_multiple(19, 22, "Quels sont le ou les domaines concernés par ces clauses ?")
+```
+
+
+```{r}
+ref_question <- data_clean_unique |> 
+    select(19:22, 226) |> 
+    group_by(Catégorie2) |> 
+    filter(across(where(is.character), ~. != "N/A")) |> 
+    ungroup() |> 
+    summarise(n_total = n(), .by = Catégorie2)
+total <- sum(ref_question$n_total)
+sans_rep <- data_clean_unique |> 
+    select(19:22, 226) |> 
+    group_by(Catégorie2) |> 
+    summarise_all(funs(sum(. == "N/A"))) |> 
+    janitor::adorn_totals("row") |>
+    select(Catégorie2, 2) |> 
+    rename(`Sans réponse` = 2) |> 
+    mutate(n2 = case_when(grepl("Communes", Catégorie2) == TRUE ~ `Sans réponse`, .default = NA_real_))
+sans_rep <- sans_rep |> 
+    add_row(Catégorie2 = "Une commune", `Sans réponse` = sum(sans_rep$n2, na.rm = TRUE)) |> 
+    select(-n2)
+cat1 <- data_clean_unique |> 
+    select(19:22, 226) |> 
+    group_by(Catégorie2) |> 
+    summarise_all(funs(sum(. == "Oui"))) |> 
+    janitor::adorn_totals("row") |>
+    left_join(sans_rep, by = "Catégorie2") |> 
+    pivot_longer(cols = -c(Catégorie2, `Sans réponse`), names_to = "cat", values_to = "n") |> 
+    left_join(ref_nb_structures, by = "Catégorie2") |> 
+    mutate(nb_reponses = n_total - `Sans réponse`,
+           cat = str_extract(cat, "(?<=\\[).*"),
+           cat = str_replace_all(cat, "\\]", ""),
+           percent = paste0(round(n / nb_reponses *100, 0), "%"), .by = cat) |> 
+    select(-c(n, n_total, nb_reponses, `Sans réponse`)) |> 
+    mutate(percent = str_replace_all(percent, "NaN%", "0%")) |> 
+    pivot_wider(names_from = cat, values_from = percent)
+cat2 <- data_clean_unique |> 
+    filter(Catégorie == "Une commune") |> 
+    select(19:22, 225) |> 
+    group_by(Catégorie) |> 
+    summarise_all(funs(sum(. == "Oui"))) |> 
+    left_join(sans_rep, by = c("Catégorie" = "Catégorie2")) |> 
+    pivot_longer(cols = -c(Catégorie, `Sans réponse`), names_to = "cat", values_to = "n") |> 
+    mutate(nb_reponses = 30 - `Sans réponse`,
+           cat = str_extract(cat, "(?<=\\[).*"),
+           cat = str_replace_all(cat, "\\]", ""),
+           percent = paste0(round(n / nb_reponses *100, 0), "%")) |> 
+    select(-c(n, nb_reponses, `Sans réponse`)) |> pivot_wider(names_from = cat, values_from = percent)
+ # Moyenne pondérée
+moy_pond <- data_clean_unique |> 
+    select(19:22, 226) |> 
+    group_by(Catégorie2) |> 
+    summarise_all(funs(sum(. == "Oui"))) |> 
+    pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+    mutate(cat = str_extract(cat, "(?<=\\[).*"),
+           cat = str_replace_all(cat, "\\]", "")) |> 
+    mutate_all(replace_na, replace = 0) |>
+    left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+    mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+           percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+           .by = Catégorie2) |> 
+    mutate(poids_CT = n * poids) |> 
+    group_by(cat) |> 
+    summarise(p=sum(poids_CT)) |> ungroup() |> 
+    mutate(`Total pondéré`= paste0(round(p/sum(p)*100, 0), "%")) |> 
+    select(-p) |> 
+    pivot_wider(names_from = 1, values_from = 2) |> 
+    mutate(Catégorie = "Total pondéré", .before = 1)
+# All together
+stat_indiv <- list(cat2, cat1 |> rename(Catégorie = Catégorie2)) |> 
+    bind_rows() |> ungroup() |> 
+    rbind(moy_pond) |> 
+    mutate_all(replace_na, replace = "0%") |>  
+    mutate(index = case_match(Catégorie, 
+                              "Total pondéré" ~ 1.5,
+                              "Une commune" ~ 2,
+                              "Communes de moins de 3 500 hab." ~ 3,
+                              "Communes de 3 500 à 10 000 hab." ~ 4,
+                              "Communes de 10 000 à 100 000 hab." ~ 5,
+                              "Communes de plus de 100 000 hab." ~ 6,
+                              "Une métropole" ~ 7,
+                              "Un EPCI (hors métropole)" ~ 8,
+                              "Un département" ~ 9,
+                              "Une région" ~ 10,
+                              "Autre" ~ 11, 
+                              .default = 1)) |> 
+    arrange(index) |> select(-index) |> 
+    mutate_all(function(x) gsub("NA%", "0%", x)) |> ungroup() |> 
+    mutate(Catégorie = case_when(Catégorie == "Total" ~ paste0("Total (", total, " réponses)"), 
+                                  .default = Catégorie)) 
+    # Création colonne 'Sans réponse' si n'existe pas déjà
+stat_indiv <- stat_indiv |> ungroup() |> 
+    select(1, order(colnames(stat_indiv)))
+
+knitr::kable(stat_indiv, format = "html") |> 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Quels sont le ou les domaines concernés par ces clauses ?")
+dat <- all_stat_2023 |> 
+    filter(Question == "Quels sont le ou les domaines concernés par ces clauses ?" & Structure == "Total",
+           Réponses != "Sans réponse") |> 
+  mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0))
+p0 <- dat |> 
+    ggplot(aes(y=Occurrences, x=Réponses, fill = Réponses)) + 
+        geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+        labs(x = "", y = "Nombre de réponses", 
+             title = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
+        geom_label(aes(x = Réponses, y = Occurrences+1, label = paste0(Pourcentage, "%")), 
+                   size = 8, fill = "white", label.size = NA, hjust = 0) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+        ylim(0, max(dat$Occurrences)+14) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        theme(legend.position = "none",
+              plot.title = element_text(hjust = 1),
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+# Fonction graph total pondéré
+dat <- data_clean_unique |> 
+    select(19:22, 226) |> 
+    group_by(Catégorie2) |> 
+    summarise_all(funs(sum(. == "Oui"))) |> 
+    pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+    mutate(cat = str_extract(cat, "(?<=\\[).*"),
+           cat = str_replace_all(cat, "\\]", "")) |> 
+    mutate_all(replace_na, replace = 0) |>
+    left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+    mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+           percent_normal = round(n / sum(n) *100, 0),
+           .by = Catégorie2) |> 
+    mutate(poids_CT = n * poids) |> 
+    group_by(cat) |> 
+    summarise(p=sum(poids_CT)) |> ungroup() |> 
+    mutate(`Total pondéré`= round(p/sum(p)*100, 0)) |> 
+    select(-p) |> 
+    pivot_wider(names_from = 1, values_from = 2) |> 
+    mutate(Catégorie = "Total pondéré", .before = 1) |> 
+    pivot_longer(cols = -Catégorie, names_to = "Réponses", values_to = "Pourcentage")
+p0_pond <- dat |> 
+    ggplot(aes(y=Pourcentage, x=Réponses, fill = Réponses)) + 
+        geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", 
+             title = "Total pondéré") +
+        geom_label(aes(x = Réponses, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
+                   size = 8, fill = "white", label.size = NA, hjust = 0) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+        ylim(0, max(dat$Pourcentage)+14) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        theme(legend.position = "none",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())+
+        guides(fill = guide_legend(title = "Légende", ncol = 1))
+# Fonction type de collectivité
+dat <- all_stat_2023 |> 
+    filter(Question == nom_col & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre"),
+           Réponses != "Sans réponse") |> 
+    mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0)) |> 
+    mutate(Pourcentage = as.numeric(Pourcentage)/100,
+           Structure = factor(Structure, levels = c("Autre","Une région","Un département","Une métropole","Un EPCI (hors métropole)","Une commune")))
+p1 <- dat |> 
+    ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+    geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+    labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+    scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+    coord_flip() +
+    theme_classic() +
+    custom_theme() +
+    guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+        theme(legend.position = "none",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+# Fonction taille de commune
+dat <- all_stat_2023 |> 
+    filter(Question == nom_col & grepl("Communes de", Structure) == TRUE,
+           Réponses != "Sans réponse") |> 
+    mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0)) |> 
+    mutate(Pourcentage = as.numeric(Pourcentage)/100,
+           Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
+           Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab.")))
+p2 <- dat |> 
+    ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+    geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+    labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+    scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+    coord_flip() +
+    theme_classic() +
+    custom_theme() +
+    guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+    theme(legend.position = "none",
+          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+          panel.grid.major.y = ggplot2::element_blank())
+# Légende
+p3 <- dat |> 
+    ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+    geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+    labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune", fill = "légende") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+    scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+    coord_flip() +
+    theme_classic() +
+    custom_theme() +
+    guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
+    theme(legend.position = "top",
+          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+          panel.grid.major.y = ggplot2::element_blank())
+legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 10, 12)))
+# All
+left_part <- plot_grid(p0, p0_pond, ncol = 1)
+right_part <- plot_grid(p1, p2, ncol = 1)
+all_plots <- plot_grid(left_part, right_part, ncol = 2)
+graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(.9, .1))
+
 saving_plot(graph, "Quels sont le ou les domaines concernés par ces clauses ?")
 ```
 
@@ -1074,7 +1683,7 @@ saving_plot(graph, "Quels sont le ou les domaines concernés par ces clauses ?"
 #### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023 {-}
 
 ```{r fig.height=14, fig.width=20}
-dataviz_comp(all_stat,"Quels sont le ou les domaines concernés par ces clauses ?",
+dataviz_comp_sansSR(all_stat,"Quels sont le ou les domaines concernés par ces clauses ?",
              "Quels sont le ou les domaines concernés par ces clauses ?")
 saving_plot_comp(graph, "Quels sont le ou les domaines concernés par ces clauses ?")
 ```
@@ -1082,7 +1691,7 @@ saving_plot_comp(graph, "Quels sont le ou les domaines concernés par ces clause
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Quels%20sont%20le%20ou%20les%20domaines%20concern%C3%A9s%20par%20ces%20clauses%20%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Quels%20sont%20le%20ou%20les%20domaines%20concern%C3%A9s%20par%20ces%20clauses%20%3F.png)
 
 ```{r}
-new_dataviz_comp(all_stat, "Quels sont le ou les domaines concernés par ces clauses ?",
+new_dataviz_comp_sansSR(all_stat, "Quels sont le ou les domaines concernés par ces clauses ?",
              "Quels sont le ou les domaines concernés par ces clauses ?")
 saving_newplot(graph, "Quels sont le ou les domaines concernés par ces clauses ?")
 ```
@@ -1096,14 +1705,14 @@ saving_newplot(graph, "Quels sont le ou les domaines concernés par ces clauses 
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(16, "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
+stat_qs_simple_sansSR(16, "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 ```
 
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
+dataviz_sansSR("La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 saving_plot(graph, "Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 ```
 
@@ -1113,7 +1722,7 @@ saving_plot(graph, "Votre organisation a-t-elle défini une politique en matièr
 #### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023 {-}
 
 ```{r fig.height=14, fig.width=20}
-dataviz_comp(all_stat,"La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre collectivité a-t-elle défini une politique en matière de souveraineté publique sur les données ?",
+dataviz_comp_sansSR(all_stat,"La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre collectivité a-t-elle défini une politique en matière de souveraineté publique sur les données ?",
              "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 saving_plot_comp(graph, "Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 ```
@@ -1121,7 +1730,7 @@ saving_plot_comp(graph, "Votre organisation a-t-elle défini une politique en ma
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20organisation%20a-t-elle%20d%C3%A9fini%20une%20politique%20en%20mati%C3%A8re%20de%20souverainet%C3%A9%20publique%20sur%20les%20donn%C3%A9es%C2%A0%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20organisation%20a-t-elle%20d%C3%A9fini%20une%20politique%20en%20mati%C3%A8re%20de%20souverainet%C3%A9%20publique%20sur%20les%20donn%C3%A9es%C2%A0%3F.png)
 
 ```{r}
-new_dataviz_comp(all_stat, "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre collectivité a-t-elle défini une politique en matière de souveraineté publique sur les données ?",
+new_dataviz_comp_sansSR(all_stat, "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre collectivité a-t-elle défini une politique en matière de souveraineté publique sur les données ?",
              "La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 saving_newplot(graph, "Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 ```
@@ -1549,13 +2158,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(33, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Energie et éclairage]")
+stat_qs_simple_sansSR(33, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Energie et éclairage]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Energie et éclairage]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Energie et éclairage]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Energie et éclairage]")
 ```
 
@@ -1771,13 +2380,13 @@ saving_plot(graph, "Quelles sont, selon vous, les priorités qui justifient (ou 
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(46, "Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
+stat_qs_simple_sansSR(46, "Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
+dataviz_sansSR("Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
 saving_plot(graph, "Selon-vous, la maîtrise de la donnée constitue-t-elle un outil pertinent pour répondre aux enjeux environnementaux de votre territoire ?")
 ```
 
@@ -1980,13 +2589,13 @@ saving_plot(graph, "Votre structure a-t-elle mis en place des systèmes d’éch
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(70, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
+stat_qs_simple_sansSR(70, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
+dataviz_sansSR("Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
 saving_plot(graph, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
 ```
 
@@ -1998,7 +2607,7 @@ saving_plot(graph, "Comment estimez-vous le niveau d’acculturation de votre st
 ```{r fig.height=14, fig.width=20}
 all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "collectivité", "structure")) |> 
-  dataviz_comp("Comment estimez-vous le niveau d’acculturation de votre collectivité aux enjeux des données ?",
+  dataviz_comp_sansSR("Comment estimez-vous le niveau d’acculturation de votre collectivité aux enjeux des données ?",
              "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
 saving_plot_comp(graph, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
 ```
@@ -2008,7 +2617,7 @@ saving_plot_comp(graph, "Comment estimez-vous le niveau d’acculturation de vot
 ```{r}
 all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "collectivité", "structure")) |> 
-  new_dataviz_comp("Comment estimez-vous le niveau d’acculturation de votre collectivité aux enjeux des données ?",
+  new_dataviz_comp_sansSR("Comment estimez-vous le niveau d’acculturation de votre collectivité aux enjeux des données ?",
              "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
 saving_newplot(graph, "Comment estimez-vous le niveau d’acculturation de votre structure aux enjeux des données ?")
 ```
@@ -2422,13 +3031,13 @@ ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(93, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Comité data]")
+stat_qs_simple_sansSR(93, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Comité data]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Comité data]")
+dataviz_sansSR("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Comité data]")
 saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Comité data]")
 # Pas de comparaison car question générale en 2022 et détaillé par fonction en 2023 avec plusieurs réponses possibles
 ```
@@ -2443,13 +3052,13 @@ saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la don
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(94, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Réseau de référent(e)s data]")
+stat_qs_simple_sansSR(94, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Réseau de référent(e)s data]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Réseau de référent(e)s data]")
+dataviz_sansSR("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Réseau de référent(e)s data]")
 saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Réseau de référent(e)s data]")
 ```
 
@@ -2462,13 +3071,13 @@ saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la don
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(95, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Direction de la donnée]")
+stat_qs_simple_sansSR(95, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Direction de la donnée]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Direction de la donnée]")
+dataviz_sansSR("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Direction de la donnée]")
 saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Direction de la donnée]")
 ```
 
@@ -2481,13 +3090,13 @@ saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la don
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(96, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Chief data officer / administrateur général des données]")
+stat_qs_simple_sansSR(96, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Chief data officer / administrateur général des données]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Chief data officer / administrateur général des données]")
+dataviz_sansSR("Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Chief data officer / administrateur général des données]")
 saving_plot(graph, "Dans votre organisation, ces fonctions consacrées à la donnée existent-elles ou seront-elles créées dans les douze prochains mois ?  [Chief data officer - administrateur général des données]")
 ```
 
@@ -2700,39 +3309,409 @@ saving_plot(graph, "Avec lesquels de ces partenaires potentiels collaborez-vous,
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(111, "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
+# Structures détaillées
+cat2 <- data_clean_unique |> 
+    select(111, Catégorie2) |> 
+    summarise(n = n(), .by = c(Catégorie2, 1)) |> #na.omit() |>  
+    pivot_wider(names_from = 2, values_from = 3) |>
+    janitor::adorn_totals("row") |>
+    pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n")
+nb_na <- 191 - (cat2 |> filter(Catégorie2 == "Total" & cat != "NA") |> mutate(Total = sum(n)) |> distinct(Total))
+cat2 <- cat2 |> 
+    mutate(Catégorie2 = case_when(Catégorie2 == "Total" ~ paste0("Total (", sum(n[Catégorie2 == "Total"]) - nb_na, " réponses)"), .default = Catégorie2)) |> 
+    mutate_all(replace_na, replace = 0) |>
+    filter(cat != "Je ne sais pas") |> 
+    mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie2) |> 
+    select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+ # Structure 'commune' seulement
+cat1 <- data_clean_unique |> 
+    select(111, Catégorie) |> 
+    filter(Catégorie == "Une commune") |> 
+    summarise(n = n(), .by = c(Catégorie, 1)) |> #na.omit() |>  
+    rename(cat = 2) |> 
+    filter(cat != "Je ne sais pas") |> 
+    mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie) |> 
+    select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+nb_col <- ncol(cat2)
+ # Moyenne pondérée
+moy_pond <- data_clean_unique |> 
+    select(111, Catégorie2) |> 
+    summarise(n = n(), .by = c(Catégorie2, 1)) |> 
+    pivot_wider(names_from = 2, values_from = 3) |>
+    pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+    mutate_all(replace_na, replace = 0) |>
+    filter(cat != "Je ne sais pas") |> 
+    left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+    mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+           percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+           .by = Catégorie2) |> 
+    mutate(poids_CT = n * poids) |> 
+    group_by(cat) |> 
+    summarise(p=sum(poids_CT)) |> ungroup() |> 
+    mutate(`Total pondéré`= paste0(round(p/sum(p)*100, 0), "%")) |> 
+    select(-p) |> 
+    pivot_wider(names_from = 1, values_from = 2) |> 
+    mutate(Catégorie = "Total pondéré", .before = 1)
+ # Jointure, statistiques finales
+stat_indiv <- list(cat1, cat2 |> rename(Catégorie = Catégorie2)) |> 
+    bind_rows() |> ungroup() |> 
+    rbind(moy_pond) |> 
+    mutate_all(replace_na, replace = "0%") |>  
+    mutate(index = case_match(Catégorie, 
+                              "Total" ~ 1.5,
+                              "Une commune" ~ 2,
+                              "Communes de moins de 3 500 hab." ~ 3,
+                              "Communes de 3 500 à 10 000 hab." ~ 4,
+                              "Communes de 10 000 à 100 000 hab." ~ 5,
+                              "Communes de plus de 100 000 hab." ~ 6,
+                              "Une métropole" ~ 7,
+                              "Un EPCI (hors métropole)" ~ 8,
+                              "Un département" ~ 9,
+                              "Une région" ~ 10,
+                              "Autre" ~ 11, 
+                              .default = 1)) |> 
+    arrange(index) |> select(-index) |> ungroup()
+# Création colonne 'Sans réponse' si n'existe pas déjà
+stat_indiv <- stat_indiv |> ungroup() |> 
+    select(1, order(colnames(stat_indiv))) |> 
+    rowwise() |> 
+    mutate(`NA` = ifelse("NA" %in% names(stat_indiv), `NA`, "0%")) |> 
+    mutate(`Sans réponse` = `NA`, .after = ncol(stat_indiv)) |> 
+    select(-`NA`) |> 
+    rename(Structure = 1)
+# On affiche la table finale
+knitr::kable(stat_indiv, format = "html") |> 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
 ```
+
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
+# Fonction graph ensemble
+dat <- all_stat_2023 |> 
+    filter(Question == "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?" & Structure == "Total",
+           Réponses != "Sans réponse" & Réponses != "Je ne sais pas") |> 
+  mutate(Pourcentage = round(Occurrences / (191-13) *100, 0)) #191 total - 13 'je ne sais pas'
+p0 <- dat |> 
+    ggplot(aes(y=Occurrences, x=Réponses, fill = Réponses)) + 
+        geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+        labs(x = "", y = "Nombre de réponses", 
+             title = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
+        geom_label(aes(x = Réponses, y = Occurrences+1, label = paste0(Pourcentage, "%")), 
+                   size = 8, fill = "white", label.size = NA, hjust = 0) +
+        scale_fill_manual(values = c("#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+        ylim(0, max(dat$Occurrences)+14) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        theme(legend.position = "none",
+              plot.title = element_text(hjust = 1),
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+# Fonction graph total pondéré
+dat <- data_clean_unique |> 
+    select(111, Catégorie2) |> 
+    summarise(n = n(), .by = c(Catégorie2, 1)) |> 
+    pivot_wider(names_from = 2, values_from = 3) |>
+    pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+    mutate_all(replace_na, replace = 0) |>
+    filter(cat != "Je ne sais pas") |> 
+    left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+    mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+           .by = Catégorie2) |> 
+    mutate(poids_CT = n * poids) |> 
+    group_by(cat) |> 
+    summarise(p=sum(poids_CT)) |> ungroup() |> 
+    mutate(`Total pondéré`= round(p/sum(p)*100, 0)) |> 
+    select(-p) |> 
+    pivot_wider(names_from = 1, values_from = 2) |> 
+    mutate(Catégorie = "Total pondéré", .before = 1) |> 
+    pivot_longer(cols = -Catégorie, values_to = "Pourcentage", names_to = "Réponses") |> 
+    select(-Catégorie) |> filter(Réponses != "NA")
+
+p0_pond <- dat |> 
+    ggplot(aes(y=Pourcentage, x=Réponses, fill = Réponses)) + 
+        geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", 
+             title = "Total pondéré") +
+        geom_label(aes(x = Réponses, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
+                   size = 8, fill = "white", label.size = NA, hjust = 0) +
+        scale_fill_manual(values = c("#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+        ylim(0, max(dat$Pourcentage)+14) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        theme(legend.position = "none",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())+
+        guides(fill = guide_legend(title = "Légende", ncol = 1))
+# Fonction type de collectivité
+dat <- all_stat_2023 |> 
+    filter(Question == "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?" & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre"),
+           Réponses != "Je ne sais pas") |> 
+    mutate(Pourcentage = Occurrences / sum(Occurrences),
+           Structure = factor(Structure, levels = c("Autre","Une région","Un département","Une métropole","Un EPCI (hors métropole)","Une commune"))) |> 
+    filter(Réponses != "Sans réponse")
+p1 <- dat |> 
+    ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+    geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+    labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+    scale_fill_manual(values = c("#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+    coord_flip() +
+    theme_classic() +
+    custom_theme() +
+    guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+        theme(legend.position = "none",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+# Fonction taille de commune
+dat <- all_stat_2023 |> 
+    filter(Question == "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?" & grepl("Communes de", Structure) == TRUE,
+           Réponses != "Je ne sais pas") |> 
+    mutate(Pourcentage = Occurrences / sum(Occurrences),
+           Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
+           Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab."))) |> 
+    filter(Réponses != "Sans réponse")
+p2 <- dat |> 
+    ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+    geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+    labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+    scale_fill_manual(values = c("#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+    coord_flip() +
+    theme_classic() +
+    custom_theme() +
+    guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+    theme(legend.position = "none",
+          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+          panel.grid.major.y = ggplot2::element_blank())
+# Légende
+p3 <- dat |> 
+    ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+    geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+    labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune", fill = "légende") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+    scale_fill_manual(values = c("#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+    coord_flip() +
+    theme_classic() +
+    custom_theme() +
+    guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
+    theme(legend.position = "top",
+          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+          panel.grid.major.y = ggplot2::element_blank())
+ legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 10, 12)))
+# All
+left_part <- plot_grid(p0, p0_pond, ncol = 1)
+right_part <- plot_grid(p1, p2, ncol = 1)
+all_plots <- plot_grid(left_part, right_part, ncol = 2)
+graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(.9, .1))
+
 saving_plot(graph, "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
 ```
+
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20des%20obligations%20d%E2%80%99open%20data%20applicables%20depuis%202018%20%C3%A0%20toutes%20les%20administrations%20publiques%20de%20plus%20de%2050%20ETP%2C%20et%20notamment%20les%20collectivit%C3%A9s%20de%20plus%20de%203%20500%20habitants%20%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20des%20obligations%20d%E2%80%99open%20data%20applicables%20depuis%202018%20%C3%A0%20toutes%20les%20administrations%20publiques%20de%20plus%20de%2050%20ETP%2C%20et%20notamment%20les%20collectivit%C3%A9s%20de%20plus%20de%203%20500%20habitants%20%3F.png)
 
 #### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023 {-}
 
-```{r fig.height=14, fig.width=20}
-all_stat |> 
+```{r}
+# Stats pour graphique
+table_all <- all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "Ma collectivité n’est pas concernée par cette obligation", "Ma structure n’est pas concernée par cette obligation")) |> 
-  dataviz_comp("Pensez-vous que les services de votre collectivité sont bien informés des obligations d’open data applicables depuis 2018 à toutes les collectivités de plus de 3 500 habitants ?",
-             "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
+  filter((Question == "Pensez-vous que les services de votre collectivité sont bien informés des obligations d’open data applicables depuis 2018 à toutes les collectivités de plus de 3 500 habitants ?" | Question == "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")) |> 
+  arrange(Structure, Réponses, Edition) |> 
+  filter(Réponses != "Je ne sais pas") |> 
+  mutate(Pourcentage = Occurrences / sum(Occurrences) * 100, .by = c(Structure, Edition)) |> 
+  mutate(ecart = round(Pourcentage - lag(Pourcentage), 0),
+         Pourcentage = Pourcentage /100,
+         pos_ecart = case_when(!is.na(ecart) ~ max(Pourcentage) + .02, .default = NA_real_), .by = c(Structure, Réponses)) |> 
+  mutate(ecart = case_when(ecart >= 0 ~ paste0("+", ecart), .default = as.character(ecart))) |> 
+  filter(Réponses != "Sans réponse")
+  
+
+# Graphique Total
+  # data
+table_total <- table_all |> 
+  filter(Structure == "Total")
+  # viz
+graph_total <- table_total |> 
+  ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition,
+             tooltip = paste0(Pourcentage*100, "% en ", Edition))) +
+    geom_bar_interactive(stat="identity", width=.6, size = 2, alpha = .9, position = position_dodge2(preserve = "single", padding = 0)) +
+    coord_flip() +
+    labs(x = "", y = "Pourcentage des répondants", 
+         subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+         title = "Toutes les collectivités") +
+    scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+    scale_y_continuous(labels = scales::percent, limits = c(0, max(table_total$Pourcentage)+.5*max(table_total$Pourcentage))) + # pourcentages
+    scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+    theme_classic() +
+    custom_theme() +
+    theme(legend.position = "none",
+          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+          panel.grid.major.y = ggplot2::element_blank(),
+          plot.subtitle = element_markdown()) +
+    geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, ifelse((ecart == "+1" | ecart == "-1" | ecart == "+0"), 
+                                                                                       paste0(ecart, " point de \npourcentage"), 
+                                                                                       paste0(ecart, " points de \npourcentage")))), 
+              color = "#333333", size = 5, fill = "white", label.size = NA, 
+              hjust = 0)
+
+
+# Graphique Total hors communes < 3500 hab.
+  # data
+table_total_plus3500 <- table_all |> 
+  filter(Structure == "Total hors communes < 3500 habitants")
+  # viz
+graph_total_plus3500 <- table_total_plus3500 |> 
+  ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition,
+             tooltip = paste0(Pourcentage*100, "% en ", Edition))) +
+    geom_bar_interactive(stat="identity", width=.6, size = 2, alpha = .9, position = position_dodge2(preserve = "single", padding = 0)) +
+    coord_flip() +
+    labs(x = "", y = "Pourcentage des répondants", 
+         subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+         title = "Total hors communes de moins \nde 3500 habitants") +
+    scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+    scale_y_continuous(labels = scales::percent, limits = c(0, max(table_total$Pourcentage)+.5*max(table_total$Pourcentage))) + # pourcentages
+    scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+    theme_classic() +
+    custom_theme() +
+    theme(legend.position = "none",
+          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+          panel.grid.major.y = ggplot2::element_blank(),
+          plot.subtitle = element_markdown()) +
+    geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, ifelse((ecart == "+1" | ecart == "-1" | ecart == "+0"), 
+                                                                                       paste0(ecart, " point de \npourcentage"), 
+                                                                                       paste0(ecart, " points de \npourcentage")))), 
+              color = "#333333", size = 5, fill = "white", label.size = NA, 
+              hjust = 0)
+#girafe(print(graph_total), width_svg = 11, height_svg = 7)
+
+# Graphique Collectivités
+graph_coll <- table_all |> 
+  filter(Structure == "Une commune" | Structure == "Un EPCI" | Structure == "Un département" | 
+           Structure == "Une région" | Structure == "Autre") |> 
+  mutate(Structure = factor(Structure, levels = c("Autre","Une région","Un département","Un EPCI","Une commune"))) |> 
+    ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+               text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+      geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
+      labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+      scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+      scale_fill_manual(values = c("#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+      facet_wrap(~Edition) +
+      coord_flip() +
+      theme_classic() +
+      custom_theme() +
+      guides(fill = guide_legend(nrow = 3, title = "", reverse = F)) +
+          theme(legend.position = "none",
+                panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                panel.grid.major.y = ggplot2::element_blank())
+#ggplotly(graph_coll, tooltip = "text")
+  
+  # Graphique communes
+graph_comm <- table_all |> 
+  filter(grepl("Communes de", Structure) == TRUE) |> 
+  mutate(Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
+         Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab."))) |> 
+    ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+               text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+      geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
+      labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
+      scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+      scale_fill_manual(values = c("#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+      facet_wrap(~Edition) +
+      coord_flip() +
+      theme_classic() +
+      custom_theme() +
+      guides(fill = guide_legend(nrow = 3, title = "", reverse = F)) +
+          theme(legend.position = "none",
+                panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                panel.grid.major.y = ggplot2::element_blank(),
+                axis.text.x = ggplot2::element_text(size = 18))
+#ggplotly(graph_comm, tooltip = "text")
+
+# Légende
+graph_leg <- table_all |> 
+filter(Structure == "Une commune" | Structure == "Un EPCI" | Structure == "Un département" | 
+         Structure == "Une région" | Structure == "Autre") |> 
+mutate(Structure = factor(Structure, levels = c("Autre","Une région","Un département","Un EPCI","Une commune"))) |> 
+  ggplot(aes(x = Structure, y = Pourcentage, fill = Réponses,
+             text = paste0(Pourcentage*100, "% de réponses '", Réponses, "'"))) + 
+    geom_bar(position = "fill", color = "white", stat="identity", alpha = .9) +
+    labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+    scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+    scale_fill_manual(values = c("#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+    facet_wrap(~Edition) +
+    coord_flip() +
+    theme_classic() +
+    custom_theme() +
+    guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
+    theme(legend.position = "top",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+ legend <- get_legend(graph_leg + theme(legend.box.margin = margin(0, 0, 10, 12)))
+
+   
+  # Tous ensemble
+left_part <- plot_grid(graph_total, graph_total_plus3500, ncol = 2)
+right_part <- plot_grid(graph_coll, graph_comm, ncol = 2)
+all <- plot_grid(left_part, right_part, ncol = 1)
+graph <- plot_grid(all, legend, nrow = 2, rel_heights = c(.9, .1))
 
 ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 : Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018.png"), plot = graph, width = 25, height = 15)
-#ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 : Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP et notamment les collectivités de plus de 3 500 habitants.svg"), plot = graph, width = 25, height = 15)    #ne fonctionne pas
 ```
+
+
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20des%20obligations%20d%E2%80%99open%20data%20applicables%20depuis%202018.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20des%20obligations%20d%E2%80%99open%20data%20applicables%20depuis%202018.png)
 
 ```{r}
-all_stat |> 
+# Stats pour graphique
+table_all <- all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "Ma collectivité n’est pas concernée par cette obligation", "Ma structure n’est pas concernée par cette obligation")) |> 
-  new_dataviz_comp("Pensez-vous que les services de votre collectivité sont bien informés des obligations d’open data applicables depuis 2018 à toutes les collectivités de plus de 3 500 habitants ?",
-             "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
+  filter((Question == "Pensez-vous que les services de votre collectivité sont bien informés des obligations d’open data applicables depuis 2018 à toutes les collectivités de plus de 3 500 habitants ?" | Question == "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?") ,
+         Structure != "Total" & Structure != "Total pondéré"  & Structure != "Total hors communes < 3500 habitants" & Structure != "Une commune" & Structure != "Communes de moins de 3 500 hab." & Structure != "Autre" & Réponses != "Je ne sais pas") |> 
+  mutate(occu_rep_quest = sum(Occurrences, na.rm = TRUE), .by = c(Réponses, Edition)) |> 
+  distinct(Réponses, Edition, occu_rep_quest) |> 
+  mutate(Pourcentage = occu_rep_quest / sum(occu_rep_quest), .by = Edition) |> 
+  arrange(Réponses, Edition) |> 
+  group_by(Réponses) |> 
+  mutate(ecart = round((Pourcentage - lag(Pourcentage)) * 100, 0)) |> 
+  mutate(pos_ecart = case_when(!is.na(ecart) ~ max(Pourcentage) + .02, .default = NA_real_)) |> 
+  mutate(ecart = case_when(ecart >= 0 ~ paste0("+", ecart), .default = as.character(ecart))) |> 
+  filter(Réponses != "Sans réponse") |> 
+  distinct(Réponses, Pourcentage, Edition, ecart, pos_ecart)
 
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018.png"), plot = graph, width = 25, height = 15)
+# Graphique CT et EPCI sauf communes < 3500 hab.
+graph_hors3500 <- table_all |> 
+  ggplot(aes(x = Réponses, y = Pourcentage, fill = Edition, group = Edition,
+             tooltip = paste0(Pourcentage*100, "% en ", Edition))) +
+    geom_bar_interactive(stat="identity", width=.6, size = 2, alpha = .9, position = position_dodge2(preserve = "single", padding = 0)) +
+    coord_flip() +
+    labs(x = "", y = "Pourcentage des répondants", 
+         subtitle = "Comparaison des éditions <span style='color: #33bbc9; font-size: 23pt;'>2022</span> et <span style='color: #323465; font-size: 23pt;'>2023</span>",
+         title = "Collectivités et EPCI sauf communes de \nmoins de 3500 habitants") +
+    scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 40)) + 
+    scale_y_continuous(labels = scales::percent, limits = c(0, max(table_all$Pourcentage)+.5*max(table_all$Pourcentage))) + # pourcentages
+    scale_fill_manual(values = c("2022" = "#33bbc9", "2023" = "#323465")) +
+    theme_classic() +
+    custom_theme() +
+    theme(legend.position = "none",
+          panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+          panel.grid.major.y = ggplot2::element_blank(),
+          plot.subtitle = element_markdown()) +
+    geom_text(aes(y = pos_ecart, x = Réponses, label = ifelse(is.na(ecart), NA, ifelse((ecart == "+1" | ecart == "-1" | ecart == "+0"), 
+                                                                                       paste0(ecart, " point de \npourcentage"), 
+                                                                                       paste0(ecart, " points de \npourcentage")))), 
+              color = "#333333", size = 5, fill = "white", label.size = NA, 
+              hjust = 0) +
+    theme(plot.margin = margin(0, 1, 0, 0, "cm"))
+
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018.png"), plot = graph_hors3500, width = 12, height = 8)
 ```
 
 
@@ -2744,13 +3723,13 @@ ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(112, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
+stat_qs_simple_sansSR(112, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-} 
 
 ```{r}
-dataviz("Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
+dataviz_sansSR("Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 saving_plot(graph, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 ```
 
@@ -2760,7 +3739,7 @@ saving_plot(graph, "Depuis le 1er juillet 2020, les collectivités sont égaleme
 
 ```{r fig.height=14, fig.width=20}
 all_stat |> 
-  dataviz_comp("Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre collectivité sont bien informés de cette obligation légale ?",
+  dataviz_comp_sansSR("Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre collectivité sont bien informés de cette obligation légale ?",
              "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 saving_plot_comp(graph, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 ```
@@ -2768,7 +3747,7 @@ saving_plot_comp(graph, "Depuis le 1er juillet 2020, les collectivités sont ég
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Depuis%20le%201er%20juillet%202020%2C%20les%20collectivit%C3%A9s%20sont%20%C3%A9galement%20soumises%20%C3%A0%20une%20obligation%20de%20%C2%AB%20transparence%20algorithmique%20%C2%BB.%20Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20de%20cette%20obligation%20l%C3%A9gale%20%3F.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Depuis%20le%201er%20juillet%202020%2C%20les%20collectivit%C3%A9s%20sont%20%C3%A9galement%20soumises%20%C3%A0%20une%20obligation%20de%20%C2%AB%20transparence%20algorithmique%20%C2%BB.%20Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20de%20cette%20obligation%20l%C3%A9gale%20%3F.png)
 
 ```{r}
-new_dataviz_comp(all_stat, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre collectivité sont bien informés de cette obligation légale ?",
+new_dataviz_comp_sansSR(all_stat, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre collectivité sont bien informés de cette obligation légale ?",
              "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 saving_newplot(graph, "Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 ```
@@ -2959,13 +3938,13 @@ stat_qs_multiple(147, 160, "Quel(s) sera (seront) le(s) domaine(s) concerné(s) 
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(162, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
+stat_qs_simple_sansSR(162, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Aujourd’hui, les données de votre structure sont majoritairement hébergées :")
+dataviz_sansSR("Aujourd’hui, les données de votre structure sont majoritairement hébergées :")
 
 saving_plot(graph, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
 #ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 : .png"), plot = graph, width = 25, height = 18)
@@ -2977,7 +3956,7 @@ saving_plot(graph, "Aujourd’hui, les données de votre structure sont majorita
 #### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023 {-}
 
 ```{r fig.height=14, fig.width=20}
-dataviz_comp(all_stat,"Aujourd’hui, les données de votre collectivité sont majoritairement hébergées :",
+dataviz_comp_sansSR(all_stat,"Aujourd’hui, les données de votre collectivité sont majoritairement hébergées :",
              "Aujourd’hui, les données de votre structure sont majoritairement hébergées :")
 saving_plot_comp(graph, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
 ```
@@ -2985,7 +3964,7 @@ saving_plot_comp(graph, "Aujourd’hui, les données de votre structure sont maj
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Aujourd%E2%80%99hui%2C%20les%20donn%C3%A9es%20de%20votre%20structure%20sont%20majoritairement%20h%C3%A9berg%C3%A9es.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Aujourd%E2%80%99hui%2C%20les%20donn%C3%A9es%20de%20votre%20structure%20sont%20majoritairement%20h%C3%A9berg%C3%A9es.png)
 
 ```{r}
-new_dataviz_comp(all_stat, "Aujourd’hui, les données de votre collectivité sont majoritairement hébergées :",
+new_dataviz_comp_sansSR(all_stat, "Aujourd’hui, les données de votre collectivité sont majoritairement hébergées :",
              "Aujourd’hui, les données de votre structure sont majoritairement hébergées :")
 saving_newplot(graph, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
 ```
