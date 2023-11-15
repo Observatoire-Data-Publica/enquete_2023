@@ -303,7 +303,7 @@ question.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3
 ![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width="200px"}
 :::
 
-# Manager ses données : comment et avec quels outils ?
+# Manager ses données : quelle organisation, quels outils ?
 
 Avoir des projets data ne suffit pas, encore faut-il être en capacité de
 les mener à bien, et pour cela de pouvoir gérer ses données. On est là
@@ -661,37 +661,255 @@ question.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3
 ::: sidenote3
 ![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width="30px"}
 :::
-### Souveraineté et open source
 
-La question de **la souveraineté des données, et plus largement de la souveraineté numérique**, est un sujet qui a pris une importance significative dans le débat public français ces dernières années. Quelles sont, concrètement, les pratiques des collectivités territoriales en la matière ? 
+### Des collectivités pragmatiques face aux enjeux de souveraineté
 
-Elles apparaissent assez pragmatiques. **Les collectivités répondantes se partagent ainsi de manière égale entre celles qui privilégient la qualité du service et celles qui privilégient l'origine française ou européenne** du logiciel ou du service. Les communes de moins de 10.000 habitantes sont les plus nombreuses à privilégier la qualité du service, tandis que les régions et les métropoles sont les plus nombreuses à privilégier l'origine (jusqu'à 72 % pour les métropoles !). La comparaison avec l'enquête 2022 ne laisse pas apparaître d'évolution très significative. 
+La question de **la souveraineté des données, et plus largement de la
+souveraineté numérique**, est un sujet qui a pris une importance
+significative dans le débat public français ces dernières années.
+Quelles sont, concrètement, les pratiques des collectivités
+territoriales en la matière ?
+
+Elles apparaissent assez pragmatiques. **Les collectivités répondantes
+se partagent ainsi de manière égale entre celles qui privilégient la
+qualité du service et celles qui privilégient l'origine française ou
+européenne** du logiciel ou du service. Les communes de moins de 10.000
+habitantes sont les plus nombreuses à privilégier la qualité du service,
+tandis que les régions et les métropoles sont les plus nombreuses à
+privilégier l'origine (jusqu'à 72 % pour les métropoles !). La
+comparaison avec l'enquête 2022 ne laisse pas apparaître d'évolution
+très significative.
 
 ![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Certaines%20structures%20attachent%20une%20importance%20particuli%C3%A8re%20au%20caract%C3%A8re%20%C2%AB%20souverain%20%C2%BB%20des%20outils%20et%20des%20logiciels%20qu'elles%20utilisent.%20Pour%20le%20choix%20de%20ses%20outils%20et%20logiciels%2C%20votre%20structure%20%3A.png)
-*Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs). Pour le choix de ses outils et logiciels, votre structure :*
+*Certaines structures attachent une importance particulière au caractère
+« souverain » des outils et des logiciels qu'elles utilisent. Cela peut
+se traduire par le choix prioritaire de logiciels français ou européens,
+ou encore par le recours à des solutions dites « open source » (dont le
+code informatique est libre de droits et géré par des communautés
+d'utilisateurs). Pour le choix de ses outils et logiciels, votre
+structure :*
 
-Le choix de l'open source apparaît comme un critère plus difficile à favoriser que l'origine du logiciel. Il y a ainsi **très peu de structures (15%) qui affirment privilégier systématiquement des outils open source à d'autres qui seraient propriétaires** ; il s'agit principales d'EPCI et de métropoles - mais aussi des "autres" structures, en particulier des OPSN, que leur fonction de mutualisation et leur expertise informatique peut davantage prédisposer à recourir au logiciel libre. On notera que par rapport à 2022 la préférence déclarée pour l'open source progresse de manière significative, mais cela doit être interprété avec prudence, car il peut s'agir d'un effet de structure (du fait d'une plus forte représentation des structures hors collectivités cette année). 
+Le choix de l'open source apparaît comme un critère plus difficile à
+favoriser que l'origine du logiciel. Il y a ainsi **très peu de
+structures (15%) qui affirment privilégier systématiquement des outils
+open source à d'autres qui seraient propriétaires** ; il s'agit
+principales d'EPCI et de métropoles - mais aussi des "autres"
+structures, en particulier des OPSN, que leur fonction de mutualisation
+et leur expertise informatique peut davantage prédisposer à recourir au
+logiciel libre. On notera que par rapport à 2022 la préférence déclarée
+pour l'open source progresse de manière significative, mais cela doit
+être interprété avec prudence, car il peut s'agir d'un effet de
+structure (du fait d'une plus forte représentation des structures hors
+collectivités cette année).
 
-Les collectivités déclarent en revanche dans leur majorité accorder de l'importance à la réversibilité des solutions choisies. Ainsi, 43% d'entre elles privilégient systématiquement les solutions qui garantissent la récupération des données. Seules 17% ne tiennent aucun compte du critère de réversibilité. Ici encore, toutefois, la taille de la collectivité est fortement corrélée à la réponse : les collectivités les plus grandes sont plus sensibles à ce critère, ou plus en capacité de le mettre en œuvre. 
+Les collectivités déclarent en revanche dans leur majorité accorder de
+l'importance à la réversibilité des solutions choisies. Ainsi, 43%
+d'entre elles privilégient systématiquement les solutions qui
+garantissent la récupération des données. Seules 17% ne tiennent aucun
+compte du critère de réversibilité. Ici encore, toutefois, la taille de
+la collectivité est fortement corrélée à la réponse : les collectivités
+les plus grandes sont plus sensibles à ce critère, ou plus en capacité
+de le mettre en œuvre.
 
-[Voir toutes les données sur ces questions.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#84_Certaines_structures_attachent_une_importance_particuli%C3%A8re_au_caract%C3%A8re_%C2%AB_souverain_%C2%BB_des_outils_et_des_logiciels_qu%E2%80%99elles_utilisent_Cela_peut_se_traduire_par_le_choix_prioritaire_de_logiciels_fran%C3%A7ais_ou_europ%C3%A9ens,_ou_encore_par_le_recours_%C3%A0_des_solutions_dites_%C2%AB_open_source_%C2%BB_(dont_le_code_informatique_est_libre_de_droits_et_g%C3%A9r%C3%A9_par_des_communaut%C3%A9s_d%E2%80%99utilisateurs)_Pour_le_choix_de_ses_outils_et_logiciels,_votre_structure_:)
-
-
+[Voir toutes les données sur ces
+questions.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#84_Certaines_structures_attachent_une_importance_particuli%C3%A8re_au_caract%C3%A8re_%C2%AB_souverain_%C2%BB_des_outils_et_des_logiciels_qu%E2%80%99elles_utilisent_Cela_peut_se_traduire_par_le_choix_prioritaire_de_logiciels_fran%C3%A7ais_ou_europ%C3%A9ens,_ou_encore_par_le_recours_%C3%A0_des_solutions_dites_%C2%AB_open_source_%C2%BB_(dont_le_code_informatique_est_libre_de_droits_et_g%C3%A9r%C3%A9_par_des_communaut%C3%A9s_d%E2%80%99utilisateurs)_Pour_le_choix_de_ses_outils_et_logiciels,_votre_structure_:)
 
 ::: sidenote
 ![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width="200px"}
 :::
-# Gouverner ses données : comment ?
+
+# La gouvernance des données : *work in progress*
+
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+
+## De plus en plus de collectivités formalisent leur gouvernance des données
+
+**38% des collectivités répondantes ont défini des règles de gouvernance
+des données**, soit une **progression de 10 points** par rapport à l'an
+dernier. Et cette dynamique ne semble pas prête de s'arrêter : **34% des
+collectivités interrogées déclarent avoir prévu de définir des règles de
+gouvernance des données dans les douze mois**.
+
+Il est intéressant de souligner que si, comme sur beaucoup d'autres
+sujets,les métropoles et les régions (mais aussi les structures
+territoriales autre que les collectivités) sont les plus avancées,
+toutes les strates et tailles de collectivités s'intéressent activement
+à la gouvernance des données.
+
+![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9fini%20des%20r%C3%A8gles%20de%20gouvernance%20de%20la%20donn%C3%A9e%20(internes%20ou%20externes)%20%3F.png)
+*Votre structure a-t-elle défini des règles de gouvernance de la donnée
+(internes ou externes) ?*
+
+![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20d%C3%A9fini%20des%20r%C3%A8gles%20de%20gouvernance%20de%20la%20donn%C3%A9e%20(internes%20ou%20externes)%20%3F.png)
+*Comparaison 2022-2023 : Votre structure a-t-elle défini des règles de
+gouvernance de la donnée (internes ou externes) ?*
+
+[Voir toutes les données sur cette
+question.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#41_Votre_structure_a-t-elle_d%C3%A9fini_des_r%C3%A8gles_de_gouvernance_de_la_donn%C3%A9e_(internes_ou_externes)_)
+
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+
+## La gouvernance des données se matérialise principalement par des politiques de gestion interne, mais aussi par des outils contractuels, voire de la *soft law*
+
+L'élaboration d'une **politique de gestion interne des données** est la
+modalité la plus fréquente de définition d'une gouvernance des données
+(25% des répondants), en particulier dans les "petites" collectivités.
+Dans les plus grandes collectivités, la gouvernance des données concerne
+aussi **les relations avec les partenaires**, et se traduit davantage
+par des clauses contractuelles consacrées aux données avec les
+prestataires ou des conventions partenariales. Les **Chartes de la
+donnée**, outil de "droit mou" assez visible car pouvant être approprié
+politiquement, concernent au final un nombre assez restreint de
+collectivités (13%).
+
+[Voir toutes les données sur cette
+question.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#42_Pouvez-vous_pr%C3%A9ciser_quelles_sont_ces_r%C3%A8gles_)
+
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+
+## Les chartes de la donnée, une déferlante à venir ?
+
+Peu de collectivités, on l'a vu, ont recouru à la charte des données
+comme outil de gouvernance des données - et ça n'a guère évolué par
+rapport à l'an dernier. Mais **trois fois plus envisagent d'y recourir
+dans les 12 prochains mois !** Nous pourrions ainsi assister à une
+petite déferlante de chartes dans les prochains mois. Cette dynamique
+concerne toutes les strates et tailles de collectivités, même si c'est
+dans les métropoles et les régions que ces chartes semblent devenir un
+*must*.
+
+![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20adopt%C3%A9%20une%20charte%20%C3%A9thique%20de%20la%20donn%C3%A9e%20%3F.png)
+*Votre structure a-t-elle adopté une charte éthique de la donnée ?*
+
+[Voir toutes les données sur cette
+question.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#43_Votre_structure_a-t-elle_adopt%C3%A9_une_charte_%C3%A9thique_de_la_donn%C3%A9e_)
+
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+
+## La difficile association de la société civile à la gouvernance des données des territoires
+
+L'association de parties prenantes externes à la collectivité à la
+définition de ses règles de gouvernance des données apparaît être une
+démarche relativement peu courante (21% seulement des répondants). Il
+est intéressant d'observer que **cette co-construction se fait d'abord
+avec d'autres acteurs publics** (10%), et secondairement avec des
+acteurs privés (6%), des associations (4%) et enfin des citoyens (1%)...
+et aussi que cette association de parties prenantes à la gouvernance des
+données concerne uniquement les métropoles et des acteurs type syndicats
+mixtes (et les régions s'agissant de la consultation d'autres acteurs
+publics : peut-être dans le cadre des plateformes régionales
+d'information géographiques ?). Bref, cette année comme l'an dernier, on
+est ici dans l'exception plutôt que la règle.
+
+[Voir toutes les données concernant cette
+question.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#44_La_structure_a-t-elle_associ%C3%A9_des_acteurs_externes_%C3%A0_la_d%C3%A9finition_de_ces_r%C3%A8gles_de_gouvernance_)
+
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+
+## La diffusion de pratiques d'échanges de données avec des acteurs privés du territoire
+
+La diffusion de pratiques d'échanges de données avec des acteurs privés
+du territoire est une pratique qui se développe. **44% des collectivités
+ont mis en place une plateforme de partage et d'accès aux données
+locales pour les acteurs privés** du territoire (par exemple un portail
+OpenDataSoft avec gestion des accès privés ou une plateforme Dawex), et
+10% ont prévu de le faire dans les douze prochains mois. C'est la
+traduction de l'idée désormais largement répandue qu'il faut considérer
+tout le spectre du partage des données, de leur protection totale à
+l'*open data* en passant par leur partage contrôlé - une idée d'ailleurs
+reprise dans le tout récent [rapport de la mission "Data et
+Territoires"](https://www.transformation.gouv.fr/files/ressource/Rapport_Mission_Data_Territoires.pdf)
+remis au ministre Guérini. On observe toutefois que cette pratique
+demeure marginale dans les communes de moins de 100.000 habitants - une
+raison pouvant en être qu'elles ne disposent pas de la capacité à se
+doter des outils techniques pour le faire.
+
+![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20syst%C3%A8mes%20d%E2%80%99%C3%A9changes%20et%20de%20partage%20de%20donn%C3%A9es%20%3F%20%5BDes%20plateformes%20g%C3%A9n%C3%A9rales%20de%20partage%20et%20d'acc%C3%A8s%20aux%20donn%C3%A9es%20locales%20(ex%20%3A%20plateforme%20OpenDataSoft%20avec%20acc%C3%A8s%20priv%C3%A9s%2C%20plateforme%20Dawex%E2%80%A6)%5D.png)
+*Votre structure a-t-elle mis en place des systèmes d'échanges et de
+partage de données avec des acteurs privés du territoire, ou
+prévoit-elle d'en mettre en place dans les douze prochains mois ? DES
+PLATEFORMES GÉNÉRALES DE PARTAGE ET D'ACCÈS AUX DONNÉES LOCALES (EX :
+PLATEFORME OPENDATASOFT AVEC ACCÈS PRIVÉS, PLATEFORME DAWEX...)*
+
+De facto, des pratiques de partage plus "artisanales" telles que la
+communication ponctuelle de données à des partenaires, souvent dans le
+cadre d'une convention avec un prestataire. sont plus largement
+répandues (58% des répondants) et notamment dans les communes (30%, et
+7% supplémentaires prévoient de le faire dans les douze mois à venir).
+
+![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20syst%C3%A8mes%20d%E2%80%99%C3%A9changes%20et%20de%20partage%20de%20donn%C3%A9es%20%3F%20%5BDes%20%20communications%20ponctuelles%20de%20donn%C3%A9es%5D.png)
+
+*Votre structure a-t-elle mis en place des systèmes d'échanges et de
+partage de données avec des acteurs privés du territoire, ou
+prévoit-elle d'en mettre en place dans les douze prochains mois ? DES
+COMMUNICATIONS PONCTUELLES DE DONNÉES AVEC DES PARTENAIRES/PRESTATAIRES
+(PAR EXEMPLE COMMUNICATION DE DONNÉES FONCIÈRES DANS LE CADRE DE LA
+RÉALISATION D\'UNE ÉTUDE OU D\'UNE AMO)*
+
+[Voir toutes les données sur cette
+question.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#45_Votre_structure_a-t-elle_mis_en_place_des_syst%C3%A8mes_d%E2%80%99%C3%A9changes_et_de_partage_de_donn%C3%A9es_avec_des_acteurs_priv%C3%A9s_du_territoire,_ou_pr%C3%A9voit-elle_d%E2%80%99en_mettre_en_place_dans_les_douze_prochains_mois_)
 
 ::: sidenote
 ![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width="200px"}
 :::
-# Épargner la planète
+
+# Green IT et utilisation des données pour la transition énergétique et environnementale
+
+Le lien entre données et environnement est de plus en plus souvent fait,
+que ce soit par les collectivités elles-mêmes, par les services de
+l'État ou encore par les associations de collectivité. OpenData France
+vient ainsi de publier [la deuxième édition de
+DataImpact](https://opendatafrance.fr/dataimpact-publication/),
+illustrant les cas de réutilisation des données environnementales ;
+l'Ecolab pilote [la démarche Green Data for
+Health](https://gd4h.ecologie.gouv.fr/).
+
+Si la transition énergétique et environnementale est une source de cas
+d'usage importante pour le monde territorial (voir [Répondre aux enjeux
+environnementaux, climatiques et énergétiques est une motivation
+majeure]), les collectivités sont également soucieuses de recourir aux
+données et plus largement au numérique de manière écologiquement
+responsable, comme les y invite la loi REEN. Ainsi, **49% des répondants
+sont en train d'élaborer (37%) ou ont achevé (12%) leur stratégie
+numérique responsable**. Il est intéressant de noter que cette réflexion
+est menée y compris dans certaines collectivités qui en sont pas
+soumises à l'obligation d'élaborer une stratégie numérique responsable
+au titre de la loi REEN. La comparaison avec l'édition 2022 permet
+d'apprécier la progression, **la part de collectivités ayant déjà adopté
+leur stratégie progressant de 6 points**.
+
+**La question de l'impact environnemental du numérique vient en
+premier** dans l'ordre des thématiques abordées dans le cadre de cette
+réflexion sur le numérique responsable, s'agissant des terminaux (46%)
+ou hors terminaux (36%). On notera également que **l'accessibilité et
+l'inclusion numériques sont également des enjeux importants** (36%),
+tandis que l'éthique, et le respect des droits et libertés est la
+thématique la moins représentée (25%).
+
+![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20engag%C3%A9%20une%20r%C3%A9flexion%20sur%20les%20enjeux%20du%20num%C3%A9rique%20responsable%20%3F.png)[Voir
+toutes les données sur cette
+question.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#10_LE_NUM%C3%89RIQUE_RESPONSABLE)
 
 ::: sidenote
 ![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width="200px"}
 :::
+
 # Plus d'un quart des répondants ont déjà eu recours à l'intelligence artificielle
+
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+## L'accélération des expérimentations IA dans le monde territorial
 
 27% des collectivités interrogées déclarent avoir déjà eu recours à
 l'intelligence artificielle, soit **une progression de +12 points par
@@ -712,6 +930,11 @@ conversationnels.
 *Votre structure a-t-elle déjà mis en place des projets ou
 expérimentations ayant recours à l'intelligence artificielle ?*
 
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+## Des chatbots et des modèles prédictifs
+
 De fait, parmi les 51 répondants qui déclarent avoir eu recours à l'IA
 dans leur structure, **les modèles conversationnels de type chatbot
 arrivent nettement en tête** des technologies utilisées (43%), devant
@@ -719,7 +942,7 @@ les modèles prédictifs, pourtant largement disponibles depuis bien plus
 longtemps (34%). Il est intéressant de noter que l'IA rebat quelque peu
 les cartes du point de vue de la maturité dans les usages. Ainsi, si les
 modèles prédictifs sont beaucoup utilisés dans les métropoles (28% des
-métropoles répondantes y ont eu recours),les chatbots sont davantage
+métropoles répondantes y ont eu recours), les chatbots sont davantage
 utilisés dans les départements (24% d'entre eux y ont eu recours) que
 dans tout autre type de collectivité. Cela est sans doute à rapprocher
 du fait que le département est une collectivité à la fois dotée de
@@ -735,6 +958,11 @@ to speech* et *speech to text*) sont très peu utilisés à date.
 ![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/%C3%80%20quel%20type%20de%20technique%20d%E2%80%99intelligence%20artificielle%20votre%20(vos)%20projet%20(s)%20ou%20exp%C3%A9rimentation(s)%20recoure(nt)-elle(s)%20%3F.png)
 *À quel type de technique d'intelligence artificielle votre (vos)
 projet(s) ou expérimentation(s) recoure(nt)-elle(s) ?*
+
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+## Des cas d'usage très variés
 
 **Les cas d'usage de l'IA rapportés par les collectivités enquêtées sont
 très variés**, au-delà de l'emblématique chatbot, et couvrent des
@@ -753,6 +981,38 @@ questions.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C
 :::
 
 # Protéger ses données : l'importance de la cybersécurité
+
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+## Une collectivité sur cinq déclare avoir déjà subi une cyberattaque
+
+**21% des collectivités interrogées déclarent avoir déjà subi une cyberattaque**, et ce taux est remarquablement stable dans le temps (pas de variation significative depuis l'an dernier) comme en fonction des strates de collectivités (on est entre 20 et 25% quel que soit le type de collectivité considéré). 
+
+![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20d%C3%BB%20faire%20face%20%C3%A0%20une%20cyberattaque%20importante%20%3F.png)
+*Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?*
+
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+
+## Une prise de conscience généralisée, des stratégies de réponse qui se structurent
+
+Cette réalité des attaques se traduit également par une conscience désormais extrêmement bien ancrée des menaces que font peser les cyberattaques sur les collectivités. Les chiffres collectés cette année confirment le constat réalisé l'an dernier : seuls **6% des répondants pensent que leur structure n'est "probablement pas" exposée à des attaques cyber** (contre 11% l'an dernier). Depuis l'an dernier, **la structuration des stratégies de prévention des cyber-attaques a d'ailleurs progressé** : la part de répondants estimant que le niveau de prise en compte du risque par leur collectivité est "bon", avec une stratégie en place et un budget dédié, a augmenté de 15 points (9 points dans les collectivités de plus de 3500 habitants). Cependant, si le sujet est identifié partout, dans les petites collectivités mais aussi dans les régions, la préparation est estimée insuffisante dans environ un tiers des cas. ``
+
+Tout comme l'an dernier, les obstacles rencontrés par les collectivités sont, à part égales, le manque de temps, le manque d'argent et le manque de compétences. Les difficultés de recrutement concernent plutôt les grandes collectivités et tout particulièrement les métropoles.  
+
+![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Comment%20estimez-vous%20le%20niveau%20de%20prise%20en%20compte%20du%20risque%20cyber%20par%20votre%20structure%20%3F.png)
+*Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?*
+
+::: sidenote2
+![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width="200px"}
+:::
+## Un arsenal de mesures de prévention diversifié et fonction des strates de collectivité
+
+**Les collectivités ont bien connaissance de l'arsenal des mesures de prévention qui s'offrent à elles, et elles le déploient en fonction de leurs moyens**. Le déploiement d'une stratégie de sécurité informatique reste la mesure la plus répandue (62% des cas, plus 14% de répondants envisageant de le faire dans les 12 prochains mois), avec le déploiement d'outils techniques de sécurisation des réseaux informatiques (54% + 8%). À l'autre extrémité, la certification ISO 27001, qui nécessite un investissement important, n'est mise en œuvre que par 5% des répondants (de différentes strates de collectivités néanmoins), mais les répondants sont aussi nombreux à déclarer vouloir la mettre en œuvre dans les douze prochains mois.
+
+[Voir toutes les données pour cette quesion.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#95_Parmi_les_mesures_suivantes,_qui_visent_%C3%A0_r%C3%A9duire_le_risque_de_cybers%C3%A9curit%C3%A9,_est-ce_que_votre_structure_a_mis_en_place)
 
 ::: {.tocify-extend-page data-unique="tocify-extend-page" style="height: 0;"}
 :::
