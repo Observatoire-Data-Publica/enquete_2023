@@ -373,7 +373,7 @@ saving_plot_comp <- function(graph, name) {
   ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 : {name}.svg"), plot = graph, width = 25, height = 15)
 }
 saving_newplot <- function(graph, name) {
-  ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : {name}.png"), plot = graph, width = 10, height = 7)
+  ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : {name}.png"), plot = graph, width = 13, height = 7)
   #ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : {name}.svg"), plot = graph, width = 12, height = 7)
 }
 ```
@@ -835,6 +835,8 @@ saving_newplot(graph, "Commençons par la protection de la vie privée. Considé
 ```
 
 
+[![]()]()
+
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Avez-vous nommé un(e) Délégué(e) à la Protection des Données (DPO) ?
@@ -872,6 +874,8 @@ saving_newplot(graph, "Avez-vous nommé un(e) Délégué(e) à la Protection des
 ```
 
 
+[![]()]()
+
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?
@@ -908,6 +912,8 @@ new_dataviz_comp(all_stat, "Afin de respecter le RGPD, avez-vous modifié des pr
 saving_newplot(graph, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 ```
 
+[![]()]()
+
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?
 
@@ -942,6 +948,8 @@ new_dataviz_comp(all_stat, "De manière générale, avez-vous mis en place des c
 saving_newplot(graph, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
 
+
+[![]()]()
 
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
@@ -1080,6 +1088,8 @@ saving_newplot(graph, "Quels sont le ou les domaines concernés par ces clauses 
 ```
 
 
+[![]()]()
+
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## La question de la souveraineté numérique préoccupe de plus en plus d'acteurs publics : choix des éditeurs de logiciels, hébergement des données en Europe ou en France, maîtrise des données par la collectivité... Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?
 
@@ -1116,6 +1126,8 @@ new_dataviz_comp(all_stat, "La question de la souveraineté numérique préoccup
 saving_newplot(graph, "Votre organisation a-t-elle défini une politique en matière de souveraineté publique sur les données ?")
 ```
 
+
+[![]()]()
 
 
 
@@ -1813,6 +1825,8 @@ saving_newplot(graph, "Votre structure a-t-elle défini des règles de gouvernan
 ```
 
 
+[![]()]()
+
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Pouvez-vous préciser quelles sont ces règles ?
 
@@ -1868,6 +1882,8 @@ new_dataviz_comp(all_stat, "Votre structure a-t-elle adopté une charte éthique
              "Votre collectivité a-t-elle élaboré une charte éthique de la donnée ?")
 saving_newplot(graph, "Votre structure a-t-elle adopté une charte éthique de la donnée ?")
 ```
+
+[![]()]()
 
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
@@ -1998,6 +2014,8 @@ saving_newplot(graph, "Comment estimez-vous le niveau d’acculturation de votre
 ```
 
 
+[![]()]()
+
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?
 
@@ -2032,6 +2050,8 @@ new_dataviz_comp(all_stat, "Quels sont, selon vous, les principaux obstacles à 
 saving_newplot(graph, "Quels sont, selon vous, les principaux obstacles à la diffusion d’outils innovants en matière de gestion des données ?")
 ```
 
+
+[![]()]()
 
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
@@ -2074,6 +2094,8 @@ new_dataviz_comp(all_stat, "En matière de formation sur la gestion des données
 saving_newplot(graph, "En matière de formation sur la gestion des données, quels sont, selon vous, les besoins prioritaires pour votre structure ?")
 ```
 
+
+[![]()]()
 
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
@@ -2122,6 +2144,8 @@ ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<
 ```
 
 
+[![]()]()
+
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### DIRECTION INFORMATIQUE {-}
 
@@ -2162,6 +2186,8 @@ new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire s
 ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique].png"), plot = graph, width = 25, height = 18)
 ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique].svg"), plot = graph, width = 25, height = 18)
 ```
+
+[![]()]()
 
 
 
@@ -2208,6 +2234,8 @@ ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<
 ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)].svg"), plot = graph, width = 25, height = 18)
 ```
 
+[![]()]()
+
 
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### ARCHIVES {-}
@@ -2249,6 +2277,8 @@ new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire s
 ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives].png"), plot = graph, width = 25, height = 18)
 ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives].svg"), plot = graph, width = 25, height = 18)
 ```
+
+[![]()]()
 
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### COMMUNICATION {-}
@@ -2292,6 +2322,8 @@ ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<
 ```
 
 
+[![]()]()
+
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### SERVICES TECHNIQUES {-}
 
@@ -2332,6 +2364,8 @@ new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire s
 ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques].png"), plot = graph, width = 25, height = 18)
 ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques].svg"), plot = graph, width = 25, height = 18)
 ```
+
+[![]()]()
 
 
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
@@ -2375,6 +2409,8 @@ new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire s
 ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines].png"), plot = graph, width = 25, height = 18)
 ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines].svg"), plot = graph, width = 25, height = 18)
 ```
+
+[![]()]()
 
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
@@ -2700,6 +2736,8 @@ ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<
 ```
 
 
+[![]()]()
+
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?
 
@@ -2734,6 +2772,8 @@ new_dataviz_comp(all_stat, "Depuis le 1er juillet 2020, les collectivités sont 
              "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 saving_newplot(graph, "Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
 ```
+
+[![]()]()
 
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
@@ -2772,6 +2812,8 @@ new_dataviz_comp(all_stat, "Votre collectivité a-t-elle conduit des actions pou
 saving_newplot(graph, "Votre structure a-t-elle conduit des actions pour mettre en œuvre les obligations de transparence algorithmique ?")
 ```
 
+
+[![]()]()
 
 
 <div class="sidenote">![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width=200px}</div>
@@ -2812,6 +2854,8 @@ new_dataviz_comp(all_stat, "Votre collectivité a-t-elle déjà mis en place des
              "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
 saving_newplot(graph, "Votre structure a-t-elle déjà mis en place des projets ou expérimentations ayant recours à l’intelligence artificielle ?")
 ```
+
+[![]()]()
 
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
@@ -2945,6 +2989,8 @@ new_dataviz_comp(all_stat, "Aujourd’hui, les données de votre collectivité s
              "Aujourd’hui, les données de votre structure sont majoritairement hébergées :")
 saving_newplot(graph, "Aujourd’hui, les données de votre structure sont majoritairement hébergées")
 ```
+
+[![]()]()
 
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
@@ -3208,6 +3254,8 @@ new_dataviz_comp(all_stat, "Certaines collectivités locales attachent une impor
 saving_newplot(graph, "Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Pour le choix de ses outils et logiciels, votre structure :")
 ```
 
+[![]()]()
+
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Lorsqu'une alternative open source est identifiée :
@@ -3247,6 +3295,8 @@ all_stat |>
              "Lorsqu'une alternative open source est identifiée :")
 saving_newplot(graph, "Lorsqu'une alternative open source est identifiée")
 ```
+
+[![]()]()
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Des critères de réversibilité (facilitation de la récupération de ses données) et d’interopérabilité (facilitation de l’échange de données) peuvent également être considérés lorsqu’une organisation fait le choix de ses solutions.   La réversibilité est-elle un critère entrant en compte dans le choix des solutions de votre structure ?
@@ -3337,6 +3387,8 @@ new_dataviz_comp(all_stat, "Votre collectivité a-t-elle déjà dû faire face �
 saving_newplot(graph, "Votre structure a-t-elle déjà dû faire face à une cyberattaque importante ?")
 ```
 
+[![]()]()
+
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Pensez-vous que votre structure est exposée à des attaques cyber ?
 
@@ -3371,6 +3423,8 @@ new_dataviz_comp(all_stat, "Pensez-vous que votre collectivité est exposée à 
                "Pensez-vous que votre structure est exposée à des attaques cyber ?")
 saving_newplot(graph, "Pensez-vous que votre structure est exposée à des attaques cyber ?")
 ```
+
+[![]()]()
 
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
@@ -3409,6 +3463,8 @@ new_dataviz_comp(all_stat, "Comment estimez-vous le niveau de prise en compte du
 saving_newplot(graph, "Comment estimez-vous le niveau de prise en compte du risque cyber par votre structure ?")
 ```
 
+[![]()]()
+
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?
@@ -3444,6 +3500,8 @@ new_dataviz_comp(all_stat, "Quels sont, selon vous, les principaux obstacles à 
                "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
 saving_newplot(graph, "Quels sont, selon vous, les principaux obstacles à la mise en place d’outils de sécurité informatique dans votre structure ?")
 ```
+
+[![]()]()
 
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
@@ -3485,6 +3543,8 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
 saving_newplot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une formation pour les agents et les élus]")
 ```
 
+[![]()]()
+
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### LA DÉSIGNATION D’UN RESPONSABLE DE SÉCURITÉ INFORMATIQUE (RSSI OU AUTRE) {-}
 
@@ -3519,6 +3579,8 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique (RSSI ou autre)]")
 saving_newplot(graph, "Parmi les mesures suivantes est-ce que votre structure a mis en place : [La désignation d’un responsable de sécurité informatique]")
 ```
+
+[![]()]()
 
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### UNE STRATÉGIE DE SÉCURITÉ INFORMATIQUE {-}
@@ -3555,6 +3617,8 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
 saving_newplot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une stratégie de sécurité informatique]")
 ```
 
+[![]()]()
+
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### UN PROCESSUS DE CERTIFICATION (ISO 27001) {-}
 
@@ -3589,6 +3653,9 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
 saving_newplot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Un processus de certification (ISO 27001)]")
 ```
+
+[![]()]()
+
 
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### UNE OBLIGATION D’HÉBERGEMENT SOUVERAIN (FRANÇAIS OU EUROPÉEN) {-}
@@ -3626,6 +3693,8 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
 saving_newplot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une obligation d’hébergement souverain (français ou européen)]")
 ```
 
+[![]()]()
+
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### DES CLAUSES DE SÉCURITÉ DANS LES CONTRATS INFORMATIQUES {-}
 
@@ -3660,6 +3729,8 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
 saving_newplot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité dans les contrats informatiques]")
 ```
+
+[![]()]()
 
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### DES CLAUSES DE SÉCURITÉ POUR LES DÉLÉGATIONS DE SERVICE PUBLIC {-}
@@ -3696,6 +3767,8 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
 saving_newplot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Des clauses de sécurité pour les délégations de service public]")
 ```
 
+[![]()]()
+
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### UNE COOPÉRATION AVEC L’AGENCE NATIONALE DE LA SÉCURITÉ DES SYSTÈMES D’INFORMATION (ANSSI) OU AVEC UN CYBER CAMPUS RÉGIONAL {-}
 
@@ -3731,6 +3804,8 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]")
 ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’ANSSI ou avec un cyber campus régional].png"), plot = graph, width = 25, height = 15)
 ```
+
+[![]()]()
 
 <div class="sidenote3">![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width=30px}</div>
 ### LE DÉPLOIEMENT D'OUTILS TECHNIQUES DE SÉCURISATION DES RÉSEAUX INFORMATIQUES  {-}
@@ -3771,6 +3846,8 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
 saving_newplot(graph, "armi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
 ```
 
+[![]()]()
+
 <div class="sidenote">![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width=200px}</div>
 # LE NUMÉRIQUE RESPONSABLE
 
@@ -3810,6 +3887,8 @@ new_dataviz_comp(all_stat, "Votre collectivité a-t-elle engagé une réflexion 
                "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
 saving_newplot(graph, "Votre structure a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?")
 ```
+
+[![]()]()
 
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Cette stratégie aborde-t-elle les thématiques suivantes ?
