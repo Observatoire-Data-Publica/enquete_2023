@@ -658,22 +658,39 @@ d'intérêt dans les communes petites et moyennes.
 [Voir toutes les données pour cette
 question.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#82_Votre_structure_a-t-elle_d%C3%A9ploy%C3%A9_les_technologies_suivantes,_ou_pr%C3%A9voit-elle_de_le_faire_dans_les_12_prochains_mois_)
 
+::: sidenote3
+![](https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview){width="30px"}
+:::
+### Souveraineté et open source
+
+La question de **la souveraineté des données, et plus largement de la souveraineté numérique**, est un sujet qui a pris une importance significative dans le débat public français ces dernières années. Quelles sont, concrètement, les pratiques des collectivités territoriales en la matière ? 
+
+Elles apparaissent assez pragmatiques. **Les collectivités répondantes se partagent ainsi de manière égale entre celles qui privilégient la qualité du service et celles qui privilégient l'origine française ou européenne** du logiciel ou du service. Les communes de moins de 10.000 habitantes sont les plus nombreuses à privilégier la qualité du service, tandis que les régions et les métropoles sont les plus nombreuses à privilégier l'origine (jusqu'à 72 % pour les métropoles !). La comparaison avec l'enquête 2022 ne laisse pas apparaître d'évolution très significative. 
+
+![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Certaines%20structures%20attachent%20une%20importance%20particuli%C3%A8re%20au%20caract%C3%A8re%20%C2%AB%20souverain%20%C2%BB%20des%20outils%20et%20des%20logiciels%20qu'elles%20utilisent.%20Pour%20le%20choix%20de%20ses%20outils%20et%20logiciels%2C%20votre%20structure%20%3A.png)
+*Certaines structures attachent une importance particulière au caractère « souverain » des outils et des logiciels qu'elles utilisent. Cela peut se traduire par le choix prioritaire de logiciels français ou européens, ou encore par le recours à des solutions dites « open source » (dont le code informatique est libre de droits et géré par des communautés d'utilisateurs). Pour le choix de ses outils et logiciels, votre structure :*
+
+Le choix de l'open source apparaît comme un critère plus difficile à favoriser que l'origine du logiciel. Il y a ainsi **très peu de structures (15%) qui affirment privilégier systématiquement des outils open source à d'autres qui seraient propriétaires** ; il s'agit principales d'EPCI et de métropoles - mais aussi des "autres" structures, en particulier des OPSN, que leur fonction de mutualisation et leur expertise informatique peut davantage prédisposer à recourir au logiciel libre. On notera que par rapport à 2022 la préférence déclarée pour l'open source progresse de manière significative, mais cela doit être interprété avec prudence, car il peut s'agir d'un effet de structure (du fait d'une plus forte représentation des structures hors collectivités cette année). 
+
+Les collectivités déclarent en revanche dans leur majorité accorder de l'importance à la réversibilité des solutions choisies. Ainsi, 43% d'entre elles privilégient systématiquement les solutions qui garantissent la récupération des données. Seules 17% ne tiennent aucun compte du critère de réversibilité. Ici encore, toutefois, la taille de la collectivité est fortement corrélée à la réponse : les collectivités les plus grandes sont plus sensibles à ce critère, ou plus en capacité de le mettre en œuvre. 
+
+[Voir toutes les données sur ces questions.](https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html#84_Certaines_structures_attachent_une_importance_particuli%C3%A8re_au_caract%C3%A8re_%C2%AB_souverain_%C2%BB_des_outils_et_des_logiciels_qu%E2%80%99elles_utilisent_Cela_peut_se_traduire_par_le_choix_prioritaire_de_logiciels_fran%C3%A7ais_ou_europ%C3%A9ens,_ou_encore_par_le_recours_%C3%A0_des_solutions_dites_%C2%AB_open_source_%C2%BB_(dont_le_code_informatique_est_libre_de_droits_et_g%C3%A9r%C3%A9_par_des_communaut%C3%A9s_d%E2%80%99utilisateurs)_Pour_le_choix_de_ses_outils_et_logiciels,_votre_structure_:)
+
+
+
 ::: sidenote
 ![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width="200px"}
 :::
-
 # Gouverner ses données : comment ?
 
 ::: sidenote
 ![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width="200px"}
 :::
-
 # Épargner la planète
 
 ::: sidenote
 ![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width="200px"}
 :::
-
 # Plus d'un quart des répondants ont déjà eu recours à l'intelligence artificielle
 
 27% des collectivités interrogées déclarent avoir déjà eu recours à
