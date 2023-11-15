@@ -919,7 +919,7 @@ saving_newplot(graph, "Afin de respecter le RGPD, avez-vous modifié des process
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple_sansRS <- function(n_col, nom_col){
+stat_qs_simple_sansSR <- function(n_col, nom_col){
     # Structures détaillées
    cat2 <- data_clean_unique |> 
         select(n_col, Catégorie2) |> 
@@ -980,14 +980,15 @@ stat_qs_simple_sansRS <- function(n_col, nom_col){
                                   "Une région" ~ 10,
                                   "Autre" ~ 11, 
                                   .default = 1)) |> 
-        arrange(index) |> select(-index) |> ungroup() |> 
+        arrange(index) |> select(-index) |> ungroup()
+    stat_indiv <- stat_indiv |> 
         select(1, order(colnames(stat_indiv))) |> 
         rename(Structure = 1)
     # On affiche la table finale
     knitr::kable(stat_indiv, format = "html") |> 
       kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
 }
-stat_qs_simple_sansRS(18, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
+stat_qs_simple_sansSR(18, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
 
 
@@ -1613,7 +1614,7 @@ p0_pond <- dat |>
         guides(fill = guide_legend(title = "Légende", ncol = 1))
 # Fonction type de collectivité
 dat <- all_stat_2023 |> 
-    filter(Question == nom_col & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre"),
+    filter(Question == "Quels sont le ou les domaines concernés par ces clauses ?" & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre"),
            Réponses != "Sans réponse") |> 
     mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0)) |> 
     mutate(Pourcentage = as.numeric(Pourcentage)/100,
@@ -1633,7 +1634,7 @@ p1 <- dat |>
               panel.grid.major.y = ggplot2::element_blank())
 # Fonction taille de commune
 dat <- all_stat_2023 |> 
-    filter(Question == nom_col & grepl("Communes de", Structure) == TRUE,
+    filter(Question == "Quels sont le ou les domaines concernés par ces clauses ?" & grepl("Communes de", Structure) == TRUE,
            Réponses != "Sans réponse") |> 
     mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0)) |> 
     mutate(Pourcentage = as.numeric(Pourcentage)/100,
