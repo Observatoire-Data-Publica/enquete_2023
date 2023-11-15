@@ -48,56 +48,56 @@ all_stat |>
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Direction générale]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale].png"), plot = graph, width = 13, height = 8)
+#ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale].svg"), plot = graph, width = 13, height = 8)
 
 all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Direction Informatique]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique].png"), plot = graph, width = 13, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique].svg"), plot = graph, width = 13, height = 8)
 
 all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Service d’information géographique (SIG)]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)].png"), plot = graph, width = 13, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)].svg"), plot = graph, width = 13, height = 8)
 
 all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
-new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Archives]",
+  new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Archives ]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives].png"), plot = graph, width = 13, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives].svg"), plot = graph, width = 13, height = 8)
 
 all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Communication]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication].png"), plot = graph, width = 13, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication].svg"), plot = graph, width = 13, height = 8)
 
 all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Services techniques]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques].png"), plot = graph, width = 13, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques].svg"), plot = graph, width = 13, height = 8)
 
 all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Ressources humaines]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines].png"), plot = graph, width = 13, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines].svg"), plot = graph, width = 13, height = 8)
 
 all_stat |> 
   mutate(Réponses = str_replace_all(Réponses, "Ma collectivité n’est pas concernée par cette obligation", "Ma structure n’est pas concernée par cette obligation")) |> 
   new_dataviz_comp("Pensez-vous que les services de votre collectivité sont bien informés des obligations d’open data applicables depuis 2018 à toutes les collectivités de plus de 3 500 habitants ?",
              "Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018 à toutes les administrations publiques de plus de 50 ETP, et notamment les collectivités de plus de 3 500 habitants ?")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018.png"), plot = graph, width = 25, height = 15)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pensez-vous que les services de votre structure sont bien informés des obligations d’open data applicables depuis 2018.png"), plot = graph, width = 13, height = 8)
 
 new_dataviz_comp(all_stat, "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre collectivité sont bien informés de cette obligation légale ?",
              "Depuis le 1er juillet 2020, les collectivités sont également soumises à une obligation de « transparence algorithmique ». Pensez-vous que les services de votre structure sont bien informés de cette obligation légale ?")
@@ -174,7 +174,7 @@ new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire l
 ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’ANSSI ou avec un cyber campus régional].png"), plot = graph, width = 25, height = 15)
 
 #new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]",
-               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
+#               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
 #ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques].png"), plot = graph, width = 13, height = 7)
 
 new_dataviz_comp(all_stat, "Votre collectivité a-t-elle engagé une réflexion sur les enjeux du numérique responsable ?",
