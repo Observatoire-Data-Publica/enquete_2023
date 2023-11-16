@@ -143,7 +143,8 @@ showtext_auto()
 # INFORMATIONS GÉNÉRALES
 
 
-```{r données}
+```{r données, cache=FALSE}
+
 # Import de données
 library(tidyverse)
 data <- read_csv("../Data/results-survey396597.csv") |> select(1:220)
@@ -1749,10 +1750,11 @@ saving_newplot(graph, "Votre organisation a-t-elle défini une politique en mati
 <div class="sidenote2">![](https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview){width=200px}</div>
 ## Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?
 
-#### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} En résumé {-}
 
-```{r fig.height=8, fig.width=15}
+```{r fig.height=8, fig.width=15, include=FALSE}
 dat <- all_stat_2023 |> 
+    filter(Réponses != "Sans réponse") |> 
+    mutate(Pourcentage = round(Occurrences / `Nombre de réponses` * 100)) |>
     filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure == "Total" & Réponses == "Oui, au cours des deux dernières années") |> 
     ungroup() |> 
     mutate(Question = str_extract(Question, "(?<=\\[).*"),
@@ -1782,12 +1784,13 @@ ggsave(file = glue("../Graphiques/PNG/Graphique général : domaines dans lesque
 ggsave(file = glue("../Graphiques/SVG/Graphique général : domaines dans lesquels une expérimentation des données a été engagée au cours des deux dernières années.svg"), plot = graph, width = 15, height = 9)
 ```
 
-[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20a%20%C3%A9t%C3%A9%20engag%C3%A9e%20au%20cours%20des%20deux%20derni%C3%A8res%20ann%C3%A9es.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20a%20%C3%A9t%C3%A9%20engag%C3%A9e%20au%20cours%20des%20deux%20derni%C3%A8res%20ann%C3%A9es.png)
 
 
 
-```{r fig.height=8, fig.width=15}
+```{r fig.height=8, fig.width=15, include=FALSE}
 dat <- all_stat_2023 |> 
+    filter(Réponses != "Sans réponse") |> 
+    mutate(Pourcentage = round(Occurrences / `Nombre de réponses` + 100, digits = 0)) |>
     filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & Structure == "Total" & (Réponses == "Oui, au cours des deux dernières années" | Réponses == "Non, mais c’est prévu dans les 12 prochains mois")) |> 
     ungroup() |> 
     mutate(Question = str_extract(Question, "(?<=\\[).*"),
@@ -1826,11 +1829,10 @@ ggsave(file = glue("../Graphiques/PNG/Graphique général n°2 : domaines dans l
 ggsave(file = glue("../Graphiques/SVG/Graphique général n°2 : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.svg"), plot = graph, width = 15, height = 9)
 ```
 
-[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B02%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B02%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)
 
 
 
-```{r fig.height=8, fig.width=15}
+```{r fig.height=8, fig.width=15, include=FALSE}
 dat <- all_stat_2023 |> 
     filter(grepl("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ?", Question) == TRUE & 
              (Structure == "Total hors communes < 3500 habitants") & 
@@ -1873,12 +1875,11 @@ ggsave(file = glue("../Graphiques/PNG/Graphique général n°3 (sans comm < 3500
 ggsave(file = glue("../Graphiques/SVG/Graphique général n°3 (sans comm < 3500 habs) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.svg"), plot = graph, width = 15, height = 9)
 ```
 
-[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B03%20(sans%20comm%20%3C%203500%20habs)%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B03%20(sans%20comm%20%3C%203500%20habs)%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)
 
 #### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023 {-}
 
 
-```{r fig.height=10, fig.width=15}
+```{r fig.height=10, fig.width=15, include=FALSE}
 # Données
 dat22 <- all_stat_2022 |> 
     filter(grepl("Au sein de votre collectivité, avez-vous identifié parmi les domaines suivants de nouveaux usages de la donnée qui pourraient être utiles ?", Question) == TRUE & Structure == "Total hors communes < 3500 habitants" & Réponses == "Oui") |> 
@@ -1946,7 +1947,6 @@ ggsave(file = glue("../Graphiques/PNG/Graphique général n°4 (comparaison 2022
 ggsave(file = glue("../Graphiques/SVG/Graphique général n°4 (comparaison 2022-2023) : domaines dans lesquels une expérimentation des données va être ou a déjà été engagée.svg"), plot = graph, width = 14, height = 10)
 ```
 
-[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B04%20(comparaison%202022-2023)%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B04%20(comparaison%202022-2023)%20%3A%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e.png)
 
 ```{r}
 dat22 <- data_2022 |> 
