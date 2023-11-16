@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Deuxième édition  du baromètre national  sur la data dans les territoires  par l’observatoire Data Publica  et ses partenaires</title>
+
+<script src="rapport_print_files/header-attrs-2.25/header-attrs.js"></script>
+<script src="rapport_print_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="rapport_print_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="rapport_print_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="rapport_print_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="rapport_print_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="rapport_print_files/navigation-1.1/tabsets.js"></script>
+<html>
+
+<head>
+
+<link rel="shortcut icon" href="https://nextcloud.datactivist.coop/s/tBJGcP63dGANz6N/preview"/>
+
+</head>
+
+</html>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Deuxième édition <br>du baromètre national
+<br>sur la data dans les territoires <br>par l’observatoire Data Publica
+<br>et ses partenaires</h1>
+
+</div>
+
+
+<script>
+  $(document).ready(function() {
+    $('#TOC').parent().prepend('<div id=\"nav_logo\"><img src=\"https://nextcloud.datactivist.coop/s/QBsAD4P7b9KNd5g/preview"></div>');
+  });
+</script>
+<img src="https://nextcloud.datactivist.coop/s/oEqjKtbKBnm5j22/preview" alt="logo" style="position:absolute; top:0; right:0; width:400px"/>
+<style type="text/css">
+#nav_logo { /*paramètres logo Data Publica en haut à gauche*/
+  width: 80%;
+  margin-top: 20px;
+  margin-left: -15px;
+}
+#TOC ul>li {
+  color: white;
+  background-color: #323465;
+  font-weight: normal; /*gras*/
+  padding: 3px; /*espace avant*/
+  padding-left: 11px; /*espace avant*/
+  padding-right: 11px; /*espace avant*/
+  border: #323465;
+  /*margin-top: 25px; /*espace avant*/
+}
+#TOC {
+  max-width: 250px;
+  /*white-space: nowrap;*/  /*quand c'est activé, empêche line break longs titres*/
+  font-size: .8em; /*taille*/
+  font-family: "Quicksand"; /*police*/
+  font-weight: bold; /*gras*/
+  margin-left: -1%;
+  border: #323465;
+  z-index: 2; /*met la TOC au premier plan devant marginnote*/
+}
+#TOC:before { /*marge avant premier titre de la TOC*/
+  content: "";
+  display: block;
+  padding-top: 5%;
+  background: #323465; /* background with same color */
+  border: #323465;
+}
+#TOC:after { /*marge après dernier titre de la TOC*/
+  content: "";
+  display: block;
+  padding-top: 5%;
+  background: #323465; /* background with same color */
+  border: #323465;
+}
+.sidenote, .marginnote { 
+  float: left;
+  clear: left;
+  margin-left: -27%; 
+  margin-right: -40%;
+  margin-top: -70px; /*vertical alignement*/
+  position: relative;
+}
+.sidenote2, .marginnote2 { 
+  float: left;
+  clear: left;
+  width: 7%;
+  margin-left: 0%; 
+  margin-right: -40%;
+  margin-top: 38px; /*vertical alignement*/
+  position: relative;
+}
+.sidenote3, .marginnote3 { 
+  float: left;
+  clear: left;
+  margin-left: 5%; 
+  margin-right: -40%;
+  margin-top: 38px; /*vertical alignement*/
+  position: relative;
+}
+</style>
+<p><img src="images/logos.png" /></p>
+<p>L’Observatoire Data Publica est ravi de vous présenter l’édition 2023
+de son baromètre annuel sur la data dans les territoires. Cette enquête,
+réalisée avec le soutien de la Banque des Territoires, de l’ANCT, de la
+Poste, d’Orange et en partenariat avec la Gazette des Communes, a pour
+objectif de suivre l’évolution de la maturité des collectivités (et EPCI
+bien sûr, mais aussi d’autres organismes locaux, tels les OPSN) en
+matière de données, mais aussi de thématiques proches, telles que la
+cybersécurité ou l’intelligence artificielle.</p>
+<p>Cette deuxième édition de notre enquête permet de l’ancrer dans une
+logique barométrique que nous espérons poursuivre le plus longtemps
+possible, en complémentarité avec les autres acteurs de
+l’écosystème.</p>
+<p>La notice technique est disponible <a href="#notice-technique">à la
+fin de ce document</a>.</p>
+<div class="sidenote">
+<p><img
+src="https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview"
+width="200" /></p>
+</div>
+<div id="utiliser-les-données-motivations-et-obstacles"
+class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Utiliser les données :
+Motivations et obstacles</h1>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+<div
+id="les-collectivités-souhaitent-utiliser-des-données-avant-tout-pour-améliorer-le-service-public"
+class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Les collectivités
+souhaitent utiliser des données avant tout pour améliorer le service
+public</h2>
+<p>Les raisons d’utiliser les données peuvent être multiples pour les
+organismes locaux. Si <strong>l’efficacité opérationnelle des services
+publics</strong>, ainsi que l’évaluation des politiques publiques,
+domine dans les “grandes” collectivités. Si la question des
+<strong>relations aux citoyens</strong> (transparence, information, mais
+aussi nouveaux services) est plus prégnante dans les petites
+collectivités, elle n’en demeure pas moins importante dans l’ensemble
+des collectivités : au total, la moitié d’entre elles mentionnent cet
+item parmi leurs deux premières priorités.</p>
+<p>Au-delà de ces deux raisons majeures, c’est surtout le développement
+de nouveaux services ou de nouvelles politiques publiques qui est mis en
+avant par les collectivités, plutôt en deuxième priorité.</p>
+<p>À l’inverse, on notera que les retombées économiques sur le
+territoire ne font pas parties des motivations majeures mises en avant
+par les répondants : elles ne représentent que 4% des réponses en rang
+1, et 9% en rang 2. Seules les régions insistent davantage sur cet
+aspect, sans doute en lien avec leur compétence en matière de
+développement économique.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Quelles%20sont%2C%20selon%20vous%2C%20les%20priorit%C3%A9s%20qui%20justifient%20(ou%20justifieraient)%20une%20utilisation%20plus%20importante%20des%20donn%C3%A9es%20au%20sein%20de%20votre%20organisation%20%3F%20Classez%20du%20plus%20important%20au%20moins%20important%20(de%20haut%20en%20bas)%20%20%5BClassement%201%5D.png"
+style="width:90.0%" /></p>
+<p><em>Quelles sont, selon vous, les priorités qui justifient (ou
+justifieraient) une utilisation plus importante des données au sein de
+votre organisation ? Réponse en rang 1.</em></p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div
+id="répondre-aux-enjeux-environnementaux-climatiques-et-énergétiques-est-une-motivation-majeure"
+class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Répondre aux enjeux
+environnementaux, climatiques et énergétiques est une motivation
+majeure</h2>
+<p>Le sujet fait quasiment l’unanimité : les données constituent un
+outil “prioritaire” ou “pertinent” pour la très grande majorité des
+collectivités qui ont répondu à notre enquête. Cette appréciation est
+particulièrement affirmée dès lors que l’on considère les communes de
+plus de 10000 habitants et les autres collectivités. Les petites
+communes semblent plus perplexes sur le sujet, sans doute parce qu’elles
+ne disposent pas de l’ingénierie et de l’expertise nécessaires pour
+pouvoir valoriser les données au profit de l’environnement. Les régions
+en revanche sont particulièrement persuadées de l’intérêt de la donnée
+pour répondre aux enjeux environnementaux, climatiques et énergétiques -
+on observe d’ailleurs qu’au-delà des déclarations elles se sont
+effectivement emparées de ces enjeux de manière effective, à l’image de
+la région Centre-Val de Loire et de son <a
+href="https://www.centre-valdeloire.fr/agir/proteger-lenvironnement/la-data-une-solution-face-au-rechauffement-climatique"
+target="_blank">Climate Data Hub</a>.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Selon-vous%2C%20la%20ma%C3%AEtrise%20de%20la%20donn%C3%A9e%20constitue-t-elle%20un%20outil%20pertinent%20pour%20r%C3%A9pondre%20aux%20enjeux%20environnementaux%20de%20votre%20territoire%20%3F.png"
+style="width:90.0%" /></p>
+<p><em>Selon-vous, la maîtrise de la donnée constitue-t-elle un outil
+pertinent pour répondre aux enjeux environnementaux de votre territoire
+?</em></p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div
+id="les-cas-dusage-majeurs-sont-très-liés-au-cœur-des-compétences-des-collectivités"
+class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Les cas d’usage
+majeurs sont très liés au cœur des compétences des collectivités</h2>
+<p>Cette année comme l’an dernier, on observe que les cas d’usage
+majeurs déployés dans le monde territorial sont, assez logiquement, liés
+aux compétences exercées par les collectivités. Quatre thématiques
+principales se dégagent :</p>
+<ul>
+<li>l’administration générale (qui recouvre sans doute beaucoup de
+dématérialisation des procédures), qu’on retrouve à plus de 50 % dans
+tous les types de collectivités au-delà de 10.000 habitants. Ces cas
+d’usage ont sans doute une certaine maturité, car ils ont assez
+largement déjà été mis en œuvre et apparaissent relativement peu souvent
+prévus dans l’année à venir, sauf dans les communes de moins de 10.000
+habitants.</li>
+<li>l’aménagement du territoire, qui est un cas d’usage majeur pour les
+métropoles et les régions, mais qui est moins présent dans les autres
+types de collectivités.</li>
+<li>la mobilité concerne également principalement les métropoles et les
+régions (100% des répondantes ont mis en œuvre un cas d’usage au cours
+des deux dernières années !), mais aussi les communes de plus de 100.000
+habitants.</li>
+<li>enfin, l’environnement est également un cas d’usage important, en
+particulier pour les régions et les métropoles, mais aussi les syndicats
+mixtes.</li>
+</ul>
+<p>Si ce podium reste similaire à celui observé l’an dernier, les cas
+d’usage que les collectivités répondantes indiquent vouloir déployer
+dans l’année à venir démontrent l’impact de la crise énergétique : le
+patrimoine d’une part, l’énergie et l’éclairage public d’autre part,
+sont en tête. 25 et 23% des collectivités (hors communes de moins de
+3500 habitants) prévoient de déployer un cas d’usage sur ces
+thématiques, l’environnement étant la troisième thématique la plus citée
+(21%).</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Graphique%20g%C3%A9n%C3%A9ral%20n%C2%B05%20(comparaison%202022-2023)%20:%20domaines%20dans%20lesquels%20une%20exp%C3%A9rimentation%20des%20donn%C3%A9es%20va%20%C3%AAtre%20ou%20a%20d%C3%A9j%C3%A0%20%C3%A9t%C3%A9%20engag%C3%A9e%20pour%20CT%20et%20EPCI%20hors%20communes%20de%20moins%20de%203500%20hab.png"
+style="width:90.0%" /></p>
+<p><BR> <BR> <BR></p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div
+id="linsuffisante-culture-de-la-donnée-le-temps-et-les-compétences-sont-les-principaux-obstacles-au-développement-de-lusage-des-données"
+class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> L’insuffisante
+culture de la donnée, le temps et les compétences sont les principaux
+obstacles au développement de l’usage des données</h2>
+<p>Les obstacles au développement de l’usage des données sont assez
+similaires à ceux observés l’an dernier. La culture de la donnée est
+toujours considérée comme insuffisante par 47% des collectivités
+répondantes (qui en représentent même 70% si on les pondère). Il n’y a
+qu’un très faible nombre d’organisations répondantes qui affirment que
+“le niveau est bon” - et essentiellement dans des structures autres que
+collectivités (OPSN principalement). Même dans les métropoles et les
+régions, dans lesquels la maturité en la matière est plus élevée, on
+considère que le sujet est identifié mais n’est partagé que par quelques
+services pionniers. Un travail essentiel d’acculturation des services et
+des élus reste donc encore largement devant nous, ainsi que le relève
+d’ailleurs <a
+href="https://cnig.gouv.fr/rapport-de-la-mission-data-et-territoires-a26165.html"
+target="_blank">le rapport tout récemment rendu au ministre Guérini sur
+la donnée dans les collectivités territoriales</a>.</p>
+<p>Les formations d’acculturation aux enjeux de la donnée, pour les
+services comme pour les élus, sont d’ailleurs celles qui sont le plus
+réclamées par les répondants.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comment%20estimez-vous%20le%20niveau%20d%E2%80%99acculturation%20de%20votre%20structure%20aux%20enjeux%20des%20donn%C3%A9es%20%3F.png"
+style="width:90.0%" /></p>
+<p><em>Comment estimez-vous le niveau d’acculturation de votre structure
+aux enjeux des données ?</em></p>
+<p>Au-delà de l’insuffisante acculturation à la donnée, les autres
+obstacles les plus cités sont le temps (61% des répondants) et les
+compétences (64% des répondants). Cela vaut quelle que soit la strate de
+collectivité considérée, même s’il y a des variations : les métropoles
+sont ainsi particulièrement touchées par le manque de temps, les régions
+par le manque de compétence. Si le manque de temps est moins prégnant
+qu’en 2022, il n’y a pas d’évolution majeure depuis l’an dernier.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Quels%20sont%2C%20selon%20vous%2C%20les%20principaux%20obstacles%20%C3%A0%20la%20diffusion%20d%E2%80%99outils%20innovants%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20%3F.png"
+style="width:90.0%" /></p>
+<p>Notons enfin un possible déficit d’information : ainsi, 40% des
+répondants affirment que les services de leur structure ne sont pas bien
+informés des obligations d’open data applicables en vertu de la Loi
+Lemaire. Ce chiffre monte à 61% dans les communes, et toutes les
+communes entre 3.500 et 10.000 communes répondantes se rangent dans
+cette situation. Même dans les métropoles, 28% d’entre elles sont
+concernées par cette méconnaissance perçue. Ces chiffres ne seront pas
+sans interroger les différents acteurs de l’open data, qui ont pourtant
+largement communiqué sur le sujet depuis 2016.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Pensez-vous%20que%20les%20services%20de%20votre%20structure%20sont%20bien%20inform%C3%A9s%20des%20obligations%20d%E2%80%99open%20data%20applicables%20depuis%202018%20%C3%A0%20toutes%20les%20administrations%20publiques%20de%20plus%20de%2050%20ETP%2C%20et%20notamment%20les%20collectivit%C3%A9s%20de%20plus%20de%203%20500%20habitants%20%3F.png"
+style="width:90.0%" /></p>
+<p><em>Pensez-vous que les services de votre structure sont bien
+informés des obligations d’open data applicables depuis 2018 à toutes
+les administrations publiques de plus de 50 ETP, et notamment les
+collectivités de plus de 3 500 habitants ?</em></p>
+<div class="sidenote">
+<p><img
+src="https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview"
+width="200" /></p>
+</div>
+</div>
+</div>
+<div id="manager-ses-données-quelle-organisation-quels-outils"
+class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Manager ses données :
+quelle organisation, quels outils ?</h1>
+<p>Avoir des projets data ne suffit pas, encore faut-il être en capacité
+de les mener à bien, et pour cela de pouvoir gérer ses données. On est
+là dans le domaine de l’organisation et des outils.</p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+<div id="des-dgs-et-des-dsi-de-plus-en-plus-impliquées"
+class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Des DGS et des DSI de
+plus en plus impliquées</h2>
+<p>Il est intéressant de constater que l’implication de la direction
+générale des services dans la gestion des données n’est pas marginale :
+elle est leader, ou fait preuve d’une implication forte, dans 38% des
+cas. Le constat est encore plus clair si l’on considère les résultats
+pondérés. À l’inverse, il est très rare que la direction générale des
+services ne fasse montre d’aucune implication dans ces sujets. La
+comparaison avec l’an dernier fait clairement apparaître une plus grande
+implication des DGS, notamment dans les communes et les EPCI.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20g%C3%A9n%C3%A9rale%5D.png"
+style="width:90.0%" /></p>
+<p><em>Pour la Direction générale des services, pouvez-vous nous dire si
+leur implication en matière de gestion des données est…</em></p>
+<p>Il en va de même pour les directions informatiques, qui sont
+impliquées comme leader ou de manière forte dans 60% des collectivités.
+Paradoxalement, c’est surtout dans les régions et les métropoles que les
+DSI sont les moins impliquées - sans doute parce que, dans ces
+structures, il peut y avoir des services en charge des données de
+manière autonome. Et tout comme pour les DGS, la comparaison avec l’an
+dernier fait apparaître une plus grande implication des DSI, notamment
+dans les départements.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20Informatique%5D.png"
+style="width:90.0%" /> <em>Pour la DSI, pouvez-vous nous dire si leur
+implication en matière de gestion des données est…</em></p>
+<p>Les services SIG (systèmes d’information géographique) sont le
+dernier service jouant assez souvent un rôle leader en matière de
+gestion des données. C’est assez logique, puisque dans de nombreuses
+collectivités ces services existent depuis longtemps et disposent de
+compétences précieuses pour gérer le patrimoine de données de la
+collectivité.</p>
+<p>Si les archives exercent rarement un rôle de leader, leur implication
+apparaît “forte” dans un nombre non négligeable de cas (18% des
+répondants), en particulier dans de “grosses” colectivités
+(départements, EPCI, métropoles). À l’inverse, l’implication du service
+Communication, tout comme celle des services techniques, est
+généralement plus ponctuelle, mais est néanmoins assez caractéristique
+des communes de moins de 100.000 habitants. Enfin, l’implication des
+ressources humaines est généralement nulle ou faible.</p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div id="des-fonctions-consacrées-à-la-donnée-encore-relativement-rares"
+class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Des fonctions
+consacrées à la donnée encore relativement rares</h2>
+<p>Les formes organisationnelles prises par le management de la donnée
+sont relativement diverses, et il ne semble pas encore y avoir
+d’organisation “standard” se mettant en place. La figure de
+<strong>l’administrateur général des données (Chief Data
+officer)</strong> apparaît la plus commune : 24% des répondants
+déclarent en être dotés. Sans surprise, cela concerne prioritairement de
+“grandes” collectivités, tout particulièrement les métropoles, mais
+également les départements, les régions et les autres structures
+(OPSN…). Notons que des nominations de CDO sont annoncées pour les douze
+prochains mois, notamment dans les régions, métropoles et EPCI.</p>
+<p>Presque autant de collectivités se sont dotées d’une organisation
+plus décentralisée au moyen d’un <strong>réseau de référents
+data</strong> (notons qu’il n’est pas incompatible d’avoir un CDO et des
+référents, bien au contraire !). La taille de la collectivité est ici
+très prédictive : l’intégralité des régions répondantes sont dotées d’un
+réseau de référents ou en mettront un en place dans les douze prochains
+mois, tout comme la plupart des métropoles. Dans les autres
+collectivités, si la mise en place d’un réseau de correspondants est
+prévue dans environ un quart des cas, une majorité ne prévoit pas de
+s’en doter à court terme.</p>
+<p>Si son existence est relativement rare aujourd’hui (12% des
+répondants), le <strong>comité data</strong> (entendu davantage comme
+une instance de gouvernance que le réseau de référents data, plus
+opérationnel) pourrait se développer pour devenir une modalité
+relativement répandue de management de la donnée : 19% des répondants
+annoncent avoir prévu d’en mettre un en place dans les douze prochains
+mois. Cela concerne notamment les métropoles et les régions, qui
+prévoient quasiment toutes d’en être équipées. Rendez-vous l’an prochain
+pour faire le bilan !</p>
+<p>Enfin, tout comme les autres formes d’organisation de la fonction
+data, la <strong>direction de la donnée</strong> concerne avant tout de
+grandes collectivités (les métropoles et régions sont équipées dans
+environ un quart des cas et annoncent envisager de le faire dans l’année
+dans un autre quart des cas), mais une proportion non négligeable de
+communes annoncent envisager d’en créer une.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Dans%20votre%20organisation%2C%20ces%20fonctions%20consacr%C3%A9es%20%C3%A0%20la%20donn%C3%A9e%20existent-elles%20ou%20seront-elles%20cr%C3%A9%C3%A9es%20dans%20les%20douze%20prochains%20mois%20%3F%20%20%5BChief%20data%20officer%20-%20administrateur%20g%C3%A9n%C3%A9ral%20des%20donn%C3%A9es%5D.png"
+style="width:90.0%" /></p>
+<p><em>Dans votre organisation, la fonction de chief data officer
+existe-elle ou sera-t-elle créée dans les douze prochains mois
+?</em></p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div id="des-collaborations-externes-fréquentes" class="section level2"
+number="2.3">
+<h2><span class="header-section-number">2.3</span> Des collaborations
+externes fréquentes</h2>
+<div class="sidenote3">
+<p><img
+src="https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview"
+width="30" /></p>
+</div>
+<div id="des-partenaires-publics" class="section level3" number="2.3.1">
+<h3><span class="header-section-number">2.3.1</span> Des partenaires
+publics…</h3>
+<p>Nous avons introduit cette année une nouvelle question pour
+comprendre avec quels types de partenaires extérieurs les structures
+territoriales travaillent. Elle permet de mettre en évidence que
+<strong>le travail des données n’est pas un travail solitaire</strong>,
+mais que les collectivités disposent de partenaires potentiels assez
+nombreux auxquelles elles n’hésitent pas à recourir.</p>
+<p>Les structures publiques d’appui ou de mutualisation sont ainsi
+souvent sollicitées. 47% des répondants déclarent ainsi collaborer avec
+une <strong>plateforme régionale d’information géographique</strong> ;
+si cela concerne davantage les grandes collectivités (régions,
+départements et métropoles en particulier), 7% des communes déclarent
+leur intention d’y avoir recours dans l’année à venir - 17% des communes
+de 3.500 à 10.000 habitants. Notons également que l<strong>es PRIG sont
+<em>de facto</em> les acteurs principaux de la mutualisation dans le
+monde de la donnée territoriale</strong> aujourd’hui : 38% des
+répondants déclarent avoir mis en place des technologies mutualisées
+avec leur PRIG, et 9% prévoient de le faire dans les douze prochains
+mois. Notons que toutes les strates de collectivités sont concernées,
+même les petites communes, même si c’est dans une mesure moindre que les
+grandes collectivités.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUne%20plateforme%20r%C3%A9gionale%20d%E2%80%99information%20g%C3%A9ographique%5D.png"
+style="width:90.0%" /></p>
+<p><em>Avec lesquels de ces partenaires potentiels collaborez-vous, ou
+prévoyez-vous de le faire, au sujet des données ? Une plateforme
+régionale d’information géographique.</em></p>
+<p>La collaboration avec des <strong>collectivités plus grandes</strong>
+(typiquement, un EPCI ou une région) est également populaire (38%). Mais
+paradoxalement, elle l’est… surtout chez les grandes collectivités, qui
+collaborent donc entre elles ! Ainsi, peu de communes de moins de 10.000
+habitants déclarent collaborer avec des collectivités plus grandes -
+mais 17% des communes de 3.500 à 10.000 habitants prévoient de le faire
+dans année. <strong>Ces collectivités sont également à l’origine de
+mutualisations technologiques</strong> : 25% des collectivités déclarent
+avoir mis en place des technologies mutualisées avec ces collectivités.
+Il peut souvent s’agit de portails open data, ou de services de DPO
+mutualisés, par exemple.</p>
+<p>Les collaborations avec des <strong>associations de
+collectivités</strong>, telles qu’OpenDataFrance ou la FNCCR, sont
+également fréquentes (38%), mais répondent au même schéma : elles sont
+plus fréquentes chez les grandes collectivités que dans les petites, qui
+pourraient pourtant potentiellement en avoir davantage besoin. En
+revanche, les intentions affichées sont plus faibles : seules 5% des
+répondants prévoient de collaborer avec une association de collectivités
+dans l’année. <strong>Les actions de mutualisation de ces associations
+sont relativement significatives (17%)</strong>, mais peu d’intentions
+futures sont déclarées (3%).</p>
+<p>La collaboration avec les <strong>services de l’État</strong> (ANCT,
+SGAR, Dinum…) atteint un niveau comparable aux collectivités plus
+grandes et aux associations de collectivités (38%). Mais à bien y
+regarder, ce sont, encore plus que dans les cas précédents, les plus
+grosses collectivités qui sont surtout concernées. Seules 13% des
+communes indiquent collaborer avec les services de l’État, contre 60%
+des régions et 50% des métropoles. Cela pourrait se rééquilibrer un peu
+à l’avenir, compte tenu des intentions déclarées de le faire.</p>
+<p>Les <strong>opérateurs de service public numérique (OPSN)</strong>
+sont quant à eux à l’origine de peu de collaborations avec les
+collectivités sur les sujets data. Seuls 10% des répondants indiquent
+ainsi avoir collaboré avec un OPSN. Et seuls 3% prévoient de le faire
+dans les 12 prochains mois. Ainsi, au-delà de quelques OPSN pionniers et
+visibles dans l’écosystème, les OPSN n’apparaissent pas aujourd’hui
+comme des partenaires majeurs dans le domaine, ni comme des moyens
+majeurs de mutualisation en matière de données (9% seulement), alors
+qu’ils ont pu l’être dans d’autres domaines.</p>
+<div class="sidenote3">
+<p><img
+src="https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview"
+width="30" /></p>
+</div>
+</div>
+<div id="et-des-partenaires-privés" class="section level3"
+number="2.3.2">
+<h3><span class="header-section-number">2.3.2</span> Et des partenaires
+privés</h3>
+<p>Les collectivités recourent beaucoup à des partenaires privés pour
+travailler sur le sujet des données. Ces partenaires sont, d’abord, des
+<strong>prestataires informatiques</strong> : 45% des répondants
+déclarent y recourir, et cette proportion est élevée quelle que soit la
+strate de collectivité concernée. Même dans les communes de moins de
+10.000 habitants, une collectivité sur trois y a recours (et c’est dans
+cette strate que le recours futur prévu est le plus important). On peut
+penser que le maillage d’un réseau d’ESN de proximité, ou d’ESN
+disposant de bureaux à proximité des collectivités, et qui souvent
+connaissent déjà leur DSI, joue ici à plein.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Avec%20lesquels%20de%20ces%20partenaires%20potentiels%20collaborez-vous%2C%20ou%20pr%C3%A9voyez-vous%20de%20le%20faire%2C%20au%20sujet%20des%20donn%C3%A9es%20%3F%20%20%5BUn%20prestataire%20informatique%5D.png"
+style="width:90.0%" /></p>
+<p><em>Avec lesquels de ces partenaires potentiels collaborez-vous, ou
+prévoyez-vous de le faire, au sujet des données ? Un prestataire
+informatique.</em></p>
+<p>Les <strong>assistants à maîtrise d’ouvrage (AMO)</strong>, plus
+spécialisés, constituent également des partenaires importants (31% des
+répondants déclarent y recourir), mais contrairement aux prestataires
+informatiques, le recours aux AMO est privilégié dans les grandes
+collectivités (78% des métropoles y ont recours) mais peu dans les
+petites (seules 10% des communes de 10.000 à 100.000 habitants y ont eu
+recours). Et ce sont les strates de collectivités qui y ont déjà recours
+qui déclarent le plus souvent vouloir y recourir dans l’année.</p>
+<p>Enfin, les <strong>opérateurs numériques</strong> ne sont des
+partenaires importants que pour les régions (40%), et dans une moindre
+mesure les métropoles (27%), qui ont sans doute la capacité à mener des
+négociations directes avec ces acteurs.</p>
+<p>Au final, <strong>de nombreux partenaires potentiels existent pour
+les collectivités sur le sujet des données, mais peu parviennent à
+toucher d’autres collectivités que les plus grosses et les plus
+matures</strong>. Ce sont des réseaux d’acteurs privés, sans doute de
+proximité, qui sont le plus sollicités. Peut-être y a-t-il là des
+alliances public-privé à imaginer pour faire levier sur ces acteurs
+?</p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+</div>
+<div id="gérer-ses-données-comment-avec-quels-outils"
+class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Gérer ses données :
+comment, avec quels outils ?</h2>
+<div class="sidenote3">
+<p><img
+src="https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview"
+width="30" /></p>
+</div>
+<div id="des-données-stockées-majoritairement-sur-des-serveurs-internes"
+class="section level3" number="2.4.1">
+<h3><span class="header-section-number">2.4.1</span> Des données
+stockées majoritairement sur des serveurs internes</h3>
+<p>Le passage dans l’informatique en nuage (<em>cloud</em>), souvent
+présenté comme emblématique de la transition numérique, est encore très
+loin d’être généralisé dans les collectivités. <strong>Le stockage des
+données majoritairement sur des serveurs internes est encore, et de très
+loin, la modalité dominante</strong> : elle concerne 60% des répondants,
+et est majoritaire dans toutes les catégories de collectivités, hormis
+les répondants qui ne sont pas des collectivités (notamment OPSN). Ce
+sont d’ailleurs eux qui déclarent le plus recourir au cloud, notamment
+SecNumCloud.</p>
+<p>Dans l’ensemble des collectivités, <strong>le cloud n’est majoritaire
+pour stocker les données que dans 13% des cas</strong>. Les éditeurs de
+logiciels (en SaaS) représentent une part équivalente (11%), et cela
+concerne particulièrement les communes - ce qui peut s’expliquer par le
+fait qu’acheter du logiciel en SaaS demande moins de compétences et de
+moyens techniques que d’opérer ses propres serveurs ou recourir au
+cloud.</p>
+<p>Quand aux data centers publics locaux, ils concernent principalement
+des métropoles, mais ces dernières plébiscitent l’hébergement des
+données <strong>on premises</strong> (sur leurs propres serveurs).</p>
+<p>Notons toutefois que <strong>la dynamique semble aller vers le
+développement du cloud</strong>, qui progresse de 7 points par rapport à
+l’an dernier (dont 5 pour le SecNumCloud - mais essentiellement dans des
+catégories de structure peu représentées dans l’échantillon l’an
+dernier, l’évolution est donc à interpréter avec prudence).</p>
+<p><BR> <BR></p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Aujourd%E2%80%99hui%2C%20les%20donn%C3%A9es%20de%20votre%20structure%20sont%20majoritairement%20h%C3%A9berg%C3%A9es.png"
+style="width:90.0%" /></p>
+<p><em>Aujourd’hui, les données de votre structure sont majoritairement
+hébergées…</em></p>
+<div class="sidenote3">
+<p><img
+src="https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview"
+width="30" /></p>
+</div>
+</div>
+<div id="des-collectivités-déjà-équipées-pour-gérer-leurs-données"
+class="section level3" number="2.4.2">
+<h3><span class="header-section-number">2.4.2</span> Des collectivités
+déjà équipées pour gérer leurs données ?</h3>
+<p><strong>57% des répondants déclarent que leur organisation est dotée
+d’outils de traitement et d’analyse de données</strong> (ce qui peut
+recouvrir des outils assez hétérogènes, de simples tableurs jusqu’à des
+outils spécialisés pour datascientists). Mais ce chiffre recouvre en
+réalité une réelle fracture, entre les communes d’une part, très peu
+équipées (seulement 17% d’entre elles déclarent disposer d’outils de
+traitement et d’analyse de données, et 10% prévoient de s’en doter sous
+un an), et les autres catégories de collectivités, qui sont toutes
+au-dessus de 50% (et même 90% pour les régions).</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BOutils%20de%20traitement%20et%20d&#39;analyse%20de%20donn%C3%A9es%5D.png"
+style="width:90.0%" /></p>
+<p><em>Votre structure a-t-elle déployé les technologies suivantes, ou
+prévoit-elle de le faire dans les 12 prochains mois ? Outils de
+traitement et d’analyse des données.</em></p>
+<p>Près de la moitié (47%) des collectivités répondantes déclarent avoir
+mis en place une <strong>plateforme de données</strong> (ingestion,
+stockage, traitement, analyse et visualisation de données). Ce chiffre
+peut surprendre et doit être interprété avec prudence : il est probable
+que les répondants ont interprété cette notion de manière assez diverse.
+Sans surprise le taux d’équipement affiché augmente avec la strate de
+collectivité (80% pour les régions, 61% pour les métropoles… avec 39%
+d’intention d’équiepement dans les 12 mois à venir !, 56% pour les
+départements, 52% pour les EPCI), mais les taux de réponse positive dans
+les communes (27%) à la prudence.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BPlateforme%20de%20donn%C3%A9es%20(ingestion%2C%20stockage%2C%20traitement%2C%20analyse%20%20et%20visualisation%20de%20donn%C3%A9es)%5D.png"
+style="width:90.0%" /></p>
+<p><em>Votre structure a-t-elle déployé les technologies suivantes, ou
+prévoit-elle de le faire dans les 12 prochains mois ? Plateforme de
+données</em></p>
+<p>L’existence d’un <strong>catalogue de données</strong>, outil
+fondamental du management des données, semble faire l’objet d’une prise
+de conscience importante, en tout cas dans les collectivités les plus
+matures. Ainsi, seuls 29% des répondants déclarent avoir déjà mis en
+place un catalogue… mais presque autant (23%) déclarent avoir prévu d’en
+mettre un en place sous 12 mois. Au total, il n’y a que dans les petites
+communes (moins de 10.000 habitants) que cette préoccupation n’est que
+peu présente ; dans toutes les autres catégories de collectivités, plus
+de la moitié des répondants déclarent avoir déjà mis en place un
+catalogue de données ou prévoir de le faire sous 12 mois.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9ploy%C3%A9%20les%20technologies%20suivantes%2C%20ou%20pr%C3%A9voit-elle%20de%20le%20faire%20dans%20les%2012%20prochains%20mois%20%3F%20%5BCatalogue%20de%20donn%C3%A9es%5D.png"
+style="width:90.0%" /></p>
+<p><em>Votre structure a-t-elle déployé les technologies suivantes, ou
+prévoit-elle de le faire dans les 12 prochains mois ? Un catalogue de
+données.</em></p>
+<p>Les questions portant sur des outils plus “pointus” techniquement
+(<strong>lac de données</strong>, <strong>capteurs et réseaux
+IoT</strong>, <strong>jumeau numérique</strong>,
+<strong>hyperviseur</strong>) montrent que ces outils disposent d’un
+marché encore relativement peu mature mais dynamique : dans chacun des
+cas, les intentions d’équipement dans les douze prochains mois sont au
+même niveau ou plus élevé que l’équipement actuel. Sans surprise, ce
+sont surtout les grandes collectivités, en particulier régions et
+métropoles, qui sont concernées par ces outils. S’agissant des capteurs
+et réseaux IoT, les EPCI et métropoles, qui exercent des métiers de
+proximité de gestion des services publics urbains, sont particulièrement
+concernés. S’agissant des hyperviseurs, à date les régions paraissent
+mieux équipées, mais les intentions d’équipement sont plus fortes dans
+les métropoles. Toutes les régions déclarent disposer (20%) ou prévoir
+de se doter sous un an (50%) d’un lac de données (les 30% restantes
+n’ont pas répondu). Les intentions d’acquisition sont également fortes
+dans les régions et dans une moindre mesure (car elles sont plus
+équipées) dans les métropoles s’agissant des jumeaux numériques.</p>
+<p>On notera qu’à date ces outils techniques ne suscitent pas, ou très
+peu, d’intérêt dans les communes petites et moyennes.</p>
+<div class="sidenote3">
+<p><img
+src="https://nextcloud.datactivist.coop/s/A9YfKncNT3ybLEK/preview"
+width="30" /></p>
+</div>
+</div>
+<div id="des-collectivités-pragmatiques-face-aux-enjeux-de-souveraineté"
+class="section level3" number="2.4.3">
+<h3><span class="header-section-number">2.4.3</span> Des collectivités
+pragmatiques face aux enjeux de souveraineté</h3>
+<p>La question de <strong>la souveraineté des données, et plus largement
+de la souveraineté numérique</strong>, est un sujet qui a pris une
+importance significative dans le débat public français ces dernières
+années. Quelles sont, concrètement, les pratiques des collectivités
+territoriales en la matière ?</p>
+<p>Elles apparaissent assez pragmatiques. <strong>Les collectivités
+répondantes se partagent ainsi de manière égale entre celles qui
+privilégient la qualité du service et celles qui privilégient l’origine
+française ou européenne</strong> du logiciel ou du service. Les communes
+de moins de 10.000 habitantes sont les plus nombreuses à privilégier la
+qualité du service, tandis que les régions et les métropoles sont les
+plus nombreuses à privilégier l’origine (jusqu’à 72 % pour les
+métropoles !). La comparaison avec l’enquête 2022 ne laisse pas
+apparaître d’évolution très significative.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Certaines%20structures%20attachent%20une%20importance%20particuli%C3%A8re%20au%20caract%C3%A8re%20%C2%AB%20souverain%20%C2%BB%20des%20outils%20et%20des%20logiciels%20qu&#39;elles%20utilisent.%20Pour%20le%20choix%20de%20ses%20outils%20et%20logiciels%2C%20votre%20structure%20%3A.png"
+style="width:80.0%" /></p>
+<p><em>Certaines structures attachent une importance particulière au
+caractère « souverain » des outils et des logiciels qu’elles utilisent.
+Cela peut se traduire par le choix prioritaire de logiciels français ou
+européens, ou encore par le recours à des solutions dites « open source
+» (dont le code informatique est libre de droits et géré par des
+communautés d’utilisateurs). Pour le choix de ses outils et logiciels,
+votre structure :</em></p>
+<p>Le choix de l’open source apparaît comme un critère plus difficile à
+favoriser que l’origine du logiciel. Il y a ainsi <strong>très peu de
+structures (15%) qui affirment privilégier systématiquement des outils
+open source à d’autres qui seraient propriétaires</strong> ; il s’agit
+principales d’EPCI et de métropoles - mais aussi des “autres”
+structures, en particulier des OPSN, que leur fonction de mutualisation
+et leur expertise informatique peut davantage prédisposer à recourir au
+logiciel libre. On notera que par rapport à 2022 la préférence déclarée
+pour l’open source progresse de manière significative, mais cela doit
+être interprété avec prudence, car il peut s’agir d’un effet de
+structure (du fait d’une plus forte représentation des structures hors
+collectivités cette année).</p>
+<p>Les collectivités déclarent en revanche dans leur majorité accorder
+de l’importance à la réversibilité des solutions choisies. Ainsi, 43%
+d’entre elles privilégient systématiquement les solutions qui
+garantissent la récupération des données. Seules 17% ne tiennent aucun
+compte du critère de réversibilité. Ici encore, toutefois, la taille de
+la collectivité est fortement corrélée à la réponse : les collectivités
+les plus grandes sont plus sensibles à ce critère, ou plus en capacité
+de le mettre en œuvre.</p>
+<div class="sidenote">
+<p><img
+src="https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview"
+width="200" /></p>
+</div>
+</div>
+</div>
+</div>
+<div id="la-gouvernance-des-données-work-in-progress"
+class="section level1" number="3">
+<h1><span class="header-section-number">3</span> La gouvernance des
+données : <em>work in progress</em></h1>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+<div
+id="de-plus-en-plus-de-collectivités-formalisent-leur-gouvernance-des-données"
+class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> De plus en plus de
+collectivités formalisent leur gouvernance des données</h2>
+<p><strong>38% des collectivités répondantes ont défini des règles de
+gouvernance des données</strong>, soit une <strong>progression de 10
+points</strong> par rapport à l’an dernier. Et cette dynamique ne semble
+pas prête de s’arrêter : <strong>34% des collectivités interrogées
+déclarent avoir prévu de définir des règles de gouvernance des données
+dans les douze mois</strong>.</p>
+<p>Il est intéressant de souligner que si, comme sur beaucoup d’autres
+sujets, les métropoles et les régions (mais aussi les structures
+territoriales autre que les collectivités) sont les plus avancées,
+toutes les strates et tailles de collectivités s’intéressent activement
+à la gouvernance des données.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9fini%20des%20r%C3%A8gles%20de%20gouvernance%20de%20la%20donn%C3%A9e%20(internes%20ou%20externes)%20%3F.png"
+style="width:90.0%" /></p>
+<p><em>Votre structure a-t-elle défini des règles de gouvernance de la
+donnée (internes ou externes) ?</em></p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Votre%20structure%20a-t-elle%20d%C3%A9fini%20des%20r%C3%A8gles%20de%20gouvernance%20de%20la%20donn%C3%A9e%20(internes%20ou%20externes)%20%3F.png"
+style="width:90.0%" /></p>
+<p><em>Comparaison 2022-2023 : Votre structure a-t-elle défini des
+règles de gouvernance de la donnée (internes ou externes) ?</em></p>
+<p><BR> <BR> <BR> <BR></p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div
+id="la-gouvernance-des-données-se-matérialise-principalement-par-des-politiques-de-gestion-interne-mais-aussi-par-des-outils-contractuels-voire-de-la-soft-law"
+class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> La gouvernance des
+données se matérialise principalement par des politiques de gestion
+interne, mais aussi par des outils contractuels, voire de la <em>soft
+law</em></h2>
+<p>L’élaboration d’une <strong>politique de gestion interne des
+données</strong> est la modalité la plus fréquente de définition d’une
+gouvernance des données (25% des répondants), en particulier dans les
+“petites” collectivités. Dans les plus grandes collectivités, la
+gouvernance des données concerne aussi <strong>les relations avec les
+partenaires</strong>, et se traduit davantage par des clauses
+contractuelles consacrées aux données avec les prestataires ou des
+conventions partenariales. Les <strong>Chartes de la donnée</strong>,
+outil de “droit mou” assez visible car pouvant être approprié
+politiquement, concernent au final un nombre assez restreint de
+collectivités (13%).</p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div id="les-chartes-de-la-donnée-une-déferlante-à-venir"
+class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Les chartes de la
+donnée, une déferlante à venir ?</h2>
+<p>Peu de collectivités, on l’a vu, ont recouru à la charte des données
+comme outil de gouvernance des données - et ça n’a guère évolué par
+rapport à l’an dernier. Mais <strong>trois fois plus envisagent d’y
+recourir dans les 12 prochains mois !</strong> Nous pourrions ainsi
+assister à une petite déferlante de chartes dans les prochains mois.
+Cette dynamique concerne toutes les strates et tailles de collectivités,
+même si c’est dans les métropoles et les régions que ces chartes
+semblent devenir un <em>must</em>.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20adopt%C3%A9%20une%20charte%20%C3%A9thique%20de%20la%20donn%C3%A9e%20%3F.png"
+style="width:90.0%" /></p>
+<p><em>Votre structure a-t-elle adopté une charte éthique de la donnée
+?</em></p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div
+id="la-difficile-association-de-la-société-civile-à-la-gouvernance-des-données-des-territoires"
+class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> La difficile
+association de la société civile à la gouvernance des données des
+territoires</h2>
+<p>L’association de parties prenantes externes à la collectivité à la
+définition de ses règles de gouvernance des données apparaît être une
+démarche relativement peu courante (21% seulement des répondants). Il
+est intéressant d’observer que <strong>cette co-construction se fait
+d’abord avec d’autres acteurs publics</strong> (10%), et secondairement
+avec des acteurs privés (6%), des associations (4%) et enfin des
+citoyens (1%)… et aussi que cette association de parties prenantes à la
+gouvernance des données concerne uniquement les métropoles et des
+acteurs type syndicats mixtes (et les régions s’agissant de la
+consultation d’autres acteurs publics : peut-être dans le cadre des
+plateformes régionales d’information géographiques ?). Bref, cette année
+comme l’an dernier, on est ici dans l’exception plutôt que la règle.</p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div
+id="la-diffusion-de-pratiques-déchanges-de-données-avec-des-acteurs-privés-du-territoire"
+class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> La diffusion de
+pratiques d’échanges de données avec des acteurs privés du
+territoire</h2>
+<p>La diffusion de pratiques d’échanges de données avec des acteurs
+privés du territoire est une pratique qui se développe. <strong>44% des
+collectivités ont mis en place une plateforme de partage et d’accès aux
+données locales pour les acteurs privés</strong> du territoire (par
+exemple un portail OpenDataSoft avec gestion des accès privés ou une
+plateforme Dawex), et 10% ont prévu de le faire dans les douze prochains
+mois. C’est la traduction de l’idée désormais largement répandue qu’il
+faut considérer tout le spectre du partage des données, de leur
+protection totale à l’<em>open data</em> en passant par leur partage
+contrôlé - une idée d’ailleurs reprise dans le tout récent <a
+href="https://www.transformation.gouv.fr/files/ressource/Rapport_Mission_Data_Territoires.pdf"
+target="_blank">rapport de la mission “Data et Territoires”</a> remis au
+ministre Guérini. On observe toutefois que cette pratique demeure
+marginale dans les communes de moins de 100.000 habitants - une raison
+pouvant en être qu’elles ne disposent pas de la capacité à se doter des
+outils techniques pour le faire.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20syst%C3%A8mes%20d%E2%80%99%C3%A9changes%20et%20de%20partage%20de%20donn%C3%A9es%20%3F%20%5BDes%20plateformes%20g%C3%A9n%C3%A9rales%20de%20partage%20et%20d&#39;acc%C3%A8s%20aux%20donn%C3%A9es%20locales%20(ex%20%3A%20plateforme%20OpenDataSoft%20avec%20acc%C3%A8s%20priv%C3%A9s%2C%20plateforme%20Dawex%E2%80%A6)%5D.png"
+style="width:90.0%" /></p>
+<p><em>Votre structure a-t-elle mis en place des systèmes d’échanges et
+de partage de données avec des acteurs privés du territoire, ou
+prévoit-elle d’en mettre en place dans les douze prochains mois ? DES
+PLATEFORMES GÉNÉRALES DE PARTAGE ET D’ACCÈS AUX DONNÉES LOCALES (EX :
+PLATEFORME OPENDATASOFT AVEC ACCÈS PRIVÉS, PLATEFORME DAWEX…)</em></p>
+<p>De facto, des pratiques de partage plus “artisanales” telles que la
+communication ponctuelle de données à des partenaires, souvent dans le
+cadre d’une convention avec un prestataire. sont plus largement
+répandues (58% des répondants) et notamment dans les communes (30%, et
+7% supplémentaires prévoient de le faire dans les douze mois à venir).
+<BR> <BR> <BR> <BR> <BR></p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20mis%20en%20place%20des%20syst%C3%A8mes%20d%E2%80%99%C3%A9changes%20et%20de%20partage%20de%20donn%C3%A9es%20%3F%20%5BDes%20%20communications%20ponctuelles%20de%20donn%C3%A9es%5D.png"
+style="width:85.0%" /></p>
+<p><em>Votre structure a-t-elle mis en place des systèmes d’échanges et
+de partage de données avec des acteurs privés du territoire, ou
+prévoit-elle d’en mettre en place dans les douze prochains mois ? DES
+COMMUNICATIONS PONCTUELLES DE DONNÉES AVEC DES PARTENAIRES/PRESTATAIRES
+(PAR EXEMPLE COMMUNICATION DE DONNÉES FONCIÈRES DANS LE CADRE DE LA
+RÉALISATION D'UNE ÉTUDE OU D'UNE AMO)</em></p>
+<div class="sidenote">
+<p><img
+src="https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview"
+width="200" /></p>
+</div>
+</div>
+</div>
+<div
+id="green-it-et-utilisation-des-données-pour-la-transition-énergétique-et-environnementale"
+class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Green IT et utilisation
+des données pour la transition énergétique et environnementale</h1>
+<p>Le lien entre données et environnement est de plus en plus souvent
+fait, que ce soit par les collectivités elles-mêmes, par les services de
+l’État ou encore par les associations de collectivité. OpenData France
+vient ainsi de publier <a
+href="https://opendatafrance.fr/dataimpact-publication/"
+target="_blank">la deuxième édition de DataImpact</a>, illustrant les
+cas de réutilisation des données environnementales ; l’Ecolab pilote <a
+href="https://gd4h.ecologie.gouv.fr/" target="_blank">la démarche Green
+Data for Health</a>.</p>
+<p>Si la transition énergétique et environnementale est une source de
+cas d’usage importante pour le monde territorial (voir <a
+href="#répondre-aux-enjeux-environnementaux-climatiques-et-énergétiques-est-une-motivation-majeure">Répondre
+aux enjeux environnementaux, climatiques et énergétiques est une
+motivation majeure</a>), les collectivités sont également soucieuses de
+recourir aux données et plus largement au numérique de manière
+écologiquement responsable, comme les y invite la loi REEN. Ainsi,
+<strong>49% des répondants sont en train d’élaborer (37%) ou ont achevé
+(12%) leur stratégie numérique responsable</strong>. Il est intéressant
+de noter que cette réflexion est menée y compris dans certaines
+collectivités qui en sont pas soumises à l’obligation d’élaborer une
+stratégie numérique responsable au titre de la loi REEN. La comparaison
+avec l’édition 2022 permet d’apprécier la progression, <strong>la part
+de collectivités ayant déjà adopté leur stratégie progressant de 5
+points</strong>.</p>
+<p><strong>La question de l’impact environnemental du numérique vient en
+premier</strong> dans l’ordre des thématiques abordées dans le cadre de
+cette réflexion sur le numérique responsable, s’agissant des terminaux
+(46%) ou hors terminaux (36%). On notera également que
+<strong>l’accessibilité et l’inclusion numériques sont également des
+enjeux importants</strong> (36%), tandis que l’éthique, et le respect
+des droits et libertés est la thématique la moins représentée (25%).</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20engag%C3%A9%20une%20r%C3%A9flexion%20sur%20les%20enjeux%20du%20num%C3%A9rique%20responsable%20%3F.png"
+style="width:90.0%" /></p>
+<div class="sidenote">
+<p><img
+src="https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview"
+width="200" /></p>
+</div>
+</div>
+<div
+id="plus-dun-quart-des-répondants-ont-déjà-eu-recours-à-lintelligence-artificielle"
+class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Plus d’un quart des
+répondants ont déjà eu recours à l’intelligence artificielle</h1>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+<div
+id="laccélération-des-expérimentations-ia-dans-le-monde-territorial"
+class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> L’accélération des
+expérimentations IA dans le monde territorial</h2>
+<p>27% des collectivités interrogées déclarent avoir déjà eu recours à
+l’intelligence artificielle, soit <strong>une progression de +12 points
+par rapport à l’an dernier</strong> (<em>le questionnaire a été
+renseigné durant l’été 2023</em>). Il s’agit très clairement (et sans
+surprise) d’un sujet de grandes collectivités : aucune commune de moins
+de 100.000 habitants ne déclare avoir eu recours à l’IA. Les métropoles
+sont les plus en pointe (44%), suivies de près par les départements
+(36%) et les régions (30%). On peut faire l’hypothèse que cette
+accélération forte doit beaucoup à la mise en service de ChatGPT en
+décembre 2022, qui a fortement popularisé l’intelligence artificelle,
+dans le domaine des chatbots en particulier. Et la vague ne fait que
+commencer : 30% des répondants envisagent de déployer de nouveaux
+projets IA dans les 12 prochains mois, principalement des modèles
+prédictifs (18%) mais aussi des modèles conversationnels (10%).</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20mis%20en%20place%20des%20projets%20ou%20exp%C3%A9rimentations%20ayant%20recours%20%C3%A0%20l%E2%80%99intelligence%20artificielle%20%3F.png"
+style="width:90.0%" /></p>
+<p><em>Votre structure a-t-elle déjà mis en place des projets ou
+expérimentations ayant recours à l’intelligence artificielle ?</em></p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div id="des-chatbots-et-des-modèles-prédictifs" class="section level2"
+number="5.2">
+<h2><span class="header-section-number">5.2</span> Des chatbots et des
+modèles prédictifs</h2>
+<p>De fait, parmi les 51 répondants qui déclarent avoir eu recours à
+l’IA dans leur structure, <strong>les modèles conversationnels de type
+chatbot arrivent nettement en tête</strong> des technologies utilisées
+(43%), devant les modèles prédictifs, pourtant largement disponibles
+depuis bien plus longtemps (34%). Il est intéressant de noter que l’IA
+rebat quelque peu les cartes du point de vue de la maturité dans les
+usages. Ainsi, si les modèles prédictifs sont beaucoup utilisés dans les
+métropoles (28% des métropoles répondantes y ont eu recours), les
+chatbots sont davantage utilisés dans les départements (24% d’entre eux
+y ont eu recours) que dans tout autre type de collectivité. Cela est
+sans doute à rapprocher du fait que le département est une collectivité
+à la fois dotée de moyens financiers et humains significatifs, mais
+aussi très proche des citoyens, et donc très sollicitée par ces
+derniers.</p>
+<p>D’autres types de modèles sont également utilisés de manière non
+négligeables, tels que le <em>computer vision</em> (reconnaissance
+automatique d’image) et le <em>natural language processing</em>
+(traitement automatique du langage naturel). En revanche, les modèles de
+traitement du son (<em>text to speech</em> et <em>speech to text</em>)
+sont très peu utilisés à date.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/%C3%80%20quel%20type%20de%20technique%20d%E2%80%99intelligence%20artificielle%20votre%20(vos)%20projet%20(s)%20ou%20exp%C3%A9rimentation(s)%20recoure(nt)-elle(s)%20%3F.png"
+style="width:90.0%" /></p>
+<p><em>À quel type de technique d’intelligence artificielle votre (vos)
+projet(s) ou expérimentation(s) recoure(nt)-elle(s) ?</em></p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div id="des-cas-dusage-très-variés" class="section level2"
+number="5.3">
+<h2><span class="header-section-number">5.3</span> Des cas d’usage très
+variés</h2>
+<p><strong>Les cas d’usage de l’IA rapportés par les collectivités
+enquêtées sont très variés</strong>, au-delà de l’emblématique chatbot,
+et couvrent des thématiques aussi variées que la mobilité, les déchets,
+la restauration scolaire, la formation, la fiscalité, l’administration
+générale (génération de délibérations…), le tourisme, l’occupation des
+sols… Aucun cas d’usage de type “killer app” ne semble encore émerger -
+c’est sans aucun doute trop tôt. On observe aussi que le moment est aux
+expérimentations, plus qu’aux stratégies, qui suivront sans doute.</p>
+<div class="sidenote">
+<p><img
+src="https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview"
+width="200" /></p>
+</div>
+</div>
+</div>
+<div id="protéger-ses-données-limportance-de-la-cybersécurité"
+class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Protéger ses données :
+l’importance de la cybersécurité</h1>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+<div
+id="une-collectivité-sur-cinq-déclare-avoir-déjà-subi-une-cyberattaque"
+class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Une collectivité sur
+cinq déclare avoir déjà subi une cyberattaque</h2>
+<p><strong>21% des collectivités interrogées déclarent avoir déjà subi
+une cyberattaque</strong>, et ce taux est remarquablement stable dans le
+temps (pas de variation significative depuis l’an dernier) comme en
+fonction des strates de collectivités (on est entre 20 et 25% quel que
+soit le type de collectivité considéré).</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Votre%20structure%20a-t-elle%20d%C3%A9j%C3%A0%20d%C3%BB%20faire%20face%20%C3%A0%20une%20cyberattaque%20importante%20%3F.png"
+style="width:90.0%" /></p>
+<p><em>Votre structure a-t-elle déjà dû faire face à une cyberattaque
+importante ?</em></p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div
+id="une-prise-de-conscience-généralisée-des-stratégies-de-réponse-qui-se-structurent"
+class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Une prise de
+conscience généralisée, des stratégies de réponse qui se
+structurent</h2>
+<p>Cette réalité des attaques se traduit également par une conscience
+désormais extrêmement bien ancrée des menaces que font peser les
+cyberattaques sur les collectivités. Les chiffres collectés cette année
+confirment le constat réalisé l’an dernier : seuls <strong>6% des
+répondants pensent que leur structure n’est “probablement pas” exposée à
+des attaques cyber</strong> (contre 11% l’an dernier). Depuis l’an
+dernier, <strong>la structuration des stratégies de prévention des
+cyber-attaques a d’ailleurs progressé</strong> : la part de répondants
+estimant que le niveau de prise en compte du risque par leur
+collectivité est “bon”, avec une stratégie en place et un budget dédié,
+a augmenté de 15 points (9 points dans les collectivités de plus de 3500
+habitants). Cependant, si le sujet est identifié partout, dans les
+petites collectivités mais aussi dans les régions, la préparation est
+estimée insuffisante dans environ un tiers des cas.</p>
+<p>Tout comme l’an dernier, les obstacles rencontrés par les
+collectivités sont, à part égales, le manque de temps, le manque
+d’argent et le manque de compétences. Les difficultés de recrutement
+concernent plutôt les grandes collectivités et tout particulièrement les
+métropoles.</p>
+<p><img
+src="https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Comment%20estimez-vous%20le%20niveau%20de%20prise%20en%20compte%20du%20risque%20cyber%20par%20votre%20structure%20%3F.png"
+style="width:90.0%" /></p>
+<p><em>Comment estimez-vous le niveau de prise en compte du risque cyber
+par votre structure ?</em></p>
+<div class="sidenote2">
+<p><img
+src="https://nextcloud.datactivist.coop/s/dx4FidPyJqr8PfF/preview"
+width="200" /></p>
+</div>
+</div>
+<div
+id="un-arsenal-de-mesures-de-prévention-diversifié-et-fonction-des-strates-de-collectivité"
+class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> Un arsenal de mesures
+de prévention diversifié et fonction des strates de collectivité</h2>
+<p><strong>Les collectivités ont bien connaissance de l’arsenal des
+mesures de prévention qui s’offrent à elles, et elles le déploient en
+fonction de leurs moyens</strong>. Le déploiement d’une stratégie de
+sécurité informatique reste la mesure la plus répandue (62% des cas,
+plus 14% de répondants envisageant de le faire dans les 12 prochains
+mois), avec le déploiement d’outils techniques de sécurisation des
+réseaux informatiques (54% + 8%). À l’autre extrémité, la certification
+ISO 27001, qui nécessite un investissement important, n’est mise en
+œuvre que par 5% des répondants (de différentes strates de collectivités
+néanmoins), mais les répondants sont aussi nombreux à déclarer vouloir
+la mettre en œuvre dans les douze prochains mois.</p>
+<div class="sidenote">
+<p><img
+src="https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview"
+width="200" /></p>
+</div>
+</div>
+</div>
+<div id="notice-technique" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Notice technique</h1>
+<p>L’enquête de l’Observatoire Data Publica, soutenue par la Banque des
+Territoires, le groupe La Poste, Orange, l’ANCT et la Gazette des
+Communes, a été diffusée sur une durée totale de 10 semaines entre le 21
+juin et le 31 août 2023, auprès de collectivités et d’organismes publics
+locaux de France métropolitaine et des outremers. L’échantillon final
+représente 191 organisations territoriales dont 30 communes, 51 EPCI
+(dont 18 métropoles), 25 départements, 10 régions et 75 structures
+autres (syndicats mixtes numériques regroupant des communes notamment).
+Les communes de toutes les tailles sont représentées conférant à cet
+échantillon un caractère représentatif inédit pour une enquête sur des
+enjeux numériques. L’enquête comportait 67 questions posées via un
+questionnaire en ligne sur un outil open source, Lime Survey. Les
+répondants sont indifféremment des élus ou des responsables
+administratifs. De nombreuses réponses ont été préparées, au sein des
+collectivités, dans un cadre collectif.</p>
+<p>Pour tenir compte des caractéristiques de l’échantillon, et le cas
+échéant le rendre comparable à celui de l’édition 2022, ou représentatif
+de l’ensemble des collectivités françaises, des pondérations ont pu être
+effectuées (mention “Total pondéré”), ou des dénominateurs différents
+utilisés pour le calcul des pourcentages (avec ou sans prise en compte
+des non réponses, des réponses “je ne sais pas” en particulier), ou
+encore des filtres effectuées (par exemple, pour pouvoir comparer les
+chiffres 2022 et 2023 avec des structures d’échantillon comparables, on
+a restreint les données utilisées aux collectivités et EPCI, hors
+communes de moins de 3.500 habitants). Cela explique que des chiffres
+apparemment différents puissent apparaître. Ces traitements sont
+explicités de manière détaillée dans <a
+href="https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html"
+target="_blank">l’analyse complète</a>.</p>
+<p>L’ensemble des tableaux croisés portant sur l’ensemble des questions
+de l’enquête sont disponibles <a
+href="https://datactivist.coop/enquete_data_publica/Analyse%20des%20donn%C3%A9es/Analyse_des_donnees.html"
+target="_blank">ici</a>.</p>
+<p>Les données brutes de l’enquête, anonymisées, sont disponibles <a
+href="https://github.com/datactivist/enquete_data_publica/blob/main/Data/results-survey396597.csv"
+target="_blank">ici</a>.</p>
+<p>Le code source ayant permis la génération de l’ensemble des
+graphiques et tableaux de l’enquête est disponible <a
+href="https://github.com/datactivist/enquete_data_publica/"
+target="_blank">ici</a>.</p>
+<p>Le présent rapport, produit par l’Observatoire Data Publica, est mis
+à disposition sous licence Creative Commons CC BY SA 4.0.</p>
+<p><img
+src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/CC_BY-SA_icon.svg/88px-CC_BY-SA_icon.svg.png" /></p>
+<div class="tocify-extend-page" data-unique="tocify-extend-page"
+style="height: 0;">
+
+</div>
+</div>
+
+&nbsp;
+
+<p style="text-align: center;">Réalisé par <a href="https://datactivist.coop/fr/">Datactivist</a></p>
+<p style="text-align: center;"><span style="color: #808080;"><em>16/11/2023</em></span></p>
+
+
+&nbsp;
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+</body>
+</html>

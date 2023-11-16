@@ -1,9 +1,9 @@
 # Données et librairies
 # Import de données
 library(tidyverse)
-data <- read_csv("../Data/results-survey396597.csv") |> select(1:220)
-CT_enrichies <- read_csv("../Data/interim_data.csv")
-data_2022 <- readxl::read_xlsx("../Data/data_enquete_2022.xlsx", "Resultats Bruts")
+data <- read_csv("./Data/results-survey396597.csv") |> select(1:220)
+CT_enrichies <- read_csv("./Data/interim_data.csv")
+data_2022 <- readxl::read_xlsx("./Data/data_enquete_2022.xlsx", "Resultats Bruts")
 
 # Jointure questionnaire + type de structure récupéré en pre-processing
 data <- data |> 
@@ -31,7 +31,7 @@ data_clean_unique <- data_clean |>
 # data_clean_unique |> 
 #     rename(structure = Catégorie, structure_pop = Catégorie2) |> 
 #     select(-c(2:10, SIREN, COG, nb_na, n)) |> 
-#     rio::export("../Data/process_data.csv")
+#     rio::export("./Data/process_data.csv")
 
 # Liste des régions
 library(tools)
@@ -40,7 +40,7 @@ reg <- data_clean_unique |> filter(Catégorie == "Une région") |>
 
 # Import des données des stats rassemblés
   # 2023
-all_stat_2023 <- read_csv("../Data/All_statistics_2023.csv") |> 
+all_stat_2023 <- read_csv("./Data/All_statistics_2023.csv") |> 
   mutate(Edition = "2023")
 # rassemble EPCI (hors métropoles) et métropoles pour correspondre à édition 2022
 epci_met <- all_stat_2023 |> 
@@ -57,7 +57,7 @@ all_stat_2023_comp <- rbind(all_stat_2023, epci_met) |>
   arrange(Question, Structure) |> 
   filter(Structure != "Un EPCI (hors métropole)", Structure != "Une métropole")
   # 2022
-all_stat_2022 <- read_csv("../Data/All_statistics_2022.csv") |> ungroup() |> 
+all_stat_2022 <- read_csv("./Data/All_statistics_2022.csv") |> ungroup() |> 
                     mutate(Structure = str_replace_all(Structure, c("Moins de 3 500 habitants" = "Communes de moins de 3 500 hab.",
                                                                     "Entre 3 500 et 10 000 habitants" = "Communes de 3 500 à 10 000 hab.",
                                                                     "Entre 10 000 et 100 000 habitants" = "Communes de 10 000 à 100 000 hab.",
@@ -153,16 +153,16 @@ library(cowplot)
 library(gridExtra)
 library(glue)
 saving_plot <- function(graph, name) {
-  ggsave(file = glue("../Graphiques/PNG/{name}.png"), plot = graph, width = 20, height = 15)
-  ggsave(file = glue("../Graphiques/SVG/{name}.svg"), plot = graph, width = 20, height = 15)
+  ggsave(file = glue("./Graphiques/PNG/{name}.png"), plot = graph, width = 20, height = 15)
+  ggsave(file = glue("./Graphiques/SVG/{name}.svg"), plot = graph, width = 20, height = 15)
 }
 saving_plot_comp <- function(graph, name) {
-  ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 : {name}.png"), plot = graph, width = 25, height = 15)
-  ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 : {name}.svg"), plot = graph, width = 25, height = 15)
+  ggsave(file = glue("./Graphiques/PNG/Comparaison 2022-2023 : {name}.png"), plot = graph, width = 25, height = 15)
+  ggsave(file = glue("./Graphiques/SVG/Comparaison 2022-2023 : {name}.svg"), plot = graph, width = 25, height = 15)
 }
 saving_newplot <- function(graph, name) {
-  ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : {name}.png"), plot = graph, width = 13, height = 7)
-  #ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : {name}.svg"), plot = graph, width = 12, height = 7)
+  ggsave(file = glue("./Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : {name}.png"), plot = graph, width = 13, height = 7)
+  #ggsave(file = glue("./Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : {name}.svg"), plot = graph, width = 12, height = 7)
 }
 
 
@@ -948,6 +948,8 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
 
+dataviz_sansSR("Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
+saving_plot(graph, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 
 
 
