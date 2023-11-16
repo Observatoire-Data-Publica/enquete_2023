@@ -137,7 +137,7 @@ showtext_auto()
 
 <br>
 
-![](../Rapport final/images/logos.png)
+![](../rapport/images/logos.png)
 
 <div class="sidenote">![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width=200px}</div>
 # INFORMATIONS GÉNÉRALES
@@ -5175,24 +5175,6 @@ saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risqu
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BLe%20d%C3%A9ploiement%20d%E2%80%99outils%20techniques%20de%20s%C3%A9curisation%20des%20r%C3%A9seaux%20informatiques%5D.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BLe%20d%C3%A9ploiement%20d%E2%80%99outils%20techniques%20de%20s%C3%A9curisation%20des%20r%C3%A9seaux%20informatiques%5D.png)
 
-
-#### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023 {-}
-
-```{r fig.height=14, fig.width=20}
-all_stat |>  
-  dataviz_comp("Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]",
-               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
-saving_plot_comp(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
-```
-
-
-[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BLe%20d%C3%A9ploiement%20d%E2%80%99outils%20techniques%20de%20s%C3%A9curisation%20des%20r%C3%A9seaux%20informatiques%5D.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BLe%20d%C3%A9ploiement%20d%E2%80%99outils%20techniques%20de%20s%C3%A9curisation%20des%20r%C3%A9seaux%20informatiques%5D.png)
-
-```{r eval=FALSE, include=FALSE}
-new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]",
-               "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
-saving_newplot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Le déploiement d’outils techniques de sécurisation des réseaux informatiques]")
-```
 
 
 <div class="sidenote">![](https://nextcloud.datactivist.coop/s/aC7DXPoQpAqMT2P/preview){width=200px}</div>
