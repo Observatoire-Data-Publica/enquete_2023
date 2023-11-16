@@ -31,7 +31,8 @@ knitr::opts_chunk$set(
 	out.width = "100%",
 	results = "asis",
 	fig.height=15, #45
-	fig.width=20
+	fig.width=20,
+	cache = TRUE
 )
 ```
 
@@ -496,6 +497,75 @@ stat_qs_simple <- function(n_col, nom_col){
     knitr::kable(stat_indiv, format = "html") |> 
       kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
 }
+stat_qs_simple_sansSR <- function(n_col, nom_col){
+    # Structures détaillées
+   cat2 <- data_clean_unique |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> #na.omit() |>  
+        pivot_wider(names_from = 2, values_from = 3) |>
+        janitor::adorn_totals("row") |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n")
+   nb_na <- 191 - (cat2 |> filter(Catégorie2 == "Total" & cat != "NA") |> mutate(Total = sum(n)) |> distinct(Total))
+   cat2 <- cat2 |> 
+        mutate(Catégorie2 = case_when(Catégorie2 == "Total" ~ paste0("Total (", sum(n[Catégorie2 == "Total"]) - nb_na, " réponses)"), .default = Catégorie2)) |> 
+        mutate_all(replace_na, replace = 0) |>
+        filter(cat != "NA") |> 
+        mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie2) |> 
+        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+     # Structure 'commune' seulement
+    cat1 <- data_clean_unique |> 
+        select(n_col, Catégorie) |> 
+        filter(Catégorie == "Une commune") |> 
+        summarise(n = n(), .by = c(Catégorie, 1)) |> #na.omit() |>  
+        na.omit() |> 
+        mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie) |> 
+        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
+    nb_col <- ncol(cat2)
+     # Moyenne pondérée
+    moy_pond <- data_clean_unique |> 
+        select(n_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> 
+        pivot_wider(names_from = 2, values_from = 3) |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate_all(replace_na, replace = 0) |>
+        filter(cat != "NA") |> 
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(`Total pondéré`= paste0(round(p/sum(p)*100, 0), "%")) |> 
+        select(-p) |> 
+        pivot_wider(names_from = 1, values_from = 2) |> 
+        mutate(Catégorie = "Total pondéré", .before = 1)
+     # Jointure, statistiques finales
+    stat_indiv <- list(cat1, cat2 |> rename(Catégorie = Catégorie2)) |> 
+        bind_rows() |> ungroup() |> 
+        rbind(moy_pond) |> 
+        mutate_all(replace_na, replace = "0%") |>  
+        mutate(index = case_match(Catégorie, 
+                                  "Total" ~ 1.5,
+                                  "Une commune" ~ 2,
+                                  "Communes de moins de 3 500 hab." ~ 3,
+                                  "Communes de 3 500 à 10 000 hab." ~ 4,
+                                  "Communes de 10 000 à 100 000 hab." ~ 5,
+                                  "Communes de plus de 100 000 hab." ~ 6,
+                                  "Une métropole" ~ 7,
+                                  "Un EPCI (hors métropole)" ~ 8,
+                                  "Un département" ~ 9,
+                                  "Une région" ~ 10,
+                                  "Autre" ~ 11, 
+                                  .default = 1)) |> 
+        arrange(index) |> select(-index) |> ungroup()
+    stat_indiv <- stat_indiv |> 
+        select(1, order(colnames(stat_indiv))) |> 
+        rename(Structure = 1)
+    # On affiche la table finale
+    knitr::kable(stat_indiv, format = "html") |> 
+      kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
+}
 stat_qs_simple(13, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
 
@@ -607,6 +677,131 @@ dataviz <- function(nom_col){
     assign("graph", graph, envir = .GlobalEnv)
     #grid::grid.draw(graph)
 }
+dataviz_sansSR <- function(nom_col){
+    # Fonction graph ensemble
+    dat <- all_stat_2023 |> 
+        filter(Question == nom_col & Structure == "Total",
+               Réponses != "Sans réponse") |> 
+      mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0))
+    p0 <- dat |> 
+        ggplot(aes(y=Occurrences, x=Réponses, fill = Réponses)) + 
+            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Nombre de réponses", 
+                 title = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
+            geom_label(aes(x = Réponses, y = Occurrences+1, label = paste0(Pourcentage, "%")), 
+                       size = 8, fill = "white", label.size = NA, hjust = 0) +
+            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(dat$Occurrences)+14) +
+            coord_flip() +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "none",
+                  plot.title = element_text(hjust = 1),
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+    # Fonction graph total pondéré
+    dat <- data_clean_unique |> 
+        select(nom_col, Catégorie2) |> 
+        summarise(n = n(), .by = c(Catégorie2, 1)) |> 
+        pivot_wider(names_from = 2, values_from = 3) |>
+        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
+        mutate_all(replace_na, replace = 0) |>
+        filter(cat != "NA") |> 
+        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
+        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
+               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
+               .by = Catégorie2) |> 
+        mutate(poids_CT = n * poids) |> 
+        group_by(cat) |> 
+        summarise(p=sum(poids_CT)) |> ungroup() |> 
+        mutate(`Total pondéré`= round(p/sum(p)*100, 0)) |> 
+        select(-p) |> 
+        pivot_wider(names_from = 1, values_from = 2) |> 
+        mutate(Catégorie = "Total pondéré", .before = 1) |> 
+        pivot_longer(cols = -Catégorie, names_to = "Réponses", values_to = "Pourcentage")
+    p0_pond <- dat |> 
+        ggplot(aes(y=Pourcentage, x=Réponses, fill = Réponses)) + 
+            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
+            labs(x = "", y = "Pourcentage de réponses", 
+                 title = "Total pondéré") +
+            geom_label(aes(x = Réponses, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
+                       size = 8, fill = "white", label.size = NA, hjust = 0) +
+            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
+            ylim(0, max(dat$Pourcentage)+14) +
+            coord_flip() +
+            theme_classic() +
+            custom_theme() +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())+
+            guides(fill = guide_legend(title = "Légende", ncol = 1))
+    # Fonction type de collectivité
+    dat <- all_stat_2023 |> 
+        filter(Question == nom_col & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre"),
+               Réponses != "Sans réponse") |> 
+        mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0)) |> 
+        mutate(Pourcentage = as.numeric(Pourcentage)/100,
+               Structure = factor(Structure, levels = c("Autre","Une région","Un département","Une métropole","Un EPCI (hors métropole)","Une commune")))
+    p1 <- dat |> 
+        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+            theme(legend.position = "none",
+                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+                  panel.grid.major.y = ggplot2::element_blank())
+    # Fonction taille de commune
+    dat <- all_stat_2023 |> 
+        filter(Question == nom_col & grepl("Communes de", Structure) == TRUE,
+               Réponses != "Sans réponse") |> 
+        mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0)) |> 
+        mutate(Pourcentage = as.numeric(Pourcentage)/100,
+               Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
+               Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab.")))
+    p2 <- dat |> 
+        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
+        theme(legend.position = "none",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+    # Légende
+    p3 <- dat |> 
+        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
+        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
+        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune", fill = "légende") +
+        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
+        coord_flip() +
+        theme_classic() +
+        custom_theme() +
+        guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
+        theme(legend.position = "top",
+              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
+              panel.grid.major.y = ggplot2::element_blank())
+     legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 10, 12)))
+    # All
+    left_part <- plot_grid(p0, p0_pond, ncol = 1)
+    right_part <- plot_grid(p1, p2, ncol = 1)
+    all_plots <- plot_grid(left_part, right_part, ncol = 2)
+    graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(.9, .1))
+    assign("graph", graph, envir = .GlobalEnv)
+    #grid::grid.draw(graph)
+}
+
 dataviz("Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 saving_plot(graph, "Commençons par la protection de la vie privée. Considérez-vous que votre structure est en conformité avec le RGPD ?")
 ```
@@ -882,14 +1077,14 @@ saving_newplot(graph, "Avez-vous nommé un(e) Délégué(e) à la Protection des
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(15, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
+stat_qs_simple_sansSR(15, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 ```
 
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
+dataviz_sansSR("Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 saving_plot(graph, "Afin de respecter le RGPD, avez-vous modifié des processus de gestion des données au sein de l'organisation ?")
 ```
 
@@ -919,75 +1114,7 @@ saving_newplot(graph, "Afin de respecter le RGPD, avez-vous modifié des process
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple_sansSR <- function(n_col, nom_col){
-    # Structures détaillées
-   cat2 <- data_clean_unique |> 
-        select(n_col, Catégorie2) |> 
-        summarise(n = n(), .by = c(Catégorie2, 1)) |> #na.omit() |>  
-        pivot_wider(names_from = 2, values_from = 3) |>
-        janitor::adorn_totals("row") |>
-        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n")
-   nb_na <- 191 - (cat2 |> filter(Catégorie2 == "Total" & cat != "NA") |> mutate(Total = sum(n)) |> distinct(Total))
-   cat2 <- cat2 |> 
-        mutate(Catégorie2 = case_when(Catégorie2 == "Total" ~ paste0("Total (", sum(n[Catégorie2 == "Total"]) - nb_na, " réponses)"), .default = Catégorie2)) |> 
-        mutate_all(replace_na, replace = 0) |>
-        filter(cat != "NA") |> 
-        mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie2) |> 
-        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
-     # Structure 'commune' seulement
-    cat1 <- data_clean_unique |> 
-        select(n_col, Catégorie) |> 
-        filter(Catégorie == "Une commune") |> 
-        summarise(n = n(), .by = c(Catégorie, 1)) |> #na.omit() |>  
-        na.omit() |> 
-        mutate(percent = paste0(round(n / sum(n) *100, 0), "%"), .by = Catégorie) |> 
-        select(-n) |> pivot_wider(names_from = 2, values_from = 3)
-    nb_col <- ncol(cat2)
-     # Moyenne pondérée
-    moy_pond <- data_clean_unique |> 
-        select(n_col, Catégorie2) |> 
-        summarise(n = n(), .by = c(Catégorie2, 1)) |> 
-        pivot_wider(names_from = 2, values_from = 3) |>
-        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
-        mutate_all(replace_na, replace = 0) |>
-        filter(cat != "NA") |> 
-        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
-        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
-               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
-               .by = Catégorie2) |> 
-        mutate(poids_CT = n * poids) |> 
-        group_by(cat) |> 
-        summarise(p=sum(poids_CT)) |> ungroup() |> 
-        mutate(`Total pondéré`= paste0(round(p/sum(p)*100, 0), "%")) |> 
-        select(-p) |> 
-        pivot_wider(names_from = 1, values_from = 2) |> 
-        mutate(Catégorie = "Total pondéré", .before = 1)
-     # Jointure, statistiques finales
-    stat_indiv <- list(cat1, cat2 |> rename(Catégorie = Catégorie2)) |> 
-        bind_rows() |> ungroup() |> 
-        rbind(moy_pond) |> 
-        mutate_all(replace_na, replace = "0%") |>  
-        mutate(index = case_match(Catégorie, 
-                                  "Total" ~ 1.5,
-                                  "Une commune" ~ 2,
-                                  "Communes de moins de 3 500 hab." ~ 3,
-                                  "Communes de 3 500 à 10 000 hab." ~ 4,
-                                  "Communes de 10 000 à 100 000 hab." ~ 5,
-                                  "Communes de plus de 100 000 hab." ~ 6,
-                                  "Une métropole" ~ 7,
-                                  "Un EPCI (hors métropole)" ~ 8,
-                                  "Un département" ~ 9,
-                                  "Une région" ~ 10,
-                                  "Autre" ~ 11, 
-                                  .default = 1)) |> 
-        arrange(index) |> select(-index) |> ungroup()
-    stat_indiv <- stat_indiv |> 
-        select(1, order(colnames(stat_indiv))) |> 
-        rename(Structure = 1)
-    # On affiche la table finale
-    knitr::kable(stat_indiv, format = "html") |> 
-      kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
-}
+
 stat_qs_simple_sansSR(18, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
 
@@ -995,130 +1122,6 @@ stat_qs_simple_sansSR(18, "De manière générale, avez-vous mis en place des cl
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz_sansSR <- function(nom_col){
-    # Fonction graph ensemble
-    dat <- all_stat_2023 |> 
-        filter(Question == nom_col & Structure == "Total",
-               Réponses != "Sans réponse") |> 
-      mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0))
-    p0 <- dat |> 
-        ggplot(aes(y=Occurrences, x=Réponses, fill = Réponses)) + 
-            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
-            labs(x = "", y = "Nombre de réponses", 
-                 title = paste("Toutes les collectivités,", dat$`Nombre de réponses`, "réponses")) +
-            geom_label(aes(x = Réponses, y = Occurrences+1, label = paste0(Pourcentage, "%")), 
-                       size = 8, fill = "white", label.size = NA, hjust = 0) +
-            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
-            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
-            ylim(0, max(dat$Occurrences)+14) +
-            coord_flip() +
-            theme_classic() +
-            custom_theme() +
-            theme(legend.position = "none",
-                  plot.title = element_text(hjust = 1),
-                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
-                  panel.grid.major.y = ggplot2::element_blank())
-    # Fonction graph total pondéré
-    dat <- data_clean_unique |> 
-        select(nom_col, Catégorie2) |> 
-        summarise(n = n(), .by = c(Catégorie2, 1)) |> 
-        pivot_wider(names_from = 2, values_from = 3) |>
-        pivot_longer(cols = -Catégorie2, names_to = "cat", values_to = "n") |> 
-        mutate_all(replace_na, replace = 0) |>
-        filter(cat != "NA") |> 
-        left_join(prop_all |> select(1, 6), by = c("Catégorie2" = "Structure")) |> 
-        mutate(poids = case_when(is.na(poids) ~ 0, .default = poids),
-               percent_normal = paste0(round(n / sum(n) *100, 0), "%"),
-               .by = Catégorie2) |> 
-        mutate(poids_CT = n * poids) |> 
-        group_by(cat) |> 
-        summarise(p=sum(poids_CT)) |> ungroup() |> 
-        mutate(`Total pondéré`= round(p/sum(p)*100, 0)) |> 
-        select(-p) |> 
-        pivot_wider(names_from = 1, values_from = 2) |> 
-        mutate(Catégorie = "Total pondéré", .before = 1) |> 
-        pivot_longer(cols = -Catégorie, names_to = "Réponses", values_to = "Pourcentage")
-    p0_pond <- dat |> 
-        ggplot(aes(y=Pourcentage, x=Réponses, fill = Réponses)) + 
-            geom_bar(position="dodge", stat="identity", width=.6, size = 1, alpha = .9) +
-            labs(x = "", y = "Pourcentage de réponses", 
-                 title = "Total pondéré") +
-            geom_label(aes(x = Réponses, y = Pourcentage+1, label = paste0(Pourcentage, "%")), 
-                       size = 8, fill = "white", label.size = NA, hjust = 0) +
-            scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
-            scale_x_discrete(labels = function(x) stringr::str_wrap(x, width = 30)) +
-            ylim(0, max(dat$Pourcentage)+14) +
-            coord_flip() +
-            theme_classic() +
-            custom_theme() +
-            theme(legend.position = "none",
-                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
-                  panel.grid.major.y = ggplot2::element_blank())+
-            guides(fill = guide_legend(title = "Légende", ncol = 1))
-    # Fonction type de collectivité
-    dat <- all_stat_2023 |> 
-        filter(Question == nom_col & (Structure == "Une commune" | Structure == "Un EPCI (hors métropole)" | Structure == "Une métropole" | Structure == "Un département" | Structure == "Une région" | Structure == "Autre"),
-               Réponses != "Sans réponse") |> 
-        mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0)) |> 
-        mutate(Pourcentage = as.numeric(Pourcentage)/100,
-               Structure = factor(Structure, levels = c("Autre","Une région","Un département","Une métropole","Un EPCI (hors métropole)","Une commune")))
-    p1 <- dat |> 
-        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
-        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
-        labs(x = "", y = "Pourcentage de réponses", title = "Par type de collectivité") +
-        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
-        coord_flip() +
-        theme_classic() +
-        custom_theme() +
-        guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
-            theme(legend.position = "none",
-                  panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
-                  panel.grid.major.y = ggplot2::element_blank())
-    # Fonction taille de commune
-    dat <- all_stat_2023 |> 
-        filter(Question == nom_col & grepl("Communes de", Structure) == TRUE,
-               Réponses != "Sans réponse") |> 
-        mutate(Pourcentage = round(Occurrences / `Nombre de réponses`* 100, 0)) |> 
-        mutate(Pourcentage = as.numeric(Pourcentage)/100,
-               Structure = str_replace_all(Structure, c("Communes de " = "", "p" = "P", "m" = "M")),
-               Structure = factor(Structure, levels = c("Plus de 100 000 hab.","10 000 à 100 000 hab.","3 500 à 10 000 hab.","Moins de 3 500 hab.")))
-    p2 <- dat |> 
-        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
-        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
-        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune") +
-        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
-        coord_flip() +
-        theme_classic() +
-        custom_theme() +
-        guides(fill = guide_legend(nrow = 3, title = "", reverse = T)) +
-        theme(legend.position = "none",
-              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
-              panel.grid.major.y = ggplot2::element_blank())
-    # Légende
-    p3 <- dat |> 
-        ggplot(aes(fill=Réponses, y=Pourcentage, x=Structure)) + 
-        geom_bar(position="fill", color = "white", stat="identity", alpha = .9) +
-        labs(x = "", y = "Pourcentage de réponses", title = "Par taille de commune", fill = "légende") +
-        scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-        scale_fill_manual(values = c("grey", "#bf0001", "#e1b44d", "#33bbc9", "#323465", "#616165", "#0a0a14")) +
-        coord_flip() +
-        theme_classic() +
-        custom_theme() +
-        guides(fill = guide_legend(ncol = 1, title = "", reverse = T)) +
-        theme(legend.position = "top",
-              panel.grid.major.x = ggplot2::element_line(color = "#cbcbcb"),
-              panel.grid.major.y = ggplot2::element_blank())
-     legend <- get_legend(p3 + theme(legend.box.margin = margin(0, 0, 10, 12)))
-    # All
-    left_part <- plot_grid(p0, p0_pond, ncol = 1)
-    right_part <- plot_grid(p1, p2, ncol = 1)
-    all_plots <- plot_grid(left_part, right_part, ncol = 2)
-    graph <- plot_grid(all_plots, legend, nrow = 2, rel_heights = c(.9, .1))
-    assign("graph", graph, envir = .GlobalEnv)
-    #grid::grid.draw(graph)
-}
 dataviz_sansSR("De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 saving_plot(graph, "De manière générale, avez-vous mis en place des clauses juridiques sur la gestion des données dans les contrats de délégation et dans les marchés publics ?")
 ```
