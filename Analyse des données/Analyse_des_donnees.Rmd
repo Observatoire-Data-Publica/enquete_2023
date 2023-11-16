@@ -2024,13 +2024,13 @@ ggsave(file = glue("../Graphiques/PNG/Graphique général n°5 (comparaison 2022
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(26, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
+stat_qs_simple_sansSR(26, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Aménagement du territoire]")
 ```
 
@@ -2044,13 +2044,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(27, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Mobilité]")
+stat_qs_simple_sansSR(27, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Mobilité]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Mobilité]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Mobilité]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Mobilité]")
 ```
 
@@ -2063,13 +2063,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(28, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Administration]")
+stat_qs_simple_sansSR(28, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Administration]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Administration]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Administration]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Administration]")
 ```
 
@@ -2082,13 +2082,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(29, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Développement économique]")
+stat_qs_simple_sansSR(29, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Développement économique]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Développement économique]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Développement économique]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Développement économique]")
 ```
 
@@ -2101,13 +2101,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(30, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Gestion de l’espace public]")
+stat_qs_simple_sansSR(30, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Gestion de l’espace public]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Gestion de l’espace public]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Gestion de l’espace public]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Gestion de l’espace public]")
 ```
 
@@ -2120,13 +2120,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(31, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Sécurité]")
+stat_qs_simple_sansSR(31, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Sécurité]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Sécurité]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Sécurité]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Sécurité]")
 ```
 
@@ -2139,13 +2139,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(32, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Patrimoine]")
+stat_qs_simple_sansSR(32, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Patrimoine]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Patrimoine]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Patrimoine]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Patrimoine]")
 ```
 
@@ -2177,13 +2177,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(38, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Déchets]")
+stat_qs_simple_sansSR(38, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Déchets]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Déchets]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Déchets]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Déchets]")
 ```
 
@@ -2196,13 +2196,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(34, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Tourisme]")
+stat_qs_simple_sansSR(34, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Tourisme]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Tourisme]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Tourisme]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Tourisme]")
 ```
 
@@ -2215,13 +2215,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(35, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Citoyenneté]")
+stat_qs_simple_sansSR(35, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Citoyenneté]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Citoyenneté]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Citoyenneté]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Citoyenneté]")
 ```
 
@@ -2234,13 +2234,13 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(36, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Environnement]")
+stat_qs_simple_sansSR(36, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Environnement]")
 ```
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Environnement]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Environnement]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Environnement]")
 ```
 
@@ -2255,14 +2255,14 @@ saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs
 #### ![](https://nextcloud.datactivist.coop/s/x6EAFHGsT28TxmQ/preview){width=38px} Statistiques {-}
 
 ```{r}
-stat_qs_simple(37, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]")
+stat_qs_simple_sansSR(37, "Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]")
 ```
 
 
 #### ![](https://nextcloud.datactivist.coop/s/kX9RGmTaDyn7JZ4/preview){width=38px} Visualisation {-}
 
 ```{r}
-dataviz("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]")
+dataviz_sansSR("Pour chacun de ces domaines, pouvez-vous préciser si votre structure a engagé ces deux dernières années un ou plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]")
 saving_plot(graph, "Pouvez-vous préciser si votre structure a engagé plusieurs projets ou expérimentations en matière d'utilisation des données, ou prévoit d’en engager au cours des douze prochains mois ? [Autre]")
 ```
 
@@ -2748,7 +2748,7 @@ all_stat |>
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Direction générale]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale].png"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale].png"), plot = graph, width = 12, height = 8)
 ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction générale].svg"), plot = graph, width = 25, height = 18)
 ```
 
@@ -2792,8 +2792,8 @@ all_stat |>
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Direction Informatique]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique].png"), plot = graph, width = 12, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Direction Informatique].svg"), plot = graph, width = 12, height = 8)
 ```
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20Informatique%5D.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BDirection%20Informatique%5D.png)
@@ -2839,8 +2839,8 @@ all_stat |>
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Service d’information géographique (SIG)]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)].png"), plot = graph, width = 12, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Service d’information géographique (SIG)].svg"), plot = graph, width = 12, height = 8)
 ```
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BService%20d%E2%80%99information%20g%C3%A9ographique%20(SIG)%5D.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BService%20d%E2%80%99information%20g%C3%A9ographique%20(SIG)%5D.png)
@@ -2883,8 +2883,8 @@ all_stat |>
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Archives]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives].png"), plot = graph, width = 12, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Archives].svg"), plot = graph, width = 12, height = 8)
 ```
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BArchives%5D.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BArchives%5D.png)
@@ -2926,8 +2926,8 @@ all_stat |>
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Communication]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication].png"), plot = graph, width = 12, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Communication].svg"), plot = graph, width = 12, height = 8)
 ```
 
 
@@ -2970,8 +2970,8 @@ all_stat |>
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Services techniques]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques].png"), plot = graph, width = 12, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Services techniques].svg"), plot = graph, width = 12, height = 8)
 ```
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BServices%20techniques%5D.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BServices%20techniques%5D.png)
@@ -3015,8 +3015,8 @@ all_stat |>
   mutate(Réponses = str_replace_all(Réponses, "Cette direction n'existe pas dans ma collectivité", "Cette direction n'existe pas dans ma structure")) |> 
 new_dataviz_comp("Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est :  [Ressources humaines]",
              "Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines].png"), plot = graph, width = 25, height = 18)
-ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines].svg"), plot = graph, width = 25, height = 18)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines].png"), plot = graph, width = 12, height = 8)
+ggsave(file = glue("../Graphiques/SVG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Pour chacune des directions suivantes, pouvez-vous nous dire si leur implication en matière de gestion des données est : [Ressources humaines].svg"), plot = graph, width = 12, height = 8)
 ```
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BRessources%20humaines%5D.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Pour%20chacune%20des%20directions%20suivantes%2C%20pouvez-vous%20nous%20dire%20si%20leur%20implication%20en%20mati%C3%A8re%20de%20gestion%20des%20donn%C3%A9es%20est%20%3A%20%5BRessources%20humaines%5D.png)
@@ -5130,7 +5130,7 @@ dataviz("Parmi les mesures suivantes, qui visent à réduire le risque de cybers
 saving_plot(graph, "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information ou avec un cyber campus régional]")
 ```
 
-[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20coop%C3%A9ration%20avec%20l%E2%80%99Agence%20nationale%20de%20la%20s%C3%A9curit%C3%A9%20des%20syst%C3%A8mes%20d%E2%80%99informationou%20avec%20un%20cyber%20campus%20r%C3%A9gional%5D.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20coop%C3%A9ration%20avec%20l%E2%80%99Agence%20nationale%20de%20la%20s%C3%A9curit%C3%A9%20des%20syst%C3%A8mes%20d%E2%80%99informationou%20avec%20un%20cyber%20campus%20r%C3%A9gional%5D.png)
+[![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20coop%C3%A9ration%20avec%20l%E2%80%99Agence%20nationale%20de%20la%20s%C3%A9curit%C3%A9%20des%20syst%C3%A8mes%20d%E2%80%99information%20ou%20avec%20un%20cyber%20campus%20r%C3%A9gional%5D.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20coop%C3%A9ration%20avec%20l%E2%80%99Agence%20nationale%20de%20la%20s%C3%A9curit%C3%A9%20des%20syst%C3%A8mes%20d%E2%80%99information%20ou%20avec%20un%20cyber%20campus%20r%C3%A9gional%5D.png)
 
 #### ![](https://nextcloud.datactivist.coop/s/WQoMFJwwjjeQ7x8/preview){width=38px} Comparaison 2022/2023 {-}
 
@@ -5147,7 +5147,7 @@ ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 : Parmi les mesures 
 ```{r}
 new_dataviz_comp(all_stat, "Parmi les mesures suivantes qui visent à réduire le risque de cybersécurité, est-ce que votre collectivité a mis en place :  [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]",
                "Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’Agence nationale de la sécurité des systèmes d’information (ANSSI) ou avec un cyber campus régional]")
-ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’ANSSI ou avec un cyber campus régional].png"), plot = graph, width = 25, height = 15)
+ggsave(file = glue("../Graphiques/PNG/Comparaison 2022-2023 CT et EPCI hors com<3500 hab : Parmi les mesures suivantes, qui visent à réduire le risque de cybersécurité, est-ce que votre structure a mis en place : [Une coopération avec l’ANSSI ou avec un cyber campus régional].png"), plot = graph, width = 12, height = 8)
 ```
 
 [![](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20coop%C3%A9ration%20avec%20l%E2%80%99ANSSI%20ou%20avec%20un%20cyber%20campus%20r%C3%A9gional%5D.png)](https://raw.githubusercontent.com/datactivist/enquete_data_publica/main/Graphiques/PNG/Comparaison%202022-2023%20CT%20et%20EPCI%20hors%20com%3C3500%20hab%20%3A%20Parmi%20les%20mesures%20suivantes%2C%20qui%20visent%20%C3%A0%20r%C3%A9duire%20le%20risque%20de%20cybers%C3%A9curit%C3%A9%2C%20est-ce%20que%20votre%20structure%20a%20mis%20en%20place%20%3A%20%5BUne%20coop%C3%A9ration%20avec%20l%E2%80%99ANSSI%20ou%20avec%20un%20cyber%20campus%20r%C3%A9gional%5D.png)
