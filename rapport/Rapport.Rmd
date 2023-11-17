@@ -41,6 +41,7 @@ showtext_auto()
 # {-} après les headers 3 et 4 pour enlever le numérotage automatique
 ```
 
+
 ```{css, echo = FALSE}
 #nav_logo { /*paramètres logo Data Publica en haut à gauche*/
   width: 80%;
