@@ -183,6 +183,11 @@ data_clean_unique <- data_clean |>
 library(tools)
 reg <- data_clean_unique |> filter(Catégorie == "Une région") |> 
     mutate(nom = toTitleCase(tolower(nom))) |> distinct(nom) |> t()
+
+# Réponses non métropolitaines, export
+data_clean_unique |> 
+  filter(`Quel est le nom de votre structure ?` %in% c("Département de La Réunion", "COMMUNE DE MAMOUDZOU", "REGION REUNION", "Ville (au Québec)", "Collectivité de Corse")) |> 
+  rio::export("../Data/reponses_non_metropolitaines.csv")
 ```
 
 
